@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberSmart | Cybersecurity Awareness</title>
+    <title>CyberSmart | Types of Risks & Threats</title>
     <style>
         /* ====== GENERAL STYLES ====== */
         * {
@@ -72,8 +72,6 @@
             color: #fff;
             text-align: center;
             padding: 100px 20px;
-            position: relative;
-            overflow: hidden;
         }
 
         .hero h2 {
@@ -116,7 +114,7 @@
 
         .card {
             width: 100%;
-            min-height: 200px; /* rectangle shape */
+            min-height: 200px;
             background-color: rgba(10, 31, 68, 0.8);
             padding: 25px;
             border-radius: 15px;
@@ -159,10 +157,13 @@
             transition: all 0.6s ease-out;
         }
 
-        /* NEXT PAGE BUTTON */
-        .next-page {
-            text-align: center;
-            margin: 40px 0;
+        /* ====== NAV BUTTONS CONTAINER ====== */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
         }
 
         /* FOOTER */
@@ -182,74 +183,59 @@
         <nav class="navbar">
             <h1 class="logo">CyberSmart</h1>
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="#learn">Learn</a></li>
-                <li><a href="#tips">Tips</a></li>
-                <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
     </header>
 
     <!-- HERO SECTION -->
-    <section class="hero" id="home">
-        <h2 id="welcome-msg">Welcome to CyberSmart</h2>
-        <p>Your guide to staying safe, smart, and secure in the digital world.</p>
-        <a href="#learn" class="btn" id="start-btn">Start Learning</a>
+    <section class="hero">
+        <h2>Types of Risks & Threats</h2>
+        <p>Understand the different cyber threats and risks you may face online.</p>
     </section>
 
     <!-- CONTENT CARDS -->
     <section class="content" id="learn">
         <div class="card">
-            <h2>What is CyberSmart?</h2>
-            <p>CyberSmart is a cybersecurity awareness platform designed to help individuals understand online threats and protect themselves in today’s digital world.</p>
+            <h2>Malware</h2>
+            <p>Malware is software designed to disrupt, damage, or gain unauthorized access to computer systems, such as viruses, worms, and ransomware.</p>
         </div>
 
         <div class="card">
-            <h2>What is Cybersecurity?</h2>
-            <p>Cybersecurity is the practice of protecting systems, networks, and data from attacks like hacking, phishing, and malware to keep information safe.</p>
+            <h2>Phishing</h2>
+            <p>Phishing is a type of social engineering attack where attackers trick individuals into revealing sensitive information, like passwords or credit card numbers.</p>
         </div>
 
         <div class="card">
-            <h2>Why Awareness is Important</h2>
-            <p>Many cyber attacks succeed because users are unaware of threats. Awareness helps recognize risks, avoid scams, and make safer online choices.</p>
+            <h2>Data Breach</h2>
+            <p>A data breach occurs when confidential information is accessed or stolen by unauthorized users, compromising privacy and security.</p>
         </div>
 
         <div class="card">
-            <h2>Why It Matters</h2>
-            <p>Cybersecurity protects personal information, finances, and identities. Staying informed safeguards yourself, your family, and your community.</p>
+            <h2>Social Engineering</h2>
+            <p>Manipulating people into performing actions or divulging confidential information is a common attack method in social engineering.</p>
         </div>
 
-        <!-- NEXT PAGE BUTTON -->
-        <div class="next-page">
-            <a href="types-of-risks.html" class="btn">Learn About Risks & Threats →</a>
+        <div class="card">
+            <h2>Denial of Service (DoS)</h2>
+            <p>A DoS attack aims to make a network or service unavailable by overwhelming it with traffic.</p>
         </div>
     </section>
 
+    <!-- NAVIGATION BUTTONS -->
+    <div class="nav-buttons">
+        <a href="lobby.html" class="btn">← Go Back</a>
+        <a href="next-page.html" class="btn">Next Page →</a>
+    </div>
+
     <!-- FOOTER -->
-    <footer id="contact">
+    <footer>
         <p>© 2026 CyberSmart. Stay Safe Online.</p>
     </footer>
 
     <!-- ====== JAVASCRIPT ====== -->
     <script>
-        // Dynamic welcome message
-        const welcomeMsg = document.getElementById('welcome-msg');
-        const hour = new Date().getHours();
-        let greeting = 'Welcome to CyberSmart';
-        if(hour < 12) greeting = 'Good Morning! Welcome to CyberSmart';
-        else if(hour < 18) greeting = 'Good Afternoon! Welcome to CyberSmart';
-        else greeting = 'Good Evening! Welcome to CyberSmart';
-        welcomeMsg.textContent = greeting;
-
-        // Button click animation
-        const startBtn = document.getElementById('start-btn');
-        startBtn.addEventListener('click', () => {
-            startBtn.textContent = 'Loading...';
-            setTimeout(() => {
-                startBtn.textContent = 'Start Learning';
-            }, 1000);
-        });
-
         // Scroll animation for cards
         const cards = document.querySelectorAll('.card');
         const observer = new IntersectionObserver(entries => {
@@ -264,4 +250,3 @@
 
 </body>
 </html>
-
