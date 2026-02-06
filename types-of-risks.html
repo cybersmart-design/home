@@ -14,7 +14,10 @@
         }
 
         body {
-            background: radial-gradient(circle at 50% 50%, #0a1f44, #000);
+            /* Background image with overlay for readability */
+            background: linear-gradient(rgba(10,31,68,0.7), rgba(0,0,0,0.7)), 
+                        url('background2.jpeg') no-repeat center center fixed;
+            background-size: cover;
             color: #fff;
             line-height: 1.6;
             scroll-behavior: smooth;
@@ -68,8 +71,6 @@
 
         /* ====== HERO SECTION ====== */
         .hero {
-            background: radial-gradient(circle at center, #0a1f44 0%, #000 100%);
-            color: #fff;
             text-align: center;
             padding: 100px 20px;
         }
