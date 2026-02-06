@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSmart | Cybersecurity Awareness</title>
+    <style>
+        /* ====== GENERAL STYLES ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 50%, #0a1f44, #000);
+            color: #fff;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* ====== NAVBAR ====== */
+        header {
+            background-color: rgba(10, 31, 68, 0.9);
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: #00e0ff;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-shadow: 0 0 5px #00e0ff, 0 0 10px #00e0ff;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+        }
+
+        .nav-links li {
+            margin-left: 20px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            font-weight: bold;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00e0ff;
+            text-shadow: 0 0 5px #00e0ff, 0 0 10px #00e0ff;
+        }
+
+        /* ====== HERO SECTION ====== */
+        .hero {
+            background: radial-gradient(circle at center, #0a1f44 0%, #000 100%);
+            color: #fff;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #00e0ff, 0 0 20px #00e0ff;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background-color: #00e0ff;
+            color: #0a1f44;
+            padding: 12px 25px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            box-shadow: 0 0 10px #00e0ff, 0 0 20px #00e0ff33;
+        }
+
+        .btn:hover {
+            background-color: #00c4e8;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00e0ff, 0 0 40px #00e0ff;
+        }
+
+        /* ====== VERTICAL RECTANGULAR CARDS ====== */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            width: 100%;
+            min-height: 200px; /* rectangle shape */
+            background-color: rgba(10, 31, 68, 0.8);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: left;
+            transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+            border: 1px solid #00e0ff;
+            box-shadow: 0 0 10px #00e0ff33;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+            color: #00e0ff;
+            text-shadow: 0 0 5px #00e0ff;
+        }
+
+        .card p {
+            color: #fff;
+        }
+
+        /* Hover focus effect: blur other cards */
+        .content:hover .card {
+            filter: blur(2px);
+            transform: scale(0.98);
+        }
+
+        .content .card:hover {
+            filter: blur(0);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px #00e0ff, 0 0 40px #00e0ff66;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease-out;
+        }
+
+        /* ====== FOOTER ====== */
+        footer {
+            background-color: rgba(10, 31, 68, 0.9);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <nav class="navbar">
+            <h1 class="logo">CyberSmart</h1>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#learn">Learn</a></li>
+                <li><a href="#tips">Tips</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <h2 id="welcome-msg">Welcome to CyberSmart</h2>
+        <p>Your guide to staying safe, smart, and secure in the digital world.</p>
+        <a href="#learn" class="btn" id="start-btn">Start Learning</a>
+    </section>
+
+    <!-- CONTENT CARDS -->
+    <section class="content" id="learn">
+        <div class="card">
+            <h2>What is CyberSmart?</h2>
+            <p>CyberSmart is a cybersecurity awareness platform designed to help individuals understand online threats and protect themselves in today’s digital world.</p>
+        </div>
+
+        <div class="card">
+            <h2>What is Cybersecurity?</h2>
+            <p>Cybersecurity is the practice of protecting systems, networks, and data from attacks like hacking, phishing, and malware to keep information safe.</p>
+        </div>
+
+        <div class="card">
+            <h2>Why Awareness is Important</h2>
+            <p>Many cyber attacks succeed because users are unaware of threats. Awareness helps recognize risks, avoid scams, and make safer online choices.</p>
+        </div>
+
+        <div class="card">
+            <h2>Why It Matters</h2>
+            <p>Cybersecurity protects personal information, finances, and identities. Staying informed safeguards yourself, your family, and your community.</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <p>© 2026 CyberSmart. Stay Safe Online.</p>
+    </footer>
+
+    <!-- ====== JAVASCRIPT ====== -->
+    <script>
+        // Dynamic welcome message
+        const welcomeMsg = document.getElementById('welcome-msg');
+        const hour = new Date().getHours();
+        let greeting = 'Welcome to CyberSmart';
+        if(hour < 12) greeting = 'Good Morning! Welcome to CyberSmart';
+        else if(hour < 18) greeting = 'Good Afternoon! Welcome to CyberSmart';
+        else greeting = 'Good Evening! Welcome to CyberSmart';
+        welcomeMsg.textContent = greeting;
+
+        // Button click animation
+        const startBtn = document.getElementById('start-btn');
+        startBtn.addEventListener('click', () => {
+            startBtn.textContent = 'Loading...';
+            setTimeout(() => {
+                startBtn.textContent = 'Start Learning';
+            }, 1000);
+        });
+
+        // Scroll animation for cards
+        const cards = document.querySelectorAll('.card');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.2 });
+        cards.forEach(card => observer.observe(card));
+    </script>
+
+</body>
+</html>
