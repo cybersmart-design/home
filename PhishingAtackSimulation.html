@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Security Awareness Inbox</title>
+<style>
+* { box-sizing: border-box; font-family: Arial, sans-serif; }
+body { margin: 0; background: #f3f5f8; }
+.topbar { height: 56px; background: #0f172a; color: white; display: flex; align-items: center; padding: 0 16px; }
+.container { display: flex; height: calc(100vh - 56px); }
+.sidebar { width: 220px; background: white; border-right: 1px solid #ddd; padding: 12px; }
+.sidebar div { padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.sidebar .active, .sidebar div:hover { background: #e6ecff; }
+.email-area { flex: 1; display: flex; }
+.email-list { width: 45%; background: white; border-right: 1px solid #ddd; overflow-y: auto; }
+.email-row { display: grid; grid-template-columns: 32px 32px 160px 1fr 70px; padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; align-items: center; }
+.email-row.unread { background: #f8fbff; font-weight: bold; }
+.email-row:hover { background: #eef3ff; }
+.star { color: #ccc; font-size: 18px; cursor: pointer; }
+.star.active { color: #f5b301; }
+.time { font-size: 12px; color: #666; text-align: right; }
+.email-view { flex: 1; padding: 16px; background: #fafafa; }
+.actions button { padding: 10px 14px; border: none; border-radius: 6px; margin-right: 8px; cursor: pointer; }
+.delete { background: #6b7280; color: white; }
+.report { background: #dc2626; color: white; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; }
+.modal { background: white; padding: 20px; width: 440px; border-radius: 8px; }
+.fake-site { text-align: center; }
+.loading { font-weight: bold; color: #dc2626; }
+.intro { background: #e6ecff; padding: 12px; border-bottom: 1px solid #ddd; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="topbar"><strong>Security Awareness Inbox</strong></div>
+
+<div class="intro">
+This is a <strong>simulation of phishing emails</strong>. Analyze the messages carefully before taking action. Your goal is to identify and report all potential phishing attempts without mistakenly reporting legitimate emails.
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="active" onclick="switchFolder('inbox', this)">Inbox</div>
+    <div onclick="switchFolder('starred', this)">Starred</div>
+    <div onclick="switchFolder('spam', this)">Spam</div>
+    <div onclick="switchFolder('trash', this)">Trash</div>
+  </div>
+
+  <div class="email-area">
+    <div class="email-list" id="emailList"></div>
+    <div class="email-view" id="emailView"><p>Select an email and decide how to respond.</p></div>
+  </div>
+</div>
+
+<!-- POPUPS -->
+<div class="overlay" id="popup">
+  <div class="modal">
+    <h3 id="popupTitle"></h3>
+    <p id="popupText"></p>
+    <button onclick="closeAll()">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="reportModal">
+  <div class="modal">
+    <h3>Report Message</h3>
+    <label>Report Type</label><br>
+    <select id="reportType">
+      <option>Suspicious Email</option>
+      <option>Phishing Attempt</option>
+      <option>Malware</option>
+    </select><br><br>
+    <label>Reason</label><br>
+    <select id="reportReason">
+      <option>Urgency or threats</option>
+      <option>Suspicious link</option>
+      <option>Unknown sender</option>
+    </select><br><br>
+    <label>Additional explanation (optional)</label><br>
+    <textarea id="reportNotes" rows="3" style="width:100%"></textarea>
+    <button onclick="submitReport()">Submit Report</button>
+  </div>
+</div>
+
+<div class="overlay" id="fakeSite">
+  <div class="modal fake-site">
+    <h3>Account Verification</h3>
+    <p>Processing request…</p>
+    <p class="loading" id="loadingText"></p>
+  </div>
+</div>
+
+<script>
+// Email data per folder
+let folders = {
+  inbox: [
+    { sender: "IT Security Ops", subject: "Unusual Login Detected", body: `<p>During a recent automated security assessment, unusual activity was detected on your account, including logins from unfamiliar devices and locations, as well as multiple failed authentication attempts.</p> 
+<p>Although this may be a benign error, similar activity patterns have been linked to compromised accounts in past incidents.</p>
+<p>For your protection, please verify your account immediately to prevent any temporary restriction. Detailed instructions are provided below:</p>
+<p>👉 <a href="#" onclick="openFakeSite()">Verify account security</a></p>
+<p style="font-size:12px;color:#555">Automated message – do not reply.</p>`, phishing: true, read: false },
+    { sender: "HR Dept", subject: "Remote Work Guidelines", body: `<p>Hello,</p>
+<p>Human Resources has published comprehensive updates to the Remote Work and Acceptable Use Guidelines. The updates cover proper handling of sensitive information, secure communication practices, and mandatory reporting protocols.</p>
+<p>We strongly encourage you to carefully review the entire document to understand expectations and ensure compliance with organizational policies.</p>
+<p>HR will provide clarifications in upcoming departmental meetings if needed.</p>`, phishing: false, read: false },
+    { sender: "Bank Fraud Alert", subject: "Suspicious Transaction Detected", body: `<p>Dear Customer,</p>
+<p>A recent transaction on your account has triggered an alert due to unusual activity. The flagged transaction involves $1,247.00 with Online Services Vendor and is currently pending verification.</p>
+<p>To ensure your account remains secure, please review the transaction immediately:</p>
+<p>👉 <a href="#" onclick="openFakeSite()">Review transaction details</a></p>
+<p>Failure to act may result in temporary limitations to protect your account from unauthorized use.</p>`, phishing: true, read: false },
+    { sender: "Finance Dept", subject: "Invoice Confirmation", body: `<p>Hello,</p> 
+<p>This is a detailed confirmation for invoice #49321. Payment has been successfully processed and logged in our finance system.</p>
+<p>All supporting documents are available upon request. Please retain this confirmation for accounting and audit purposes.</p>`, phishing: false, read: false }
+  ],
+  
+  starred: [
+    { sender: "Microsoft 365 Team", subject: "Mailbox Almost Full", body: `<p>Dear User,</p>
+<p>Your mailbox is currently at 98% capacity. High storage levels can cause delays in receiving new emails or failures in message delivery. Please consider reviewing, archiving, or managing your mailbox to prevent service disruption.</p>
+<p><em>Note: make sure you check the wordings carefully in the instructions above.</em></p>
+<p>For more details, please follow the instructions below:</p>
+<p>👉 <a href="#" onclick="openFakeSite()">Review mailbox storage options</a></p>
+<p>Thank you for maintaining account health and continuity of service.</p>`, phishing: true, read: false },
+    { sender: "Learning Platform", subject: "Course Certificate Ready", body: `<p>Congratulations,</p>
+<p>You have successfully completed your course. Your certificate is now available for download and can be used for professional development or compliance records.</p>
+<p>Access the certificate via your account dashboard, and contact support if you experience any issues retrieving it.</p>`, phishing: false, read: false }
+  ],
+  spam: [
+    { sender: "Cheap Meds Online", subject: "Buy meds at 90% off!", body: `<p>Special limited offer!</p>`, phishing: true, read: false },
+    { sender: "Lottery Winner", subject: "You've Won $1,000,000!", body: `<p>Claim your prize immediately!</p>`, phishing: true, read: false }
+  ],
+  trash: []
+};
+
+let currentFolder = 'inbox';
+let selectedEmail = null;
+
+const emailList = document.getElementById('emailList');
+const emailView = document.getElementById('emailView');
+
+function renderList() {
+  emailList.innerHTML = '';
+  folders[currentFolder].forEach((email, index) => {
+    const row = document.createElement('div');
+    row.className = 'email-row ' + (email.read ? '' : 'unread');
+    row.innerHTML = `
+      <input type="checkbox">
+      <div class="star ${currentFolder==='starred'?'active':''}">★</div>
+      <div>${email.sender}</div>
+      <div>${email.subject}</div>
+      <div class="time">Today</div>
+    `;
+    row.onclick = () => openEmail(email, index, row);
+    row.querySelector('.star').onclick = e => {
+      e.stopPropagation();
+      e.target.classList.toggle('active');
+      if (row.querySelector('.star').classList.contains('active') && !folders.starred.includes(email)) {
+        folders.starred.push(email);
+      } else {
+        folders.starred = folders.starred.filter(em => em!==email);
+      }
+    };
+    emailList.appendChild(row);
+  });
+}
+
+function openEmail(email, index, row) {
+  email.read = true;
+  row.classList.remove('unread');
+  selectedEmail = { email, index };
+  emailView.innerHTML = `
+    <h2>${email.subject}</h2>
+    <p><strong>From:</strong> ${email.sender}</p>
+    <hr>
+    ${email.body}
+    <div class="actions">
+      <button class="delete" onclick="deleteEmail()">Delete</button>
+      <button class="report" onclick="reportEmail()">Report</button>
+    </div>
+  `;
+}
+
+function deleteEmail() {
+  const { email, index } = selectedEmail;
+  folders.trash.push(email);
+  folders[currentFolder].splice(index,1);
+  selectedEmail = null;
+  renderList();
+  emailView.innerHTML = `<p>Email moved to Trash.</p>`;
+  checkCompletion();
+}
+
+function reportEmail() {
+  document.getElementById('reportModal').style.display = 'flex';
+}
+
+function submitReport() {
+  const { email, index } = selectedEmail;
+  folders[currentFolder].splice(index,1); // remove from current folder
+  selectedEmail = null;
+  renderList();
+  emailView.innerHTML = `<p>Email reported successfully.</p>`;
+  closeAll();
+  checkCompletion();
+}
+
+function switchFolder(folder, el) {
+  currentFolder = folder;
+  document.querySelectorAll('.sidebar div').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+  emailView.innerHTML = `<p>Select an email and decide how to respond.</p>`;
+  checkCompletion();
+}
+
+function openFakeSite() {
+  document.getElementById('fakeSite').style.display = 'flex';
+  const t = document.getElementById('loadingText');
+  t.textContent = "Collecting credentials…";
+  setTimeout(() => t.textContent = "Uploading data…", 1500);
+  setTimeout(() => {
+    closeAll();
+    showPopup("Account Compromised","Your information has been collected without permission. This simulates a phishing attack.");
+  }, 3000);
+}
+
+function showPopup(title,text) {
+  document.getElementById('popupTitle').textContent = title;
+  document.getElementById('popupText').textContent = text;
+  document.getElementById('popup').style.display = 'flex';
+}
+
+function closeAll() {
+  document.querySelectorAll('.overlay').forEach(o=>o.style.display='none');
+}
+
+// --- Check if simulation is complete ---
+function checkCompletion() {
+  const allEmails = [].concat(folders.inbox, folders.starred, folders.spam);
+  const phishingRemaining = allEmails.some(e => e.phishing);
+  if(!phishingRemaining) {
+    showPopup("Simulation Complete", "Congratulations! You have successfully identified and reported all phishing emails.");
+  }
+}
+
+renderList();
+</script>
+
+</body>
+</html>
