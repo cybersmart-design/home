@@ -2,11 +2,39 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Data Breach Simulator – Long Output</title>
 <style>
-body { background:#0b0f14; color:#c9d1d9; font-family:monospace; padding:20px; }
-#terminal { background:#010409; border:1px solid #30363d; padding:15px; height:460px; overflow-y:auto; }
-input { width:100%; background:#010409; color:#58a6ff; border:1px solid #30363d; padding:10px; margin-top:10px; caret-color:#58a6ff; }
+body {
+  background:#0b0f14;
+  color:#c9d1d9;
+  font-family:monospace;
+  padding:16px;
+  margin:0;
+}
+
+#terminal {
+  background:#010409;
+  border:1px solid #30363d;
+  padding:12px;
+  height:55vh;          /* responsive height */
+  max-height:420px;
+  overflow-y:auto;
+  border-radius:8px;
+}
+
+input {
+  width:100%;
+  background:#010409;
+  color:#58a6ff;
+  border:1px solid #30363d;
+  padding:12px;
+  margin-top:12px;
+  caret-color:#58a6ff;
+  border-radius:8px;
+  font-size:16px;
+}
+
 .alert { color:#ff7b72; }
 .warn { color:#f2cc60; }
 .success { color:#3fb950; }
@@ -23,24 +51,32 @@ input { width:100%; background:#010409; color:#58a6ff; border:1px solid #30363d;
   background:#0b0f14;
   border: 1px solid #30363d;
   padding: 20px;
-  width: 480px;
+  width: 92%;
+  max-width: 480px;
   font-family: monospace;
   color: #c9d1d9;
+  border-radius:10px;
 }
 .btn {
   margin-top: 10px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   background:#58a6ff;
   border:none;
   color:#0b0f14;
   font-weight:bold;
   cursor:pointer;
+  width:100%;
+  border-radius:8px;
 }
 .btn:hover { background:#2f6fa6; }
 
 .btn-success { background:#22c55e; }
 .btn-fail { background:#ef4444; }
 
+h2 {
+  margin:0 0 12px 0;
+  font-size:18px;
+}
 </style>
 </head>
 
