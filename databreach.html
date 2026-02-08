@@ -6,20 +6,11 @@
 <style>
 body { background:#0b0f14; color:#c9d1d9; font-family:monospace; padding:20px; }
 #terminal { background:#010409; border:1px solid #30363d; padding:15px; height:460px; overflow-y:auto; }
-input { width:100%; background:#010409; color:#58a6ff; border:1px solid #30363d; padding:10px; margin-top:10px; }
+input { width:100%; background:#010409; color:#58a6ff; border:1px solid #30363d; padding:10px; margin-top:10px; caret-color:#58a6ff; }
 .alert { color:#ff7b72; }
 .warn { color:#f2cc60; }
 .success { color:#3fb950; }
 .system { color:#8b949e; }
-.green { color:#3fb950; }
-.cursor {
-  display:inline-block;
-  width:8px;
-  background:#58a6ff;
-  margin-left:3px;
-  animation: blink 0.8s steps(1) infinite;
-}
-@keyframes blink { 0%, 50% { opacity:1; } 51%, 100% { opacity:0; } }
 
 /* Modal */
 .modal-bg {
@@ -46,6 +37,10 @@ input { width:100%; background:#010409; color:#58a6ff; border:1px solid #30363d;
   cursor:pointer;
 }
 .btn:hover { background:#2f6fa6; }
+
+.btn-success { background:#22c55e; }
+.btn-fail { background:#ef4444; }
+
 </style>
 </head>
 
@@ -73,12 +68,23 @@ input { width:100%; background:#010409; color:#58a6ff; border:1px solid #30363d;
 <div id="terminal"></div>
 <input id="cmd" placeholder="command@security-console$">
 
+<!-- SUCCESS / FAIL POPUP -->
+<div class="modal-bg" id="resultModal" style="display:none;">
+  <div class="modal">
+    <h3 id="resultTitle"></h3>
+    <p id="resultText"></p>
+    <button class="btn btn-success" id="tryAgainBtn">Try Again</button>
+    <button class="btn btn-fail" onclick="exitSimulation()">Exit</button>
+  </div>
+</div>
+
 <script>
 const term = document.getElementById("terminal");
 const cmd = document.getElementById("cmd");
 let busy = false;
 let score = 0;
 let mode = null;
+let completed = false;
 
 function log(msg, cls="system") {
   const d = document.createElement("div");
@@ -88,23 +94,9 @@ function log(msg, cls="system") {
   term.scrollTop = term.scrollHeight;
 }
 
-function addCursor() {
-  const cursor = document.createElement("span");
-  cursor.className = "cursor";
-  cursor.id = "cursor";
-  term.appendChild(cursor);
-  term.scrollTop = term.scrollHeight;
-}
-
-function removeCursor() {
-  const cursor = document.getElementById("cursor");
-  if(cursor) cursor.remove();
-}
-
 function stream(lines, done, speed=120) {
   busy = true;
   cmd.disabled = true;
-  removeCursor();
   let i = 0;
   const t = setInterval(() => {
     if (i >= lines.length) {
@@ -112,7 +104,6 @@ function stream(lines, done, speed=120) {
       busy = false;
       cmd.disabled = false;
       cmd.focus();
-      addCursor();
       if (done) done();
       return;
     }
@@ -128,10 +119,35 @@ function selectMode(m) {
 }
 
 function startConsole() {
+  term.innerHTML = "";
+  score = 0;
+  completed = false;
   log("security-console@corpnet:~$ monitoring enabled");
   log("Mode: " + mode.toUpperCase());
   log("Type 'help' for commands.");
-  addCursor();
+  cmd.focus();
+}
+
+function showResult(success, text) {
+  document.getElementById("resultTitle").textContent = success ? "✔ Simulation Complete" : "✖ Simulation Failed";
+  document.getElementById("resultText").textContent = text;
+  document.getElementById("resultModal").style.display = "flex";
+  cmd.disabled = true;
+}
+
+function hideResult() {
+  document.getElementById("resultModal").style.display = "none";
+  cmd.disabled = false;
+  cmd.focus();
+}
+
+document.getElementById("tryAgainBtn").onclick = () => {
+  hideResult();
+  startConsole();
+};
+
+function exitSimulation() {
+  document.body.innerHTML = "<h2 style='padding:40px;text-align:center'>Simulation ended. You may close this window.</h2>";
 }
 
 cmd.addEventListener("keydown", e => {
@@ -151,6 +167,11 @@ cmd.addEventListener("keydown", e => {
   }
 
   log("> " + input);
+
+  if (completed) {
+    log("Simulation already completed. Try again or exit.", "warn");
+    return;
+  }
 
   if (c === "help") {
     log("Available commands:");
@@ -283,6 +304,8 @@ cmd.addEventListener("keydown", e => {
       ], () => {
         log("SUCCESS: Threat contained", "success");
         score += 30;
+        completed = true;
+        showResult(true, "You contained the breach successfully. Final score: " + score);
       }, 90);
     } else {
       stream([
@@ -291,6 +314,8 @@ cmd.addEventListener("keydown", e => {
         "Then run 'inspect outbound connections'."
       ], () => {
         log("ERROR: Containment failed. Missing evidence.", "alert");
+        completed = true;
+        showResult(false, "Containment failed. You did not gather enough evidence.");
       }, 90);
     }
     return;
