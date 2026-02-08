@@ -2,48 +2,219 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Security Awareness Inbox</title>
 <style>
 * { box-sizing: border-box; font-family: Arial, sans-serif; }
 body { margin: 0; background: #f3f5f8; }
-.topbar { height: 56px; background: #0f172a; color: white; display: flex; align-items: center; padding: 0 16px; }
-.container { display: flex; height: calc(100vh - 56px); }
-.sidebar { width: 220px; background: white; border-right: 1px solid #ddd; padding: 12px; }
-.sidebar div { padding: 8px 10px; border-radius: 6px; cursor: pointer; }
-.sidebar .active, .sidebar div:hover { background: #e6ecff; }
-.email-area { flex: 1; display: flex; }
-.email-list { width: 45%; background: white; border-right: 1px solid #ddd; overflow-y: auto; }
-.email-row { display: grid; grid-template-columns: 32px 32px 160px 1fr 70px; padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; align-items: center; }
+
+.topbar {
+  height: 56px;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.container {
+  display: flex;
+  height: calc(100vh - 56px);
+}
+
+.sidebar {
+  width: 220px;
+  background: white;
+  border-right: 1px solid #ddd;
+  padding: 12px;
+}
+
+.sidebar div {
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.sidebar .active,
+.sidebar div:hover {
+  background: #e6ecff;
+}
+
+.email-area {
+  flex: 1;
+  display: flex;
+}
+
+.email-list {
+  width: 45%;
+  background: white;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+}
+
+.email-row {
+  display: grid;
+  grid-template-columns: 32px 32px 160px 1fr 70px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  align-items: center;
+}
+
 .email-row.unread { background: #f8fbff; font-weight: bold; }
 .email-row:hover { background: #eef3ff; }
 .email-row.highlight { background: #fff5b1; } /* YELLOW HIGHLIGHT */
-.star { color: #ccc; font-size: 18px; cursor: pointer; }
+
+.star {
+  color: #ccc;
+  font-size: 18px;
+  cursor: pointer;
+}
 .star.active { color: #f5b301; }
-.time { font-size: 12px; color: #666; text-align: right; }
-.email-view { flex: 1; padding: 16px; background: #fafafa; }
-.actions button { padding: 10px 14px; border: none; border-radius: 6px; margin-right: 8px; cursor: pointer; }
+
+.time {
+  font-size: 12px;
+  color: #666;
+  text-align: right;
+}
+
+.email-view {
+  flex: 1;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.actions button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  margin-right: 8px;
+  cursor: pointer;
+}
 .delete { background: #6b7280; color: white; }
 .report { background: #dc2626; color: white; }
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; }
-.modal { background: white; padding: 20px; width: 440px; border-radius: 8px; }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  width: 90%;
+  max-width: 440px;
+  border-radius: 8px;
+}
+
 .fake-site { text-align: center; }
-.loading { font-weight: bold; color: #dc2626; }
-.intro { background: #e6ecff; padding: 12px; border-bottom: 1px solid #ddd; font-size: 14px; }
+
+.loading {
+  font-weight: bold;
+  color: #dc2626;
+}
+
+.intro {
+  background: #e6ecff;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
 
 /* ENDPOINT */
-.endpoint { position: fixed; inset:0; background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:50; }
-.endpoint .modal { width: 400px; text-align:center; }
-.endpoint button { margin: 10px 0; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; }
+.endpoint {
+  position: fixed;
+  inset:0;
+  background: rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:50;
+}
+.endpoint .modal { width: 90%; max-width: 400px; text-align:center; }
+.endpoint button {
+  margin: 10px 0;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
 .continue { background:#22c55e; color:white; }
 .exit { background:#ef4444; color:white; }
 
 /* INTRODUCTION OVERLAY */
-#introOverlay { display:flex; background: rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:100; }
-#introOverlay .modal { max-width:600px; text-align:left; background:#111; color:#fff; border-radius:10px; padding:30px; line-height:1.5; }
+#introOverlay {
+  display:flex;
+  background: rgba(0,0,0,0.9);
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+}
+#introOverlay .modal {
+  max-width:600px;
+  text-align:left;
+  background:#111;
+  color:#fff;
+  border-radius:10px;
+  padding:30px;
+  line-height:1.5;
+}
 #introOverlay h2 { color:#ffcc00; }
-#introOverlay button { margin-top:20px; width:100%; padding:15px; background:#3b82f6; color:white; font-weight:bold; border:none; border-radius:8px; cursor:pointer; }
-#introOverlay .warning { background:#330000; padding:10px; border-left:5px solid #ff4444; margin:15px 0; }
+#introOverlay button {
+  margin-top:20px;
+  width:100%;
+  padding:15px;
+  background:#3b82f6;
+  color:white;
+  font-weight:bold;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+#introOverlay .warning {
+  background:#330000;
+  padding:10px;
+  border-left:5px solid #ff4444;
+  margin:15px 0;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 860px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+  .sidebar {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    padding: 8px;
+  }
+  .sidebar div {
+    flex: 1;
+    margin-right: 6px;
+    white-space: nowrap;
+  }
+  .email-area {
+    flex-direction: column;
+    height: calc(100vh - 56px - 64px);
+  }
+  .email-list {
+    width: 100%;
+    height: 45%;
+  }
+  .email-view {
+    height: 55%;
+    overflow-y: auto;
+  }
+}
 </style>
 </head>
 <body>
