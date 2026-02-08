@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Breach Simulator – Long Output</title>
+<title>Data Breach Simulator – Defender Side</title>
 <style>
 body {
   background:#0b0f14;
@@ -39,6 +39,45 @@ input {
 .warn { color:#f2cc60; }
 .success { color:#3fb950; }
 .system { color:#8b949e; }
+.info { color:#58a6ff; }
+
+#statusBar {
+  margin: 12px 0;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.statusBox {
+  background:#010409;
+  border:1px solid #30363d;
+  padding:10px;
+  border-radius:8px;
+  width: 32%;
+}
+
+.statusBox strong { display:block; font-size:14px; margin-bottom:6px; }
+
+.progress {
+  height:10px;
+  background:#30363d;
+  border-radius:6px;
+  overflow:hidden;
+}
+.progress > div {
+  height:100%;
+  background:#58a6ff;
+}
+
+.bad {
+  background:#ef4444 !important;
+}
+.warnbar {
+  background:#f2cc60 !important;
+}
+.good {
+  background:#22c55e !important;
+}
 
 /* Modal */
 .modal-bg {
@@ -52,7 +91,7 @@ input {
   border: 1px solid #30363d;
   padding: 20px;
   width: 92%;
-  max-width: 480px;
+  max-width: 520px;
   font-family: monospace;
   color: #c9d1d9;
   border-radius:10px;
@@ -72,13 +111,10 @@ input {
 
 .btn-success { background:#22c55e; }
 .btn-fail { background:#ef4444; }
+.btn-warning { background:#f2cc60; color:#0b0f14; }
 
-h2 {
-  margin:0 0 12px 0;
-  font-size:18px;
-}
+h2 { margin:0 0 12px 0; font-size:18px; }
 
-/* Back to Difficulty button */
 #backDifficulty {
   position: fixed;
   top: 16px;
@@ -100,7 +136,6 @@ h2 {
 
 <h2>🛡 Data Breach Investigation Console</h2>
 
-<!-- BACK TO DIFFICULTY -->
 <button id="backDifficulty" onclick="showDifficulty()">Back to Difficulty</button>
 
 <!-- INTRO / MODE SELECTION -->
@@ -108,7 +143,7 @@ h2 {
   <div class="modal">
     <h3>⚠ Simulation Notice</h3>
     <p>This is <strong>NOT a real security system</strong>. It is a <strong>simulation for training</strong> and awareness only.</p>
-    <p>Choose a mode below:</p>
+    <p>Choose a mode and role below:</p>
 
     <button class="btn" onclick="selectMode('guided')">Guided Mode</button>
     <button class="btn" onclick="selectMode('challenge')">Challenge Mode</button>
@@ -117,6 +152,39 @@ h2 {
       Guided mode = easier + hints.<br>
       Challenge mode = harder + no hints.
     </p>
+
+    <hr style="border:1px solid #30363d; margin:12px 0;">
+
+    <p style="color:#8b949e;">Choose your role:</p>
+    <button class="btn btn-warning" onclick="selectRole('SOC Analyst')">SOC Analyst</button>
+    <button class="btn btn-warning" onclick="selectRole('Incident Responder')">Incident Responder</button>
+    <button class="btn btn-warning" onclick="selectRole('Forensic Investigator')">Forensic Investigator</button>
+  </div>
+</div>
+
+<div id="statusBar">
+  <div class="statusBox">
+    <strong>Threat Level</strong>
+    <div class="progress"><div id="threatBar"></div></div>
+    <span id="threatText">LOW</span>
+  </div>
+  <div class="statusBox">
+    <strong>Timer</strong>
+    <div class="progress"><div id="timerBar"></div></div>
+    <span id="timerText">--:--</span>
+  </div>
+  <div class="statusBox">
+    <strong>Score</strong>
+    <div class="progress"><div id="scoreBar"></div></div>
+    <span id="scoreText">0</span>
+  </div>
+</div>
+
+<!-- Network visualization -->
+<div class="statusBox" style="width:100%; margin-bottom:12px;">
+  <strong>Network Diagram</strong>
+  <div style="font-size:12px; line-height:1.5; color:#8b949e;">
+    [Internet] → [Firewall] → [DMZ] → [CorpNet] → [Endpoints]
   </div>
 </div>
 
@@ -128,8 +196,13 @@ h2 {
   <div class="modal">
     <h3 id="resultTitle"></h3>
     <p id="resultText"></p>
-    <button class="btn btn-success" id="tryAgainBtn">Try Again</button>
-    <button class="btn btn-fail" onclick="exitSimulation()">Exit</button>
+
+    <!-- Success -->
+    <button class="btn btn-success" id="completeBtn" style="display:none;" onclick="completeSimulation()">Complete</button>
+
+    <!-- Fail -->
+    <button class="btn btn-success" id="tryAgainBtn" style="display:none;">Try Again</button>
+    <button class="btn btn-fail" id="exitBtn" style="display:none;" onclick="exitSimulation()">Exit</button>
   </div>
 </div>
 
@@ -137,10 +210,25 @@ h2 {
 const term = document.getElementById("terminal");
 const cmd = document.getElementById("cmd");
 const backBtn = document.getElementById("backDifficulty");
+
 let busy = false;
 let score = 0;
 let mode = null;
+let role = null;
 let completed = false;
+
+let threat = 0;
+let timer = 0;
+let phase = 1;
+
+let timerInterval = null;
+let hintTimeout = null;
+
+const roleCommands = {
+  "SOC Analyst": ["audit access logs", "inspect outbound connections", "check database queries", "help", "clear", "score"],
+  "Incident Responder": ["containment", "scan endpoints", "isolate host", "help", "clear", "score"],
+  "Forensic Investigator": ["collect memory dump", "analyze disk image", "review event logs", "help", "clear", "score"]
+};
 
 function log(msg, cls="system") {
   const d = document.createElement("div");
@@ -148,6 +236,57 @@ function log(msg, cls="system") {
   d.textContent = msg;
   term.appendChild(d);
   term.scrollTop = term.scrollHeight;
+}
+
+function setThreat(delta) {
+  threat = Math.max(0, Math.min(100, threat + delta));
+  document.getElementById("threatBar").style.width = threat + "%";
+  document.getElementById("threatText").textContent =
+    threat < 35 ? "LOW" :
+    threat < 70 ? "MEDIUM" :
+    threat < 90 ? "HIGH" : "CRITICAL";
+
+  document.getElementById("threatBar").className =
+    threat < 35 ? "good" :
+    threat < 70 ? "warnbar" :
+    threat < 90 ? "bad" : "bad";
+
+  // NEW: auto-fail on critical
+  if (threat >= 90 && !completed) {
+    fail("CRITICAL THREAT LEVEL: Simulation failed. Breach escalated.");
+  }
+}
+
+function setScore(delta) {
+  score = Math.max(0, score + delta);
+  document.getElementById("scoreBar").style.width = Math.min(100, score) + "%";
+  document.getElementById("scoreText").textContent = score;
+}
+
+function setTimer(seconds) {
+  timer = seconds;
+  updateTimerDisplay();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timer--;
+    updateTimerDisplay();
+    if (timer <= 0) {
+      clearInterval(timerInterval);
+      fail("TIME OUT: Breach escalated and data was exfiltrated.");
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const min = Math.floor(timer / 60);
+  const sec = timer % 60;
+  document.getElementById("timerText").textContent =
+    `${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+
+  const pct = Math.max(0, Math.min(100, (timer / (mode === 'guided' ? 360 : 240)) * 100));
+  document.getElementById("timerBar").style.width = pct + "%";
+  document.getElementById("timerBar").className =
+    pct > 60 ? "good" : pct > 30 ? "warnbar" : "bad";
 }
 
 function stream(lines, done, speed=120) {
@@ -170,19 +309,40 @@ function stream(lines, done, speed=120) {
 
 function selectMode(m) {
   mode = m;
+  if (!role) role = "SOC Analyst"; // default
   document.getElementById("introModal").style.display = "none";
   backBtn.style.display = "inline-block";
   startConsole();
+}
+
+function selectRole(r) {
+  role = r;
+  log("Role selected: " + role, "info");
 }
 
 function startConsole() {
   term.innerHTML = "";
   score = 0;
   completed = false;
+  phase = 1;
+  threat = 10;
+
+  setThreat(0);
+  setScore(0);
+  setTimer(mode === "guided" ? 360 : 240);
+
   log("security-console@corpnet:~$ monitoring enabled");
   log("Mode: " + mode.toUpperCase());
+  log("Role: " + (role || "Not selected"));
   log("Type 'help' for commands.");
   cmd.focus();
+
+  if (hintTimeout) clearTimeout(hintTimeout);
+  if (mode === "guided") {
+    hintTimeout = setTimeout(() => {
+      log("HINT: Start with 'audit access logs' to identify the breach source.", "warn");
+    }, 20000);
+  }
 }
 
 function showResult(success, text) {
@@ -190,6 +350,10 @@ function showResult(success, text) {
   document.getElementById("resultText").textContent = text;
   document.getElementById("resultModal").style.display = "flex";
   cmd.disabled = true;
+
+  document.getElementById("completeBtn").style.display = success ? "block" : "none";
+  document.getElementById("tryAgainBtn").style.display = success ? "none" : "block";
+  document.getElementById("exitBtn").style.display = "block";
 }
 
 function hideResult() {
@@ -200,23 +364,76 @@ function hideResult() {
 
 document.getElementById("tryAgainBtn").onclick = () => {
   hideResult();
-  startConsole();
+  window.location.reload();
 };
 
-function exitSimulation() {
-  document.body.innerHTML = "<h2 style='padding:40px;text-align:center'>Simulation ended. You may close this window.</h2>";
+function completeSimulation() {
+  window.location.href = "Simulationpage.html";
 }
 
-// Show difficulty selection again
+function exitSimulation() {
+  window.location.href = "Simulationpage.html";
+}
+
+// FIXED: BACK TO DIFFICULTY
 function showDifficulty() {
-  document.getElementById("introModal").style.display = "flex";
-  backBtn.style.display = "none";
+  if (timerInterval) clearInterval(timerInterval);
+  if (hintTimeout) clearTimeout(hintTimeout);
+
   mode = null;
+  role = null;
+  completed = false;
+  busy = false;
+  threat = 0;
+  score = 0;
+  phase = 1;
+
+  document.getElementById("resultModal").style.display = "none";
   term.innerHTML = "";
   cmd.value = "";
   cmd.disabled = false;
-  completed = false;
-  score = 0;
+
+  document.getElementById("introModal").style.display = "flex";
+  backBtn.style.display = "none";
+
+  document.getElementById("threatBar").style.width = "0%";
+  document.getElementById("timerBar").style.width = "0%";
+  document.getElementById("scoreBar").style.width = "0%";
+  document.getElementById("threatText").textContent = "LOW";
+  document.getElementById("timerText").textContent = "--:--";
+  document.getElementById("scoreText").textContent = "0";
+}
+
+function fail(text) {
+  completed = true;
+  showResult(false, text);
+  clearInterval(timerInterval);
+}
+
+function success(text) {
+  completed = true;
+  showResult(true, text);
+  clearInterval(timerInterval);
+}
+
+function advancePhase() {
+  phase++;
+  if (phase === 2) {
+    log("ALERT: Unusual outbound connection detected from DMZ.", "alert");
+    setThreat(15);
+  }
+  if (phase === 3) {
+    log("ALERT: Lateral movement detected inside CorpNet.", "alert");
+    setThreat(20);
+  }
+  if (phase === 4) {
+    log("ALERT: Data exfiltration in progress!", "alert");
+    setThreat(30);
+  }
+}
+
+function isAllowedCommand(cmd) {
+  return roleCommands[role].includes(cmd);
 }
 
 cmd.addEventListener("keydown", e => {
@@ -227,6 +444,11 @@ cmd.addEventListener("keydown", e => {
 
   if (!mode) {
     log("Select a mode first.", "alert");
+    return;
+  }
+
+  if (!role) {
+    log("Select a role first.", "alert");
     return;
   }
 
@@ -242,15 +464,16 @@ cmd.addEventListener("keydown", e => {
     return;
   }
 
+  if (!isAllowedCommand(c)) {
+    log("command not found (not available for your role)", "alert");
+    setThreat(8);
+    setScore(-5);
+    return;
+  }
+
   if (c === "help") {
     log("Available commands:");
-    log(" - audit access logs");
-    log(" - check database queries");
-    log(" - inspect outbound connections");
-    log(" - scan endpoints");
-    log(" - containment");
-    log(" - clear");
-    log(" - score");
+    roleCommands[role].forEach(cmd => log(" - " + cmd));
     return;
   }
 
@@ -265,41 +488,153 @@ cmd.addEventListener("keydown", e => {
     return;
   }
 
-  if (c === "audit access logs") {
-    stream([
-      "Reading access_log_2026_02_06.log...",
-      "Reading access_log_2026_02_05.log...",
-      "Reading access_log_2026_02_04.log...",
-      "Preparing access audit engine...",
-      "Loading user activity index...",
-      "Loading geo-IP database...",
-      "Checking login frequency thresholds...",
-      "Analyzing read/write ratios...",
-      "Scanning for abnormal query bursts...",
-      "Scanning for off-hours access...",
-      "Comparing baseline behavior...",
-      "User: jdoe | baseline exceeded (x12)",
-      "User: svc-backup | normal behavior",
-      "User: admin | abnormal read volume detected",
-      "Extracting session metadata...",
-      "Resolving IP addresses...",
-      "IP 185.22.xxx.xxx → RU",
-      "Cross-checking MFA enforcement...",
-      "MFA disabled on admin account",
-      "Validating IAM policies...",
-      "Policy mismatch detected",
-      "Rebuilding access timeline...",
-      "Generating audit summary..."
-    ], () => {
-      log("SUCCESS: Unauthorized access identified", "success");
-      score += mode === "guided" ? 10 : 20;
-    }, 90);
-    return;
+  // SOC Analyst commands
+  if (role === "SOC Analyst") {
+    if (c === "audit access logs") {
+      stream([
+        "Reading access_log_2026_02_06.log...",
+        "User: admin | abnormal read volume detected",
+        "MFA disabled on admin account",
+        "Suspicious login from RU IP",
+        "Generating audit summary..."
+      ], () => {
+        log("SUCCESS: Unauthorized access identified", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-5);
+        if (phase === 1) advancePhase();
+      }, 90);
+      return;
+    }
+
+    if (c === "inspect outbound connections") {
+      stream([
+        "Inspecting outbound connections...",
+        "Connection to unknown IP 185.22.xxx.xxx detected",
+        "Data transfer initiated (large payload)",
+        "Tracing route..."
+      ], () => {
+        log("SUCCESS: Data exfiltration channel identified", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-4);
+        if (phase <= 3) advancePhase();
+      }, 90);
+      return;
+    }
+
+    if (c === "check database queries") {
+      stream([
+        "Analyzing DB query patterns...",
+        "Detected abnormal SELECT volume",
+        "Suspicious query: SELECT * FROM customer_data WHERE ...",
+        "Correlating with access logs..."
+      ], () => {
+        log("SUCCESS: Suspicious database activity confirmed", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-3);
+        if (phase <= 2) advancePhase();
+      }, 90);
+      return;
+    }
   }
 
-  // Other commands (check database, inspect outbound, scan endpoints, containment)
-  // ... leave the rest of your command logic as-is
+  // Incident Responder commands
+  if (role === "Incident Responder") {
+    if (c === "containment") {
+      stream([
+        "Applying containment...",
+        "Isolating infected endpoint...",
+        "Blocking outbound connections...",
+        "Revoking suspicious admin sessions..."
+      ], () => {
+        log("SUCCESS: Containment applied", "success");
+        setScore(mode === "guided" ? 15 : 25);
+        setThreat(-10);
+        if (phase >= 4) {
+          success("Breach contained. Incident resolved successfully.");
+        } else {
+          advancePhase();
+        }
+      }, 90);
+      return;
+    }
+
+    if (c === "scan endpoints") {
+      stream([
+        "Scanning endpoints for malicious processes...",
+        "Found suspicious process: sys_updater.exe",
+        "Process communicating with external IP",
+        "Checking file hash..."
+      ], () => {
+        log("SUCCESS: Infected endpoint identified", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-3);
+        if (phase <= 2) advancePhase();
+      }, 90);
+      return;
+    }
+
+    if (c === "isolate host") {
+      stream([
+        "Isolating host from network...",
+        "Host removed from CorpNet",
+        "Firewall rules updated..."
+      ], () => {
+        log("SUCCESS: Host isolated", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-5);
+        if (phase >= 3) advancePhase();
+      }, 90);
+      return;
+    }
+  }
+
+  // Forensic Investigator commands
+  if (role === "Forensic Investigator") {
+    if (c === "collect memory dump") {
+      stream([
+        "Collecting memory dump...",
+        "Dump saved to secure evidence folder...",
+        "Hash generated..."
+      ], () => {
+        log("SUCCESS: Memory dump collected", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-2);
+      }, 90);
+      return;
+    }
+
+    if (c === "analyze disk image") {
+      stream([
+        "Analyzing disk image...",
+        "Found malware binary: sys_updater.exe",
+        "Evidence: persistence via registry..."
+      ], () => {
+        log("SUCCESS: Disk analysis complete", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-3);
+      }, 90);
+      return;
+    }
+
+    if (c === "review event logs") {
+      stream([
+        "Reviewing event logs...",
+        "Multiple failed login attempts detected",
+        "Account lockouts triggered",
+        "Suspicious process execution logged..."
+      ], () => {
+        log("SUCCESS: Forensic timeline built", "success");
+        setScore(mode === "guided" ? 10 : 20);
+        setThreat(-3);
+        if (phase === 1) advancePhase();
+      }, 90);
+      return;
+    }
+  }
+
   log("command not found", "alert");
+  setThreat(8);
+  setScore(-5);
 });
 </script>
 
