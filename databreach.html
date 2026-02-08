@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Data Breach Simulator – Long Output</title>
+<style>
+body { background:#0b0f14; color:#c9d1d9; font-family:monospace; padding:20px; }
+#terminal { background:#010409; border:1px solid #30363d; padding:15px; height:460px; overflow-y:auto; }
+input { width:100%; background:#010409; color:#58a6ff; border:1px solid #30363d; padding:10px; margin-top:10px; }
+.alert { color:#ff7b72; }
+.warn { color:#f2cc60; }
+.success { color:#3fb950; }
+.system { color:#8b949e; }
+.green { color:#3fb950; }
+.cursor {
+  display:inline-block;
+  width:8px;
+  background:#58a6ff;
+  margin-left:3px;
+  animation: blink 0.8s steps(1) infinite;
+}
+@keyframes blink { 0%, 50% { opacity:1; } 51%, 100% { opacity:0; } }
+
+/* Modal */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex; justify-content:center; align-items:center;
+  z-index: 999;
+}
+.modal {
+  background:#0b0f14;
+  border: 1px solid #30363d;
+  padding: 20px;
+  width: 480px;
+  font-family: monospace;
+  color: #c9d1d9;
+}
+.btn {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background:#58a6ff;
+  border:none;
+  color:#0b0f14;
+  font-weight:bold;
+  cursor:pointer;
+}
+.btn:hover { background:#2f6fa6; }
+</style>
+</head>
+
+<body>
+
+<h2>🛡 Data Breach Investigation Console</h2>
+
+<!-- INTRO / MODE SELECTION -->
+<div class="modal-bg" id="introModal">
+  <div class="modal">
+    <h3>⚠ Simulation Notice</h3>
+    <p>This is <strong>NOT a real security system</strong>. It is a <strong>simulation for training</strong> and awareness only.</p>
+    <p>Choose a mode below:</p>
+
+    <button class="btn" onclick="selectMode('guided')">Guided Mode</button>
+    <button class="btn" onclick="selectMode('challenge')">Challenge Mode</button>
+
+    <p style="margin-top: 12px; color:#8b949e;">
+      Guided mode = easier + hints.<br>
+      Challenge mode = harder + no hints.
+    </p>
+  </div>
+</div>
+
+<div id="terminal"></div>
+<input id="cmd" placeholder="command@security-console$">
+
+<script>
+const term = document.getElementById("terminal");
+const cmd = document.getElementById("cmd");
+let busy = false;
+let score = 0;
+let mode = null;
+
+function log(msg, cls="system") {
+  const d = document.createElement("div");
+  d.className = cls;
+  d.textContent = msg;
+  term.appendChild(d);
+  term.scrollTop = term.scrollHeight;
+}
+
+function addCursor() {
+  const cursor = document.createElement("span");
+  cursor.className = "cursor";
+  cursor.id = "cursor";
+  term.appendChild(cursor);
+  term.scrollTop = term.scrollHeight;
+}
+
+function removeCursor() {
+  const cursor = document.getElementById("cursor");
+  if(cursor) cursor.remove();
+}
+
+function stream(lines, done, speed=120) {
+  busy = true;
+  cmd.disabled = true;
+  removeCursor();
+  let i = 0;
+  const t = setInterval(() => {
+    if (i >= lines.length) {
+      clearInterval(t);
+      busy = false;
+      cmd.disabled = false;
+      cmd.focus();
+      addCursor();
+      if (done) done();
+      return;
+    }
+    log(lines[i]);
+    i++;
+  }, speed);
+}
+
+function selectMode(m) {
+  mode = m;
+  document.getElementById("introModal").style.display = "none";
+  startConsole();
+}
+
+function startConsole() {
+  log("security-console@corpnet:~$ monitoring enabled");
+  log("Mode: " + mode.toUpperCase());
+  log("Type 'help' for commands.");
+  addCursor();
+}
+
+cmd.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  const input = cmd.value.trim();
+  const c = input.toLowerCase();
+  cmd.value = "";
+
+  if (!mode) {
+    log("Select a mode first.", "alert");
+    return;
+  }
+
+  if (busy) {
+    log("system busy... please wait", "warn");
+    return;
+  }
+
+  log("> " + input);
+
+  if (c === "help") {
+    log("Available commands:");
+    log(" - audit access logs");
+    log(" - check database queries");
+    log(" - inspect outbound connections");
+    log(" - scan endpoints");
+    log(" - containment");
+    log(" - clear");
+    log(" - score");
+    return;
+  }
+
+  if (c === "clear") {
+    term.innerHTML = "";
+    startConsole();
+    return;
+  }
+
+  if (c === "score") {
+    log("Current score: " + score, "success");
+    return;
+  }
+
+  if (c === "audit access logs") {
+    stream([
+      "Reading access_log_2026_02_06.log...",
+      "Reading access_log_2026_02_05.log...",
+      "Reading access_log_2026_02_04.log...",
+      "Preparing access audit engine...",
+      "Loading user activity index...",
+      "Loading geo-IP database...",
+      "Checking login frequency thresholds...",
+      "Analyzing read/write ratios...",
+      "Scanning for abnormal query bursts...",
+      "Scanning for off-hours access...",
+      "Comparing baseline behavior...",
+      "User: jdoe | baseline exceeded (x12)",
+      "User: svc-backup | normal behavior",
+      "User: admin | abnormal read volume detected",
+      "Extracting session metadata...",
+      "Resolving IP addresses...",
+      "IP 185.22.xxx.xxx → RU",
+      "Cross-checking MFA enforcement...",
+      "MFA disabled on admin account",
+      "Validating IAM policies...",
+      "Policy mismatch detected",
+      "Rebuilding access timeline...",
+      "Generating audit summary..."
+    ], () => {
+      log("SUCCESS: Unauthorized access identified", "success");
+      score += mode === "guided" ? 10 : 20;
+    }, 90);
+    return;
+  }
+
+  if (c === "check database queries") {
+    stream([
+      "Connecting to database audit socket...",
+      "Loading query history...",
+      "Checking table: customer_records",
+      "Checking table: payment_profiles",
+      "Checking table: user_credentials",
+      "Analyzing SELECT patterns...",
+      "Analyzing EXPORT flags...",
+      "Large result set detected (14,200 rows)",
+      "Query runtime exceeded threshold",
+      "Export-like behavior confirmed",
+      "Cross-referencing user identity...",
+      "Query executed by admin",
+      "Session marked as suspicious",
+      "Recording forensic snapshot..."
+    ], () => {
+      log("SUCCESS: Database exfiltration attempt detected", "success");
+      score += mode === "guided" ? 10 : 20;
+    }, 110);
+    return;
+  }
+
+  if (c === "inspect outbound connections") {
+    stream([
+      "Initializing network telemetry...",
+      "Capturing outbound sessions...",
+      "Inspecting TLS handshakes...",
+      "Resolving remote endpoints...",
+      "203.0.113.44 resolved",
+      "203.0.113.45 resolved",
+      "Analyzing traffic volume...",
+      "Outbound spike detected: 1.2GB",
+      "Transfer duration: 4m 12s",
+      "Protocol: HTTPS",
+      "Pattern matches known exfiltration behavior",
+      "Marking connection as malicious...",
+      "Preparing containment recommendation..."
+    ], () => {
+      log("SUCCESS: Exfiltration endpoint identified", "success");
+      score += mode === "guided" ? 10 : 20;
+    }, 110);
+    return;
+  }
+
+  if (c === "scan endpoints") {
+    stream([
+      "Starting endpoint telemetry scan...",
+      "Checking installed agents...",
+      "Verifying AV signature status...",
+      "Looking for suspicious processes...",
+      "Detecting unauthorized agent installation...",
+      "Process: data_exfiltrator.exe detected",
+      "Process hiding technique: DLL injection",
+      "Quarantining process snapshot...",
+      "Generating endpoint report..."
+    ], () => {
+      log("SUCCESS: Malicious endpoint detected", "success");
+      score += mode === "guided" ? 10 : 20;
+    }, 100);
+    return;
+  }
+
+  if (c === "containment") {
+    if (mode === "guided") {
+      stream([
+        "Initiating containment...",
+        "Disabling compromised account: admin",
+        "Forcing password reset...",
+        "Re-enabling MFA...",
+        "Blocking outbound IPs: 203.0.113.44, 203.0.113.45",
+        "Locking down database export permissions...",
+        "Containment complete."
+      ], () => {
+        log("SUCCESS: Threat contained", "success");
+        score += 30;
+      }, 90);
+    } else {
+      stream([
+        "Containment requires confirmation...",
+        "Please run 'audit access logs' first.",
+        "Then run 'inspect outbound connections'."
+      ], () => {
+        log("ERROR: Containment failed. Missing evidence.", "alert");
+      }, 90);
+    }
+    return;
+  }
+
+  log("command not found", "alert");
+});
+</script>
+
+</body>
+</html>
