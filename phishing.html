@@ -234,6 +234,9 @@ body { margin: 0; background: #f3f5f8; }
 <div class="topbar">
   <strong>Security Awareness Inbox</strong>
   <button id="backDifficulty" style="margin-left:auto;padding:6px 12px;border:none;border-radius:6px;background:#3b82f6;color:white;cursor:pointer;display:none;" onclick="showDifficulty()">Back to Difficulty</button>
+  <button style="margin-left:8px;padding:6px 12px;border:none;border-radius:6px;background:#f59e0b;color:white;cursor:pointer;" onclick="goToSimulationSelection()">
+    Back to Simulation Selection
+  </button>
 </div>
 
 <div class="intro">
@@ -500,6 +503,11 @@ function exitSimulation() {
 function showDifficulty() {
   document.getElementById('introOverlay').style.display = 'flex';
   document.getElementById('backDifficulty').style.display = 'none';
+}
+
+// --- NEW FUNCTION ---
+function goToSimulationSelection() {
+  window.location.href = 'Simulationpage.html';
 }
 </script>
 
