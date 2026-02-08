@@ -64,7 +64,7 @@ body { margin: 0; background: #f3f5f8; }
 
 .email-row.unread { background: #f8fbff; font-weight: bold; }
 .email-row:hover { background: #eef3ff; }
-.email-row.highlight { background: #fff5b1; } /* YELLOW HIGHLIGHT */
+.email-row.highlight { background: #fff5b1; }
 
 .star {
   color: #ccc;
@@ -126,7 +126,6 @@ body { margin: 0; background: #f3f5f8; }
   font-size: 14px;
 }
 
-/* ENDPOINT */
 .endpoint {
   position: fixed;
   inset:0;
@@ -149,7 +148,6 @@ body { margin: 0; background: #f3f5f8; }
 .continue { background:#22c55e; color:white; }
 .exit { background:#ef4444; color:white; }
 
-/* INTRODUCTION OVERLAY */
 #introOverlay {
   display:flex;
   background: rgba(0,0,0,0.9);
@@ -185,7 +183,6 @@ body { margin: 0; background: #f3f5f8; }
   margin:15px 0;
 }
 
-/* MOBILE RESPONSIVE */
 @media (max-width: 860px) {
   .container {
     flex-direction: column;
@@ -234,7 +231,10 @@ body { margin: 0; background: #f3f5f8; }
   </div>
 </div>
 
-<div class="topbar"><strong>Security Awareness Inbox</strong></div>
+<div class="topbar">
+  <strong>Security Awareness Inbox</strong>
+  <button id="backDifficulty" style="margin-left:auto;padding:6px 12px;border:none;border-radius:6px;background:#3b82f6;color:white;cursor:pointer;display:none;" onclick="showDifficulty()">Back to Difficulty</button>
+</div>
 
 <div class="intro">
 This is a <strong>simulation of phishing emails</strong>. Analyze the messages carefully before taking action. Your goal is to identify and report all potential phishing attempts without mistakenly reporting legitimate emails.
@@ -308,10 +308,10 @@ This is a <strong>simulation of phishing emails</strong>. Analyze the messages c
 let mode = "guided";
 let guidedIndex = 0;
 
-// --- START SIMULATION ---
 function selectMode(m) {
   mode = m;
   document.getElementById('introOverlay').style.display = 'none';
+  document.getElementById('backDifficulty').style.display = 'inline-block';
 
   document.getElementById("modeDesc").innerText = mode === "guided"
     ? "Guided mode: Next phishing email will be highlighted in yellow."
@@ -352,7 +352,6 @@ function getAllEmails() {
   return [].concat(folders.inbox, folders.starred, folders.spam);
 }
 
-// --- RENDER EMAIL LIST ---
 function renderList() {
   emailList.innerHTML = '';
   folders[currentFolder].forEach((email, index) => {
@@ -387,7 +386,6 @@ function renderList() {
   }
 }
 
-// --- OPEN EMAIL ---
 function openEmail(email, index, row) {
   email.read = true;
   row.classList.remove('unread');
@@ -405,7 +403,6 @@ function openEmail(email, index, row) {
   `;
 }
 
-// --- DELETE EMAIL ---
 function deleteEmail() {
   const { email, index } = selectedEmail;
   folders.trash.push(email);
@@ -416,7 +413,6 @@ function deleteEmail() {
   checkCompletion();
 }
 
-// --- REPORT EMAIL ---
 function reportEmail() {
   document.getElementById('reportModal').style.display = 'flex';
 }
@@ -440,7 +436,6 @@ function submitReport() {
   checkCompletion();
 }
 
-// --- SWITCH FOLDER ---
 function switchFolder(folder, el) {
   currentFolder = folder;
   document.querySelectorAll('.sidebar div').forEach(d=>d.classList.remove('active'));
@@ -450,7 +445,6 @@ function switchFolder(folder, el) {
   checkCompletion();
 }
 
-// --- HIGHLIGHT PHISHING ---
 function getNextPhishing() {
   return getAllEmails().find(e => e.phishing);
 }
@@ -468,7 +462,6 @@ function highlightNextPhishing() {
   });
 }
 
-// --- FAKE SITE ---
 function openFakeSite() {
   document.getElementById('fakeSite').style.display = 'flex';
   const t = document.getElementById('loadingText');
@@ -480,7 +473,6 @@ function openFakeSite() {
   }, 3000);
 }
 
-// --- POPUPS ---
 function showPopup(title,text) {
   document.getElementById('popupTitle').textContent = title;
   document.getElementById('popupText').textContent = text;
@@ -491,7 +483,6 @@ function closeAll() {
   document.querySelectorAll('.overlay').forEach(o=>o.style.display='none');
 }
 
-// --- CHECK COMPLETION ---
 function checkCompletion() {
   const phishingRemaining = getAllEmails().some(e => e.phishing);
   if (!phishingRemaining) {
@@ -499,12 +490,16 @@ function checkCompletion() {
   }
 }
 
-// --- ENDPOINT BUTTONS ---
 function goToMain() {
   window.location.href = 'index.html';
 }
 function exitSimulation() {
   document.body.innerHTML = "<h2 style='padding:40px;text-align:center'>Simulation ended. You may close this window.</h2>";
+}
+
+function showDifficulty() {
+  document.getElementById('introOverlay').style.display = 'flex';
+  document.getElementById('backDifficulty').style.display = 'none';
 }
 </script>
 
