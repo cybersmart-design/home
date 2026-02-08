@@ -1,258 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CyberSmart | Cybersecurity Awareness</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CyberSmart | Your Guide to Cybersecurity</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.7;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: #020617;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    nav a {
+      color: #e5e7eb;
+      margin-left: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      color: #38bdf8;
+    }
 
-<style>
-/* ===== GENERAL ===== */
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, sans-serif;
-}
+    /* HERO with VIDEO BACKGROUND and CENTERED TEXT */
+    .hero {
+      position: relative;
+      height: 60vh;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center; /* Center horizontally */
+      padding: 0 1.5rem;
+      color: #fff;
+      overflow: hidden;
+      text-align: center; /* Center text */
+      z-index: 1;
+    }
+    .hero .content-wrapper {
+      position: relative;
+      max-width: 700px;
+      z-index: 2;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #cbd5f5;
+      line-height: 1.6;
+    }
+    /* Video styling */
+    .hero video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: 0;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      filter: brightness(0.4);
+    }
 
-body{
-    background:
-        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-        url("background1.jpeg");
-    background-size:cover;
-    background-position:center;
-    background-attachment:fixed;
-    color:white;
-    line-height:1.6;
-    scroll-behavior:smooth;
-}
+    /* Sections */
+    section {
+      padding: 4rem 1.5rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+    h2 {
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .subtitle {
+      text-align: center;
+      max-width: 800px;
+      margin: auto 0 2.5rem;
+      color: #cbd5f5;
+      font-size: 1.1rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.8rem;
+    }
+    .card {
+      background: #020617;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: left;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    }
+    .card h3 {
+      color: #38bdf8;
+      margin-bottom: 0.7rem;
+      font-size: 1.3rem;
+    }
+    .card p {
+      font-size: 1rem;
+      color: #cbd5f5;
+    }
 
-/* ===== NAVBAR ===== */
-header{
-    background-color:rgba(10,31,68,0.55);
-    backdrop-filter:blur(6px);
-    padding:15px 30px;
-    position:sticky;
-    top:0;
-    z-index:1000;
-}
+    /* Bottom Call-to-Action Button */
+    .bottom-cta {
+      text-align: center;
+      margin: 3rem 0;
+    }
+    .btn {
+      background: #38bdf8;
+      color: #020617;
+      padding: 0.9rem 1.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.2s;
+      display: inline-block;
+    }
+    .btn:hover {
+      background: #0ea5e9;
+    }
 
-.navbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      color: #94a3b8;
+      background: #020617;
+      margin-top: 2rem;
+    }
 
-.logo{
-    color:#00e0ff;
-    font-size:1.8rem;
-    font-weight:bold;
-}
-
-.nav-links{
-    list-style:none;
-    display:flex;
-}
-
-.nav-links li{
-    margin-left:20px;
-}
-
-.nav-links a{
-    color:white;
-    font-weight:bold;
-    transition:.3s;
-}
-
-.nav-links a:hover{
-    color:#00e0ff;
-}
-
-/* ===== HERO ===== */
-.hero{
-    text-align:center;
-    padding:120px 20px;
-    background:rgba(0,0,0,0.35);
-    backdrop-filter:blur(4px);
-}
-
-.hero h2{
-    font-size:2.5rem;
-    margin-bottom:15px;
-}
-
-.hero p{
-    font-size:1.2rem;
-    margin-bottom:25px;
-}
-
-.btn{
-    background:#00e0ff;
-    color:#001b3d;
-    padding:12px 25px;
-    border-radius:5px;
-    font-weight:bold;
-    transition:.3s;
-    display:inline-block;
-}
-
-.btn:hover{
-    background:#00c4e8;
-    transform:scale(1.05);
-}
-
-/* ===== CONTENT ===== */
-.content{
-    display:flex;
-    flex-direction:column;
-    gap:30px;
-    max-width:800px;
-    margin:50px auto;
-    padding:0 20px;
-}
-
-/* ===== CARDS ===== */
-.card{
-    width:100%;
-    min-height:200px;
-    background:rgba(10,31,68,0.45);
-    backdrop-filter:blur(8px);
-    padding:25px;
-    border-radius:15px;
-    border:1px solid rgba(0,224,255,0.5);
-    transition:.3s;
-    opacity:0;
-    transform:translateY(30px);
-}
-
-.card h2{
-    color:#00e0ff;
-    margin-bottom:15px;
-}
-
-/* ===== HOVER BLUR EFFECT ===== */
-.content:hover .card{
-    filter:blur(2px);
-    transform:scale(.98);
-}
-
-.content .card:hover{
-    filter:blur(0);
-    transform:scale(1.02);
-    box-shadow:0 0 20px #00e0ff88;
-}
-
-/* Scroll animation */
-.card.visible{
-    opacity:1;
-    transform:translateY(0);
-    transition:all .6s ease-out;
-}
-
-/* ===== NEXT BUTTON ===== */
-.next-page{
-    text-align:center;
-    margin:40px 0;
-}
-
-/* ===== FOOTER ===== */
-footer{
-    background:rgba(10,31,68,0.55);
-    backdrop-filter:blur(6px);
-    text-align:center;
-    padding:20px;
-    margin-top:50px;
-}
-</style>
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero .content-wrapper {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <!-- NAVIGATION -->
+  <header>
+    <div class="logo">CyberSmart</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="types-of-risk.html">Learn</a>
+      <a href="#">Tips</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
 
-<header>
-<nav class="navbar">
-<h1 class="logo">CyberSmart</h1>
-<ul class="nav-links">
-<li><a href="#home">Home</a></li>
-<li><a href="#learn">Learn</a></li>
-<li><a href="#tips">Tips</a></li>
-<li><a href="#contact">Contact</a></li>
-</ul>
-</nav>
-</header>
+  <!-- HERO with VIDEO and CENTERED TEXT -->
+  <section class="hero">
+    <video autoplay muted loop playsinline>
+      <source src="videoback.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div class="content-wrapper">
+      <h1>Empower Yourself Against Cyber Threats</h1>
+      <p>
+        CyberSmart teaches you the skills to understand, prevent, and respond
+        to digital risks. Start by learning the theory, then test your
+        knowledge in challenge-style simulations.
+      </p>
+    </div>
+  </section>
 
-<section class="hero" id="home">
-<h2 id="welcome-msg">Welcome to CyberSmart</h2>
-<p>Your guide to staying safe, smart, and secure in the digital world.</p>
-<a href="#learn" class="btn" id="start-btn">Start Learning</a>
-</section>
+  <!-- WHY CYBERSECURITY MATTERS -->
+  <section class="container">
+    <h2>Why Cybersecurity Knowledge Matters</h2>
+    <p class="subtitle">
+      Every device, account, and online interaction carries potential risks.
+      Understanding these threats empowers you to make safer choices and
+      protect your digital life.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <h3>Protect Your Data</h3>
+        <p>
+          Learn how breaches occur and how sensitive data can be exposed — and
+          how to prevent it.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Recognize Scams</h3>
+        <p>
+          Understand phishing and other online scams so you can identify threats
+          before they impact you.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Prevent Malware</h3>
+        <p>
+          Discover malware types, how they spread, and steps to secure your
+          devices.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Maintain Privacy</h3>
+        <p>
+          Learn how personal data is collected, tracked, and how to safeguard
+          your digital footprint.
+        </p>
+      </div>
+    </div>
+  </section>
 
-<section class="content" id="learn">
+  <!-- SOLUTIONS & BEST PRACTICES -->
+  <section class="container">
+    <h2>Practical Solutions & Best Practices</h2>
+    <p class="subtitle">
+      Knowledge alone isn’t enough — CyberSmart teaches actionable steps you
+      can apply to stay safe online.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <h3>Strong Passwords</h3>
+        <p>
+          Create unique, complex passwords and use password managers to secure
+          accounts.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Two-Factor Authentication</h3>
+        <p>Add an extra security layer for accounts to prevent unauthorized access.</p>
+      </div>
+      <div class="card">
+        <h3>Safe Browsing</h3>
+        <p>
+          Learn to spot suspicious links, check website legitimacy, and avoid
+          risky downloads.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Device & Network Security</h3>
+        <p>Keep devices updated, use firewalls, and secure Wi-Fi connections.</p>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
-<h2>What is CyberSmart?</h2>
-<p>CyberSmart is a cybersecurity awareness platform designed to help individuals understand online threats and protect themselves.</p>
-</div>
+  <!-- LEARNING FLOW -->
+  <section class="container">
+    <h2>How CyberSmart Works</h2>
+    <p class="subtitle">
+      Our approach ensures you not only understand risks but also know how to
+      respond. Once confident, you can apply your knowledge in
+      challenge-style simulations.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <h3>Step 1: Learn</h3>
+        <p>Understand different cyber risks and their real-world implications.</p>
+      </div>
+      <div class="card">
+        <h3>Step 2: Understand Solutions</h3>
+        <p>Discover actionable strategies to mitigate and prevent threats.</p>
+      </div>
+      <div class="card">
+        <h3>Step 3: Apply</h3>
+        <p>After learning, test your skills in interactive challenges (coming soon!).</p>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
-<h2>What is Cybersecurity?</h2>
-<p>Cybersecurity protects systems, networks, and data from attacks like hacking, phishing, and malware.</p>
-</div>
+  <!-- FUTURE SIMULATIONS TEASER -->
+  <section class="container">
+    <h2>Interactive Challenges Coming Soon</h2>
+    <p class="subtitle">
+      Once you’ve learned about different risks and solutions, you’ll be able
+      to apply your knowledge in hands-on simulations. Get ready to test your
+      skills in a safe and fun environment.
+    </p>
+  </section>
 
-<div class="card">
-<h2>Why Awareness is Important</h2>
-<p>Many cyber attacks succeed because users are unaware of threats. Awareness helps people avoid scams and risks.</p>
-</div>
+  <!-- RESOURCES & TIPS -->
+  <section class="container">
+    <h2>Quick Tips & Resources</h2>
+    <p class="subtitle">
+      Stay proactive in your cybersecurity journey with small steps every day.
+    </p>
+    <div class="grid">
+      <div class="card">
+        <h3>Regular Updates</h3>
+        <p>Keep your software, browsers, and apps up to date to patch vulnerabilities.</p>
+      </div>
+      <div class="card">
+        <h3>Think Before You Click</h3>
+        <p>Always verify links and attachments before interacting.</p>
+      </div>
+      <div class="card">
+        <h3>Back Up Data</h3>
+        <p>Maintain offline or cloud backups to recover from attacks or failures.</p>
+      </div>
+      <div class="card">
+        <h3>Stay Informed</h3>
+        <p>Follow reputable cybersecurity news sources to keep up with new threats.</p>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
-<h2>Why It Matters</h2>
-<p>Cybersecurity protects personal information, finances, and identity. Staying informed keeps communities safe.</p>
-</div>
+  <!-- BOTTOM CTA BUTTON -->
+  <div class="bottom-cta">
+    <a href="types-of-risk.html" class="btn">Explore Types of Risk & Solutions</a>
+  </div>
 
-<div class="next-page">
-<a href="types-of-risks.html" class="btn">Learn About Risks →</a>
-</div>
-
-</section>
-
-<footer id="contact">
-<p>© 2026 CyberSmart. Stay Safe Online.</p>
-</footer>
-
-<script>
-
-/* Dynamic greeting */
-const welcomeMsg=document.getElementById('welcome-msg');
-const hour=new Date().getHours();
-
-if(hour<12) welcomeMsg.textContent="Good Morning! Welcome to CyberSmart";
-else if(hour<18) welcomeMsg.textContent="Good Afternoon! Welcome to CyberSmart";
-else welcomeMsg.textContent="Good Evening! Welcome to CyberSmart";
-
-/* Button animation */
-const startBtn=document.getElementById('start-btn');
-
-startBtn.addEventListener('click',()=>{
-startBtn.textContent="Loading...";
-setTimeout(()=>{
-startBtn.textContent="Start Learning";
-},1000);
-});
-
-/* Scroll animation */
-const cards=document.querySelectorAll('.card');
-
-const observer=new IntersectionObserver(entries=>{
-entries.forEach(entry=>{
-if(entry.isIntersecting){
-entry.target.classList.add('visible');
-}
-});
-},{threshold:0.2});
-
-cards.forEach(card=>observer.observe(card));
-
-</script>
-
+  <!-- FOOTER -->
+  <footer>© 2026 CyberSmart. All Rights Reserved.</footer>
 </body>
 </html>
-
-
