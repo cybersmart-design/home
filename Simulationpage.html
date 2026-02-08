@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Threat Simulation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+    }
+
+    .card h2 {
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+    }
+
+    .btn {
+      margin-top: 15px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #0ea5e9;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Select a Cyber Threat Simulation</h1>
+
+<div class="grid">
+
+  <div class="card" onclick="startSim('breach')">
+    <h2>Data Breach Simulation</h2>
+    <p>Experience how leaked information can spread and impact security.</p>
+    <button class="btn">Start</button>
+  </div>
+
+  <div class="card" onclick="startSim('phishing')">
+    <h2>Phishing Attack Simulation</h2>
+    <p>Learn to identify fake emails and suspicious messages.</p>
+    <button class="btn">Start</button>
+  </div>
+
+  <div class="card" onclick="startSim('malware')">
+    <h2>Malware Simulation</h2>
+    <p>See how malicious software infects systems and causes damage.</p>
+    <button class="btn">Start</button>
+  </div>
+
+</div>
+
+<script>
+  function startSim(type) {
+    if (type === 'breach') {
+      window.location.href = 'https://cybersmart-design.github.io/home/databreach.html';
+    } else if (type === 'phishing') {
+      window.location.href = 'https://cybersmart-design.github.io/home/phishing.html';
+    } else if (type === 'malware') {
+      window.location.href = 'https://cybersmart-design.github.io/home/malwareattack.html';
+    }
+  } else if (type === 'phishing') {
+      alert('Launching Phishing Simulation...');
+    } else if (type === 'malware') {
+      alert('Launching Malware Simulation...');
+    }
+  }
+</script>
+
+</body>
+</html>
 
