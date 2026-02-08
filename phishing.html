@@ -28,6 +28,14 @@ body { margin: 0; background: #f3f5f8; }
 .fake-site { text-align: center; }
 .loading { font-weight: bold; color: #dc2626; }
 .intro { background: #e6ecff; padding: 12px; border-bottom: 1px solid #ddd; font-size: 14px; }
+
+/* ENDPOINT */
+.endpoint { position: fixed; inset:0; background: rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:50; }
+.endpoint .modal { width: 400px; text-align:center; }
+.endpoint button { margin: 10px 0; width:100%; padding:12px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; }
+.continue { background:#22c55e; color:white; }
+.exit { background:#ef4444; color:white; }
+
 </style>
 </head>
 <body>
@@ -87,6 +95,16 @@ This is a <strong>simulation of phishing emails</strong>. Analyze the messages c
     <h3>Account Verification</h3>
     <p>Processing request…</p>
     <p class="loading" id="loadingText"></p>
+  </div>
+</div>
+
+<!-- ENDPOINT -->
+<div class="endpoint" id="endpoint">
+  <div class="modal">
+    <h3>Simulation Complete</h3>
+    <p>You have completed this phishing simulation.</p>
+    <button class="continue" onclick="goToMain()">Continue to Main Page</button>
+    <button class="exit" onclick="exitSimulation()">Exit</button>
   </div>
 </div>
 
@@ -238,8 +256,16 @@ function checkCompletion() {
   const allEmails = [].concat(folders.inbox, folders.starred, folders.spam);
   const phishingRemaining = allEmails.some(e => e.phishing);
   if(!phishingRemaining) {
-    showPopup("Simulation Complete", "Congratulations! You have successfully identified and reported all phishing emails.");
+    document.getElementById('endpoint').style.display = 'flex';
   }
+}
+
+// Endpoint buttons
+function goToMain() {
+  window.location.href = 'index.html'; // main page
+}
+function exitSimulation() {
+  document.body.innerHTML = "<h2 style='padding:40px;text-align:center'>Simulation ended. You may close this window.</h2>";
 }
 
 renderList();
@@ -247,4 +273,3 @@ renderList();
 
 </body>
 </html>
-
