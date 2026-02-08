@@ -36,9 +36,33 @@ body { margin: 0; background: #f3f5f8; }
 .continue { background:#22c55e; color:white; }
 .exit { background:#ef4444; color:white; }
 
+/* INTRODUCTION OVERLAY */
+#introOverlay { display:flex; background: rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:100; }
+#introOverlay .modal { max-width:600px; text-align:left; background:#111; color:#fff; border-radius:10px; padding:30px; line-height:1.5; }
+#introOverlay h2 { color:#ffcc00; }
+#introOverlay button { margin-top:20px; width:100%; padding:15px; background:#3b82f6; color:white; font-weight:bold; border:none; border-radius:8px; cursor:pointer; }
+#introOverlay .warning { background:#330000; padding:10px; border-left:5px solid #ff4444; margin:15px 0; }
 </style>
 </head>
 <body>
+
+<!-- INTRODUCTION OVERLAY -->
+<div class="overlay" id="introOverlay">
+  <div class="modal">
+    <h2>⚠ Security Awareness Training</h2>
+    <p>Welcome to this <strong>phishing email simulation</strong>. Your goal is to identify potentially malicious emails and report them without mistakenly marking legitimate emails.</p>
+    <div class="warning"><strong>Warning:</strong> Clicking on suspicious links in this simulation will demonstrate how attackers collect information.</div>
+    <h3>Guidelines:</h3>
+    <ul>
+      <li>Verify the sender's address carefully.</li>
+      <li>Beware of urgent requests or threats.</li>
+      <li>Hover over links before clicking.</li>
+      <li>Never share credentials.</li>
+      <li>Use the Report button for suspected phishing.</li>
+    </ul>
+    <button onclick="startSimulation()">Start Simulation</button>
+  </div>
+</div>
 
 <div class="topbar"><strong>Security Awareness Inbox</strong></div>
 
@@ -109,7 +133,13 @@ This is a <strong>simulation of phishing emails</strong>. Analyze the messages c
 </div>
 
 <script>
-// Email data per folder
+// --- START SIMULATION ---
+function startSimulation() {
+  document.getElementById('introOverlay').style.display = 'none';
+  renderList(); // render inbox emails
+}
+
+// --- EMAIL DATA ---
 let folders = {
   inbox: [
     { sender: "IT Security Ops", subject: "Unusual Login Detected", body: `<p>During a recent automated security assessment, unusual activity was detected on your account, including logins from unfamiliar devices and locations, as well as multiple failed authentication attempts.</p> 
@@ -130,7 +160,6 @@ let folders = {
 <p>This is a detailed confirmation for invoice #49321. Payment has been successfully processed and logged in our finance system.</p>
 <p>All supporting documents are available upon request. Please retain this confirmation for accounting and audit purposes.</p>`, phishing: false, read: false }
   ],
-  
   starred: [
     { sender: "Microsoft 365 Team", subject: "Mailbox Almost Full", body: `<p>Dear User,</p>
 <p>Your mailbox is currently at 98% capacity. High storage levels can cause delays in receiving new emails or failures in message delivery. Please consider reviewing, archiving, or managing your mailbox to prevent service disruption.</p>
@@ -155,6 +184,7 @@ let selectedEmail = null;
 const emailList = document.getElementById('emailList');
 const emailView = document.getElementById('emailView');
 
+// --- RENDER EMAIL LIST ---
 function renderList() {
   emailList.innerHTML = '';
   folders[currentFolder].forEach((email, index) => {
@@ -181,6 +211,7 @@ function renderList() {
   });
 }
 
+// --- OPEN EMAIL ---
 function openEmail(email, index, row) {
   email.read = true;
   row.classList.remove('unread');
@@ -197,6 +228,7 @@ function openEmail(email, index, row) {
   `;
 }
 
+// --- DELETE EMAIL ---
 function deleteEmail() {
   const { email, index } = selectedEmail;
   folders.trash.push(email);
@@ -207,6 +239,7 @@ function deleteEmail() {
   checkCompletion();
 }
 
+// --- REPORT EMAIL ---
 function reportEmail() {
   document.getElementById('reportModal').style.display = 'flex';
 }
@@ -221,6 +254,7 @@ function submitReport() {
   checkCompletion();
 }
 
+// --- SWITCH FOLDER ---
 function switchFolder(folder, el) {
   currentFolder = folder;
   document.querySelectorAll('.sidebar div').forEach(d=>d.classList.remove('active'));
@@ -230,6 +264,7 @@ function switchFolder(folder, el) {
   checkCompletion();
 }
 
+// --- FAKE SITE ---
 function openFakeSite() {
   document.getElementById('fakeSite').style.display = 'flex';
   const t = document.getElementById('loadingText');
@@ -241,6 +276,7 @@ function openFakeSite() {
   }, 3000);
 }
 
+// --- POPUPS ---
 function showPopup(title,text) {
   document.getElementById('popupTitle').textContent = title;
   document.getElementById('popupText').textContent = text;
@@ -251,7 +287,7 @@ function closeAll() {
   document.querySelectorAll('.overlay').forEach(o=>o.style.display='none');
 }
 
-// --- Check if simulation is complete ---
+// --- CHECK COMPLETION ---
 function checkCompletion() {
   const allEmails = [].concat(folders.inbox, folders.starred, folders.spam);
   const phishingRemaining = allEmails.some(e => e.phishing);
@@ -260,15 +296,15 @@ function checkCompletion() {
   }
 }
 
-// Endpoint buttons
+// --- ENDPOINT BUTTONS ---
 function goToMain() {
-  window.location.href = 'index.html'; // main page
+  window.location.href = 'index.html';
 }
 function exitSimulation() {
   document.body.innerHTML = "<h2 style='padding:40px;text-align:center'>Simulation ended. You may close this window.</h2>";
 }
 
-renderList();
+// --- INIT ---
 </script>
 
 </body>
