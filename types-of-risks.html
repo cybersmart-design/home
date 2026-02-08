@@ -1,254 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberSmart | Types of Risks & Threats</title>
-    <style>
-        /* ====== GENERAL STYLES ====== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberSmart | Types of Risks & Threats</title>
+<style>
+/* GENERAL STYLES */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    color: #fff;
+    overflow-x: hidden;
+    background: #0a1f44;
+}
 
-        body {
-            /* Background image with overlay for readability */
-            background: linear-gradient(rgba(10,31,68,0.7), rgba(0,0,0,0.7)), 
-                        url('background2.jpeg') no-repeat center center fixed;
-            background-size: cover;
-            color: #fff;
-            line-height: 1.6;
-            scroll-behavior: smooth;
-        }
+/* NAVBAR */
+header {
+    background-color: rgba(10, 31, 68, 0.9);
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.logo {
+    color: #00e0ff;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+}
+.nav-links li {
+    margin-left: 20px;
+}
+.nav-links a {
+    color: #fff;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.nav-links a:hover {
+    color: #00e0ff;
+}
 
-        a {
-            text-decoration: none;
-        }
+/* HERO WITH VIDEO BACKGROUND */
+.hero {
+    position: relative;
+    text-align: center;
+    padding: 80px 20px;
+    overflow: hidden;
+}
+.hero video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    filter: brightness(0.4);
+    z-index: 0;
+}
+.hero .hero-content {
+    position: relative;
+    z-index: 2;
+}
+.hero h2 {
+    font-size: 2.2rem;
+    text-shadow: 0 0 10px #00e0ff;
+}
+.hero p {
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
 
-        /* ====== NAVBAR ====== */
-        header {
-            background-color: rgba(10, 31, 68, 0.9);
-            padding: 15px 30px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+/* INTRODUCTION */
+.intro {
+    max-width: 900px;
+    margin: 40px auto;
+    text-align: center;
+    padding: 0 20px;
+    font-size: 1.1rem;
+    color: #cce7ff;
+}
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+/* VIDEOS */
+.video-section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.video-section iframe {
+    width: 100%;
+    height: 315px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
 
-        .logo {
-            color: #00e0ff;
-            font-size: 1.8rem;
-            font-weight: bold;
-            text-shadow: 0 0 5px #00e0ff, 0 0 10px #00e0ff;
-        }
+/* CONTENT CARDS */
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+.card {
+    background-color: rgba(10, 31, 68, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #00e0ff33;
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.4s ease;
+}
+.card h2 {
+    color: #00e0ff;
+    font-size: 1.4rem;
+}
+.card p {
+    color: #fff;
+    font-size: 1rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding-top 0.4s ease;
+    padding-top: 0;
+}
+.card:hover p,
+.card.active p {
+    max-height: 500px;
+    padding-top: 10px;
+}
 
-        .nav-links {
-            list-style: none;
-            display: flex;
-        }
+/* NAV BUTTONS */
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.nav-buttons .btn {
+    flex: 1;
+    background-color: #00e0ff;
+    color: #0a1f44;
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.nav-buttons .btn:hover {
+    background-color: #00c4e8;
+    transform: scale(1.05);
+}
 
-        .nav-links li {
-            margin-left: 20px;
-        }
+/* FOOTER */
+footer {
+    background-color: rgba(10, 31, 68, 0.9);
+    text-align: center;
+    padding: 20px;
+    margin-top: 50px;
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
 
-        .nav-links a {
-            color: #fff;
-            font-weight: bold;
-            transition: color 0.3s, text-shadow 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #00e0ff;
-            text-shadow: 0 0 5px #00e0ff, 0 0 10px #00e0ff;
-        }
-
-        /* ====== HERO SECTION ====== */
-        .hero {
-            text-align: center;
-            padding: 100px 20px;
-        }
-
-        .hero h2 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px #00e0ff, 0 0 20px #00e0ff;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 25px;
-        }
-
-        .btn {
-            background-color: #00e0ff;
-            color: #0a1f44;
-            padding: 12px 25px;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-            display: inline-block;
-            box-shadow: 0 0 10px #00e0ff, 0 0 20px #00e0ff33;
-        }
-
-        .btn:hover {
-            background-color: #00c4e8;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px #00e0ff, 0 0 40px #00e0ff;
-        }
-
-        /* ====== VERTICAL RECTANGULAR CARDS ====== */
-        .content {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            width: 100%;
-            min-height: 200px;
-            background-color: rgba(10, 31, 68, 0.8);
-            padding: 25px;
-            border-radius: 15px;
-            text-align: left;
-            transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
-            border: 1px solid #00e0ff;
-            box-shadow: 0 0 10px #00e0ff33;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        .card h2 {
-            margin-bottom: 15px;
-            color: #00e0ff;
-            text-shadow: 0 0 5px #00e0ff;
-        }
-
-        .card p {
-            color: #fff;
-        }
-
-        /* Hover focus effect: blur other cards */
-        .content:hover .card {
-            filter: blur(2px);
-            transform: scale(0.98);
-        }
-
-        .content .card:hover {
-            filter: blur(0);
-            transform: scale(1.02);
-            box-shadow: 0 0 20px #00e0ff, 0 0 40px #00e0ff66;
-        }
-
-        .card.visible {
-            opacity: 1;
-            transform: translateY(0);
-            transition: all 0.6s ease-out;
-        }
-
-        /* ====== NAV BUTTONS CONTAINER ====== */
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        /* FOOTER */
-        footer {
-            background-color: rgba(10, 31, 68, 0.9);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 50px;
-        }
-    </style>
+/* MOBILE */
+@media (max-width: 768px) {
+    .hero h2 { font-size: 1.8rem; }
+    .hero p { font-size: 1.1rem; }
+}
+@media (max-width: 480px) {
+    .hero h2 { font-size: 1.5rem; }
+    .card h2 { font-size: 1.2rem; }
+}
+</style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <header>
-        <nav class="navbar">
-            <h1 class="logo">CyberSmart</h1>
-            <ul class="nav-links">
-                <li><a href="lobby.html">Home</a></li>
-                <li><a href="#learn">Learn</a></li>
-            </ul>
-        </nav>
-    </header>
+<!-- NAVIGATION -->
+<header>
+    <nav class="navbar">
+        <div class="logo">CyberSmart</div>
+        <ul class="nav-links">
+            <li><a href="lobby.html">Home</a></li>
+            <li><a href="#learn">Learn</a></li>
+        </ul>
+    </nav>
+</header>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
+<!-- HERO WITH VIDEO BACKGROUND -->
+<section class="hero">
+    <video autoplay muted loop playsinline>
+        <source src="videoback2.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="hero-content">
         <h2>Types of Risks & Threats</h2>
-        <p>Understand the different cyber threats and risks you may face online.</p>
-    </section>
+        <p>Explore key cybersecurity risks and learn how they can affect you.</p>
+    </div>
+</section>
 
-    <!-- CONTENT CARDS -->
-    <section class="content" id="learn">
-        <div class="card">
-            <h2>Malware</h2>
-            <p>Malware is software designed to disrupt, damage, or gain unauthorized access to computer systems, such as viruses, worms, and ransomware.</p>
-        </div>
-
-        <div class="card">
-            <h2>Phishing</h2>
-            <p>Phishing is a type of social engineering attack where attackers trick individuals into revealing sensitive information, like passwords or credit card numbers.</p>
-        </div>
-
-        <div class="card">
-            <h2>Data Breach</h2>
-            <p>A data breach occurs when confidential information is accessed or stolen by unauthorized users, compromising privacy and security.</p>
-        </div>
-
-        <div class="card">
-            <h2>Social Engineering</h2>
-            <p>Manipulating people into performing actions or divulging confidential information is a common attack method in social engineering.</p>
-        </div>
-
-        <div class="card">
-            <h2>Denial of Service (DoS)</h2>
-            <p>A DoS attack aims to make a network or service unavailable by overwhelming it with traffic.</p>
-        </div>
-    </section>
-
-    <!-- NAVIGATION BUTTONS -->
-<div class="nav-buttons">
-    <a href="lobby.html" class="btn">← Go Back</a>
-    <a href="Simulationpage.html" class="btn">Next Page →</a>
+<!-- INTRODUCTORY STATEMENT -->
+<div class="intro">
+    <p>
+        Cybersecurity is not just about technology — it's about understanding the risks
+        that exist in the digital world. Below are some of the most common risks and threats
+        you may encounter online, explained in clear and simple terms. Click or tap each risk
+        to learn more.
+    </p>
 </div>
 
+<!-- INFO VIDEOS -->
+<div class="video-section">
+    <iframe src="https://www.youtube.com/embed/6aLwNv3tyhg" allowfullscreen></iframe>
+    <iframe src="https://www.youtube.com/embed/qjmDDGaGmys" allowfullscreen></iframe>
+</div>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2026 CyberSmart. Stay Safe Online.</p>
-    </footer>
+<!-- CONTENT CARDS -->
+<section class="content" id="learn">
+    <div class="card">
+        <h2>Malware</h2>
+        <p>Malware is software designed to disrupt, damage, or gain unauthorized access to computer systems, such as viruses, worms, and ransomware.</p>
+    </div>
+    <div class="card">
+        <h2>Phishing</h2>
+        <p>Phishing is a type of social engineering attack where attackers trick individuals into revealing sensitive information like passwords or credit card details.</p>
+    </div>
+    <div class="card">
+        <h2>Data Breach</h2>
+        <p>A data breach occurs when confidential information is accessed or stolen by unauthorized users, compromising privacy and security.</p>
+    </div>
+    <div class="card">
+        <h2>Social Engineering</h2>
+        <p>Social engineering uses deception to manipulate individuals into performing actions or divulging confidential information.</p>
+    </div>
+    <div class="card">
+        <h2>Denial of Service (DoS)</h2>
+        <p>A DoS attack aims to make a network or service unavailable by overwhelming it with traffic.</p>
+    </div>
+</section>
 
-    <!-- ====== JAVASCRIPT ====== -->
-    <script>
-        // Scroll animation for cards
-        const cards = document.querySelectorAll('.card');
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.2 });
-        cards.forEach(card => observer.observe(card));
-    </script>
+<!-- NAVIGATION BUTTONS -->
+<div class="nav-buttons">
+    <a href="lobby.html" class="btn">← Back to Home</a>
+    <a href="#learn" class="btn">Explore Solutions →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>© 2026 CyberSmart. Stay Safe Online.</footer>
+
+<script>
+// Scroll animation + card toggle
+const cards = document.querySelectorAll('.card');
+cards.forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('active'));
+});
+</script>
 
 </body>
 </html>
