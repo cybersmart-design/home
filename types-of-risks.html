@@ -59,7 +59,8 @@ header {
 .hero {
     position: relative;
     text-align: center;
-    padding: 80px 20px;
+    height: 85vh;       /* taller hero for immersive video */
+    min-height: 600px;
     overflow: hidden;
 }
 .hero video {
@@ -78,11 +79,11 @@ header {
     z-index: 2;
 }
 .hero h2 {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     text-shadow: 0 0 10px #00e0ff;
 }
 .hero p {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     margin-top: 10px;
 }
 
@@ -165,6 +166,7 @@ header {
     text-align: center;
     font-weight: bold;
     transition: 0.3s;
+    text-decoration: none;
 }
 .nav-buttons .btn:hover {
     background-color: #00c4e8;
@@ -213,7 +215,7 @@ footer {
     </video>
     <div class="hero-content">
         <h2>Types of Risks & Threats</h2>
-        <p>Explore key cybersecurity risks and learn how they can affect you.</p>
+        <p>Explore key cybersecurity risks and learn how to protect yourself.</p>
     </div>
 </section>
 
@@ -222,8 +224,7 @@ footer {
     <p>
         Cybersecurity is not just about technology — it's about understanding the risks
         that exist in the digital world. Below are some of the most common risks and threats
-        you may encounter online, explained in clear and simple terms. Click or tap each risk
-        to learn more.
+        you may encounter online. Click or tap each risk to learn both the threat and how to respond.
     </p>
 </div>
 
@@ -237,23 +238,38 @@ footer {
 <section class="content" id="learn">
     <div class="card">
         <h2>Malware</h2>
-        <p>Malware is software designed to disrupt, damage, or gain unauthorized access to computer systems, such as viruses, worms, and ransomware.</p>
+        <p>
+            Malware is software designed to disrupt, damage, or gain unauthorized access to computer systems, such as viruses, worms, and ransomware.
+            <br><strong>Solution:</strong> Keep your devices updated, install antivirus software, avoid suspicious downloads, and back up your data regularly.
+        </p>
     </div>
     <div class="card">
         <h2>Phishing</h2>
-        <p>Phishing is a type of social engineering attack where attackers trick individuals into revealing sensitive information like passwords or credit card details.</p>
+        <p>
+            Phishing is a type of social engineering attack where attackers trick individuals into revealing sensitive information like passwords or credit card details.
+            <br><strong>Solution:</strong> Verify email and website legitimacy, never click on suspicious links, and enable two-factor authentication.
+        </p>
     </div>
     <div class="card">
         <h2>Data Breach</h2>
-        <p>A data breach occurs when confidential information is accessed or stolen by unauthorized users, compromising privacy and security.</p>
+        <p>
+            A data breach occurs when confidential information is accessed or stolen by unauthorized users, compromising privacy and security.
+            <br><strong>Solution:</strong> Use strong passwords, enable multi-factor authentication, and monitor accounts for unusual activity.
+        </p>
     </div>
     <div class="card">
         <h2>Social Engineering</h2>
-        <p>Social engineering uses deception to manipulate individuals into performing actions or divulging confidential information.</p>
+        <p>
+            Social engineering uses deception to manipulate individuals into performing actions or divulging confidential information.
+            <br><strong>Solution:</strong> Verify identities, question unusual requests, and never share passwords or personal info unexpectedly.
+        </p>
     </div>
     <div class="card">
         <h2>Denial of Service (DoS)</h2>
-        <p>A DoS attack aims to make a network or service unavailable by overwhelming it with traffic.</p>
+        <p>
+            A DoS attack aims to make a network or service unavailable by overwhelming it with traffic.
+            <br><strong>Solution:</strong> Use network firewalls, DDoS protection services, and monitor traffic for unusual activity.
+        </p>
     </div>
 </section>
 
@@ -267,7 +283,7 @@ footer {
 <footer>© 2026 CyberSmart. Stay Safe Online.</footer>
 
 <script>
-// Scroll animation + card toggle
+// Card toggle for expandable content
 const cards = document.querySelectorAll('.card');
 cards.forEach(card => {
     card.addEventListener('click', () => card.classList.toggle('active'));
