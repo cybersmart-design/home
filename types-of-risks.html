@@ -4,196 +4,170 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CyberSmart | Types of Risks & Threats</title>
+
 <style>
-/* GENERAL STYLES */
+/* RESET */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
-html {
-    scroll-behavior: smooth;
-}
+
+/* GLOBAL (MATCHES LOBBY) */
 body {
-    color: #fff;
-    overflow-x: hidden;
-    background: #0a1f44;
+    background-color: #0b132b;
+    color: #ffffff;
+    line-height: 1.6;
+    text-align: center;
 }
 
 /* NAVBAR */
 header {
-    background-color: rgba(10, 31, 68, 0.9);
+    background-color: #1c2541;
     padding: 15px 30px;
     position: sticky;
     top: 0;
     z-index: 1000;
 }
+
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1100px;
+    margin: auto;
 }
+
 .logo {
-    color: #00e0ff;
+    color: #5bc0be;
     font-size: 1.8rem;
     font-weight: bold;
 }
+
 .nav-links {
     list-style: none;
     display: flex;
+    gap: 20px;
 }
-.nav-links li {
-    margin-left: 20px;
-}
+
 .nav-links a {
-    color: #fff;
+    color: #ffffff;
+    text-decoration: none;
     font-weight: bold;
-    transition: 0.3s;
 }
+
 .nav-links a:hover {
-    color: #00e0ff;
+    color: #5bc0be;
 }
 
-/* HERO WITH VIDEO BACKGROUND */
+/* HERO (IDENTICAL STYLE TO LOBBY) */
 .hero {
-    position: relative;
-    text-align: center;
-    height: 85vh;       /* taller hero for immersive video */
-    min-height: 600px;
-    overflow: hidden;
-}
-.hero video {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    filter: brightness(0.4);
-    z-index: 0;
-}
-.hero .hero-content {
-    position: relative;
-    z-index: 2;
-}
-.hero h2 {
-    font-size: 2.5rem;
-    text-shadow: 0 0 10px #00e0ff;
-}
-.hero p {
-    font-size: 1.3rem;
-    margin-top: 10px;
+    padding: 110px 20px 90px;
 }
 
-/* INTRODUCTION */
-.intro {
+.hero h1 {
+    font-size: 2.8rem;
+    color: #5bc0be;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: #cbd5e1;
+    max-width: 700px;
+    margin: auto;
+}
+
+/* BUTTONS */
+.btn {
+    display: inline-block;
+    margin-top: 25px;
+    background-color: #5bc0be;
+    color: #0b132b;
+    padding: 12px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #3a9d9a;
+    transform: scale(1.05);
+}
+
+/* SECTIONS */
+.section {
     max-width: 900px;
-    margin: 40px auto;
-    text-align: center;
+    margin: 50px auto;
     padding: 0 20px;
-    font-size: 1.1rem;
-    color: #cce7ff;
+    text-align: left;
+}
+
+/* CARDS (MATCH LOBBY INFO BLOCKS) */
+.card {
+    background-color: #1c2541;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    color: #5bc0be;
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #ffffff;
+}
+
+.card strong {
+    color: #cbd5e1;
 }
 
 /* VIDEOS */
 .video-section {
     max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-.video-section iframe {
-    width: 100%;
-    height: 315px;
-    border: none;
-    border-radius: 10px;
-    margin-bottom: 30px;
-}
-
-/* CONTENT CARDS */
-.content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 900px;
     margin: 50px auto;
     padding: 0 20px;
 }
-.card {
-    background-color: rgba(10, 31, 68, 0.9);
-    padding: 20px;
-    border-radius: 15px;
-    border: 1px solid #00e0ff33;
-    cursor: pointer;
-    overflow: hidden;
-    transition: 0.4s ease;
-}
-.card h2 {
-    color: #00e0ff;
-    font-size: 1.4rem;
-}
-.card p {
-    color: #fff;
-    font-size: 1rem;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease, padding-top 0.4s ease;
-    padding-top: 0;
-}
-.card:hover p,
-.card.active p {
-    max-height: 500px;
-    padding-top: 10px;
+
+.video-section iframe {
+    width: 100%;
+    height: 315px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    border: none;
 }
 
 /* NAV BUTTONS */
 .nav-buttons {
     display: flex;
     justify-content: center;
-    max-width: 900px;
+    gap: 20px;
     margin: 40px auto;
-    padding: 0 20px;
-    gap: 15px;
     flex-wrap: wrap;
-}
-.nav-buttons .btn {
-    flex: 1;
-    background-color: #00e0ff;
-    color: #0a1f44;
-    padding: 12px 25px;
-    border-radius: 5px;
-    text-align: center;
-    font-weight: bold;
-    transition: 0.3s;
-    text-decoration: none;
-}
-.nav-buttons .btn:hover {
-    background-color: #00c4e8;
-    transform: scale(1.05);
 }
 
 /* FOOTER */
 footer {
-    background-color: rgba(10, 31, 68, 0.9);
-    text-align: center;
+    margin-top: 60px;
     padding: 20px;
-    margin-top: 50px;
+    background-color: #1c2541;
     font-size: 0.9rem;
-    color: #94a3b8;
+    color: #cbd5e1;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
-    .hero h2 { font-size: 1.8rem; }
-    .hero p { font-size: 1.1rem; }
-}
-@media (max-width: 480px) {
-    .hero h2 { font-size: 1.5rem; }
-    .card h2 { font-size: 1.2rem; }
+    .hero h1 {
+        font-size: 2rem;
+    }
 }
 </style>
 </head>
+
 <body>
 
 <!-- NAVIGATION -->
@@ -207,73 +181,68 @@ footer {
     </nav>
 </header>
 
-<!-- HERO WITH VIDEO BACKGROUND -->
+<!-- HERO -->
 <section class="hero">
-    <video autoplay muted loop playsinline>
-        <source src="videoback2.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <div class="hero-content">
-        <h2>Types of Risks & Threats</h2>
-        <p>Explore key cybersecurity risks and learn how to protect yourself.</p>
-    </div>
+    <h1>Types of Risks & Threats</h1>
+    <p>
+        Understand the most common cybersecurity risks and learn how to protect
+        yourself online.
+    </p>
+    <a href="#learn" class="btn">Start Learning</a>
 </section>
 
-<!-- INTRODUCTORY STATEMENT -->
-<div class="intro">
-    <p>
-        Cybersecurity is not just about technology — it's about understanding the risks
-        that exist in the digital world. Below are some of the most common risks and threats
-        you may encounter online. Click or tap each risk to learn both the threat and how to respond.
-    </p>
-</div>
-
-<!-- INFO VIDEOS -->
+<!-- VIDEOS -->
 <div class="video-section">
     <iframe src="https://www.youtube.com/embed/6aLwNv3tyhg" allowfullscreen></iframe>
     <iframe src="https://www.youtube.com/embed/qjmDDGaGmys" allowfullscreen></iframe>
 </div>
 
-<!-- CONTENT CARDS -->
-<section class="content" id="learn">
+<!-- RISKS -->
+<section class="section" id="learn">
+
     <div class="card">
-        <h2>Malware</h2>
+        <h3>Malware</h3>
         <p>
-            Malware is software designed to disrupt, damage, or gain unauthorized access to computer systems, such as viruses, worms, and ransomware.
-            <br><strong>Solution:</strong> Keep your devices updated, install antivirus software, avoid suspicious downloads, and back up your data regularly.
+            Malware is harmful software such as viruses and ransomware.
+            <br><strong>Solution:</strong> Keep software updated, use antivirus tools, and back up data.
         </p>
     </div>
+
     <div class="card">
-        <h2>Phishing</h2>
+        <h3>Phishing</h3>
         <p>
-            Phishing is a type of social engineering attack where attackers trick individuals into revealing sensitive information like passwords or credit card details.
-            <br><strong>Solution:</strong> Verify email and website legitimacy, never click on suspicious links, and enable two-factor authentication.
+            Fake emails or websites trick users into revealing sensitive data.
+            <br><strong>Solution:</strong> Check links carefully and enable two-factor authentication.
         </p>
     </div>
+
     <div class="card">
-        <h2>Data Breach</h2>
+        <h3>Data Breaches</h3>
         <p>
-            A data breach occurs when confidential information is accessed or stolen by unauthorized users, compromising privacy and security.
-            <br><strong>Solution:</strong> Use strong passwords, enable multi-factor authentication, and monitor accounts for unusual activity.
+            Unauthorized access to private information.
+            <br><strong>Solution:</strong> Use strong passwords and monitor accounts regularly.
         </p>
     </div>
+
     <div class="card">
-        <h2>Social Engineering</h2>
+        <h3>Social Engineering</h3>
         <p>
-            Social engineering uses deception to manipulate individuals into performing actions or divulging confidential information.
-            <br><strong>Solution:</strong> Verify identities, question unusual requests, and never share passwords or personal info unexpectedly.
+            Manipulation techniques used to trick people.
+            <br><strong>Solution:</strong> Verify identities and never share sensitive info unexpectedly.
         </p>
     </div>
+
     <div class="card">
-        <h2>Denial of Service (DoS)</h2>
+        <h3>Denial of Service (DoS)</h3>
         <p>
-            A DoS attack aims to make a network or service unavailable by overwhelming it with traffic.
-            <br><strong>Solution:</strong> Use network firewalls, DDoS protection services, and monitor traffic for unusual activity.
+            Attacks that overload systems and cause downtime.
+            <br><strong>Solution:</strong> Use firewalls and traffic monitoring tools.
         </p>
     </div>
+
 </section>
 
-<!-- NAVIGATION BUTTONS -->
+<!-- NAV BUTTONS -->
 <div class="nav-buttons">
     <a href="lobby.html" class="btn">← Back to Home</a>
     <a href="solutions.html" class="btn">Explore Solutions →</a>
@@ -281,14 +250,6 @@ footer {
 
 <!-- FOOTER -->
 <footer>© 2026 CyberSmart. Stay Safe Online.</footer>
-
-<script>
-// Card toggle for expandable content
-const cards = document.querySelectorAll('.card');
-cards.forEach(card => {
-    card.addEventListener('click', () => card.classList.toggle('active'));
-});
-</script>
 
 </body>
 </html>
