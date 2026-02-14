@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Security Awareness Inbox</title>
+<title>Security Awareness Inbox | Advanced Training</title>
 <style>
-* { box-sizing: border-box; font-family: Arial, sans-serif; }
-body { margin: 0; background: #f3f5f8; }
+* { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+body { margin: 0; background: #f3f5f8; display: flex; flex-direction: column; height: 100vh; }
 
 .topbar {
   height: 56px;
@@ -15,12 +15,33 @@ body { margin: 0; background: #f3f5f8; }
   display: flex;
   align-items: center;
   padding: 0 16px;
+  flex-shrink: 0;
+  gap: 10px;
 }
 
-.container {
-  display: flex;
-  height: calc(100vh - 56px);
+#scoreDisplay {
+  background: #1e293b;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #5bc0be;
+  font-weight: bold;
+  border: 1px solid #5bc0be;
+  margin-right: 10px;
 }
+
+.btn-nav {
+  padding: 6px 14px;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  background: #1e293b;
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+}
+.btn-nav:hover { background: #334155; border-color: #94a3b8; }
+
+.container { display: flex; flex: 1; overflow: hidden; }
 
 .sidebar {
   width: 220px;
@@ -34,17 +55,12 @@ body { margin: 0; background: #f3f5f8; }
   border-radius: 6px;
   cursor: pointer;
   margin-bottom: 6px;
+  transition: 0.2s;
 }
 
-.sidebar .active,
-.sidebar div:hover {
-  background: #e6ecff;
-}
+.sidebar .active, .sidebar div:hover { background: #e6ecff; color: #1d4ed8; }
 
-.email-area {
-  flex: 1;
-  display: flex;
-}
+.email-area { flex: 1; display: flex; }
 
 .email-list {
   width: 45%;
@@ -55,8 +71,8 @@ body { margin: 0; background: #f3f5f8; }
 
 .email-row {
   display: grid;
-  grid-template-columns: 32px 32px 160px 1fr 70px;
-  padding: 10px;
+  grid-template-columns: 32px 32px 1fr 1fr 70px;
+  padding: 12px 10px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
   align-items: center;
@@ -64,453 +80,290 @@ body { margin: 0; background: #f3f5f8; }
 
 .email-row.unread { background: #f8fbff; font-weight: bold; }
 .email-row:hover { background: #eef3ff; }
-.email-row.highlight { background: #fff5b1; }
+.email-row.highlight { background: #fff5b1; border-left: 4px solid #f59e0b; }
 
-.star {
-  color: #ccc;
-  font-size: 18px;
-  cursor: pointer;
-}
-.star.active { color: #f5b301; }
+.email-hint { display: block; font-size: 11px; color: #ef4444; font-weight: normal; }
 
-.time {
-  font-size: 12px;
-  color: #666;
-  text-align: right;
-}
+.time { font-size: 12px; color: #666; text-align: right; }
 
-.email-view {
-  flex: 1;
-  padding: 16px;
-  background: #fafafa;
-}
+.email-view { flex: 1; padding: 24px; background: #fafafa; overflow-y: auto; }
 
 .actions button {
-  padding: 10px 14px;
+  padding: 10px 16px;
   border: none;
   border-radius: 6px;
   margin-right: 8px;
   cursor: pointer;
+  font-weight: bold;
 }
-.delete { background: #6b7280; color: white; }
+.delete { background: #64748b; color: white; }
 .report { background: #dc2626; color: white; }
 
+.hacker-log {
+    height: 140px;
+    background: #0a0a0a;
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+    padding: 12px;
+    font-size: 13px;
+    overflow-y: auto;
+    border-top: 4px solid #dc2626;
+}
+
+.log-entry { margin-bottom: 4px; }
+.log-critical { color: #ff4444; font-weight: bold; }
+
 .overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.85);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000;
 }
 
 .modal {
   background: white;
-  padding: 20px;
-  width: 90%;
-  max-width: 440px;
-  border-radius: 8px;
+  padding: 30px;
+  width: 95%;
+  max-width: 500px;
+  border-radius: 12px;
+  color: #1e293b;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-.fake-site { text-align: center; }
+.endpoint { text-align: center; }
+.endpoint h3 { font-size: 24px; margin-bottom: 10px; }
+.stats-box { background: #f1f5f9; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left; }
 
-.loading {
-  font-weight: bold;
-  color: #dc2626;
-}
+.btn-primary { background: #2563eb; color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.btn-secondary { background: #64748b; color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
-.intro {
-  background: #e6ecff;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-  font-size: 14px;
-}
-
-.endpoint {
-  position: fixed;
-  inset:0;
-  background: rgba(0,0,0,0.7);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:50;
-}
-.endpoint .modal { width: 90%; max-width: 400px; text-align:center; }
-.endpoint button {
-  margin: 10px 0;
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:6px;
-  font-weight:bold;
-  cursor:pointer;
-}
-.continue { background:#22c55e; color:white; }
-.exit { background:#ef4444; color:white; }
-
-#introOverlay {
-  display:flex;
-  background: rgba(0,0,0,0.9);
-  justify-content:center;
-  align-items:center;
-  z-index:100;
-}
-#introOverlay .modal {
-  max-width:600px;
-  text-align:left;
-  background:#111;
-  color:#fff;
-  border-radius:10px;
-  padding:30px;
-  line-height:1.5;
-}
-#introOverlay h2 { color:#ffcc00; }
-#introOverlay button {
-  margin-top:20px;
-  width:100%;
-  padding:15px;
-  background:#3b82f6;
-  color:white;
-  font-weight:bold;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-#introOverlay .warning {
-  background:#330000;
-  padding:10px;
-  border-left:5px solid #ff4444;
-  margin:15px 0;
-}
-
-@media (max-width: 860px) {
-  .container {
-    flex-direction: column;
-    height: auto;
-  }
-  .sidebar {
-    width: 100%;
-    display: flex;
-    overflow-x: auto;
-    padding: 8px;
-  }
-  .sidebar div {
-    flex: 1;
-    margin-right: 6px;
-    white-space: nowrap;
-  }
-  .email-area {
-    flex-direction: column;
-    height: calc(100vh - 56px - 64px);
-  }
-  .email-list {
-    width: 100%;
-    height: 45%;
-  }
-  .email-view {
-    height: 55%;
-    overflow-y: auto;
-  }
-}
+#introOverlay { display: flex; }
 </style>
 </head>
 <body>
 
-<!-- INTRODUCTION OVERLAY -->
 <div class="overlay" id="introOverlay">
   <div class="modal">
-    <h2>⚠ Security Awareness Training</h2>
-    <p>Welcome to this <strong>phishing email simulation</strong>. Your goal is to identify potentially malicious emails and report them without mistakenly marking legitimate emails.</p>
-    <div class="warning"><strong>Warning:</strong> Clicking on suspicious links in this simulation will demonstrate how attackers collect information.</div>
-    <h3>Choose Mode:</h3>
-
-    <button onclick="selectMode('guided')">Guided Mode</button>
-    <button onclick="selectMode('challenge')">Challenge Mode</button>
-
-    <div id="modeDesc" style="margin-top:15px;"></div>
+    <h2 style="color: #1e293b">⚠ Simulation Mode Selection</h2>
+    <p>Select your difficulty. <strong>Challenge Mode</strong> features harder typosquatting and hides hints.</p>
+    <button class="btn-primary" onclick="selectMode('guided')">Guided Mode (With Highlights)</button>
+    <button class="btn-secondary" onclick="selectMode('challenge')">Challenge Mode (Harder Emails)</button>
   </div>
 </div>
 
 <div class="topbar">
-  <strong>Security Awareness Inbox</strong>
-  <button id="backDifficulty" style="margin-left:auto;padding:6px 12px;border:none;border-radius:6px;background:#3b82f6;color:white;cursor:pointer;display:none;" onclick="showDifficulty()">Back to Difficulty</button>
-  <button style="margin-left:8px;padding:6px 12px;border:none;border-radius:6px;background:#f59e0b;color:white;cursor:pointer;" onclick="goToSimulationSelection()">
-    Back to Simulation Selection
-  </button>
-</div>
-
-<div class="intro">
-This is a <strong>simulation of phishing emails</strong>. Analyze the messages carefully before taking action. Your goal is to identify and report all potential phishing attempts without mistakenly reporting legitimate emails.
+  <button class="btn-nav" onclick="window.location.href='solutions.html'">← Back to Solutions</button>
+  <button class="btn-nav" onclick="openModeSelection()">Change Mode</button>
+  
+  <div style="margin-left: auto; display: flex; align-items: center;">
+    <div id="scoreDisplay">Score: 0</div>
+    <button class="btn-nav" style="background: #475569;" onclick="resetGame()">Full Reset</button>
+  </div>
 </div>
 
 <div class="container">
   <div class="sidebar">
-    <div class="active" onclick="switchFolder('inbox', this)">Inbox</div>
+    <div class="active" id="inboxTab" onclick="switchFolder('inbox', this)">Inbox</div>
     <div onclick="switchFolder('starred', this)">Starred</div>
-    <div onclick="switchFolder('spam', this)">Spam</div>
     <div onclick="switchFolder('trash', this)">Trash</div>
   </div>
 
   <div class="email-area">
     <div class="email-list" id="emailList"></div>
     <div class="email-view" id="emailView">
-      <p>Select an email and decide how to respond.</p>
+      <p style="padding:40px; text-align:center; color: #64748b;">Select an email to investigate.</p>
     </div>
   </div>
 </div>
 
-<!-- POPUPS -->
+<div class="hacker-log" id="lootLog">
+    <div class="log-entry">[SYSTEM] Monitoring for suspicious activities...</div>
+</div>
+
 <div class="overlay" id="popup">
   <div class="modal">
     <h3 id="popupTitle"></h3>
-    <p id="popupText"></p>
-    <button onclick="closeAll()">Close</button>
+    <p id="popupText" style="margin: 15px 0; line-height: 1.6;"></p>
+    <button class="btn-primary" onclick="closeAll()">Continue</button>
   </div>
 </div>
 
-<div class="overlay" id="reportModal">
-  <div class="modal">
-    <h3>Report Message</h3>
-    <label>Report Type</label><br>
-    <select id="reportType">
-      <option>Suspicious Email</option>
-      <option>Phishing Attempt</option>
-      <option>Malware</option>
-    </select><br><br>
-    <label>Reason</label><br>
-    <select id="reportReason">
-      <option>Urgency or threats</option>
-      <option>Suspicious link</option>
-      <option>Unknown sender</option>
-    </select><br><br>
-    <label>Additional explanation (optional)</label><br>
-    <textarea id="reportNotes" rows="3" style="width:100%"></textarea>
-    <button onclick="submitReport()">Submit Report</button>
-  </div>
-</div>
-
-<div class="overlay" id="fakeSite">
-  <div class="modal fake-site">
-    <h3>Account Verification</h3>
-    <p>Processing request…</p>
-    <p class="loading" id="loadingText"></p>
-  </div>
-</div>
-
-<!-- ENDPOINT -->
-<div class="endpoint" id="endpoint">
-  <div class="modal">
-    <h3>Simulation Complete</h3>
-    <p>You have completed this phishing simulation.</p>
-    <button class="continue" onclick="goToMain()">Continue to Main Page</button>
-    <button class="exit" onclick="exitSimulation()">Exit</button>
+<div class="overlay" id="endpoint">
+  <div class="modal endpoint">
+    <h3 id="endTitle">Simulation Complete</h3>
+    <div class="stats-box" id="endStats"></div>
+    <button class="btn-primary" id="tryAgainBtn" onclick="resetGame()">Try Again</button>
+    <button class="btn-secondary" onclick="window.location.href='solutions.html'">View All Solutions</button>
   </div>
 </div>
 
 <script>
+// DATA TEMPLATES
+const GUIDED_EMAILS = [
+    { sender: "IT Helpdesk", realAddr: "support@company-verify.net", subject: "Urgent: Password Reset", body: `<p>Your password expires in 1 hour.</p><p>👉 <a href="#" onclick="openFakeSite()">Update Now</a></p>`, phishing: true, read: false },
+    { sender: "Netflix Billing", realAddr: "support@netflix-payments.net", subject: "Payment Declined", body: `<p>Update card info immediately.</p><p>👉 <a href="#" onclick="openFakeSite()">Update Card</a></p>`, phishing: true, read: false },
+    { sender: "FedEx", realAddr: "no-reply@fedex-parcel-status.com", subject: "Package Pending", body: `<p>Action required for delivery.</p><p>👉 <a href="#" onclick="openFakeSite()">Track</a></p>`, phishing: true, read: false },
+    { sender: "Microsoft", realAddr: "alert@microsoft-security-auth.com", subject: "Security Alert", body: `<p>Login from Russia detected.</p><p>👉 <a href="#" onclick="openFakeSite()">Secure Now</a></p>`, phishing: true, read: false },
+    { sender: "HR Dept", realAddr: "hr@company.com", subject: "2026 Holidays", body: `<p>See attached calendar.</p>`, phishing: false, read: false },
+    { sender: "Finance", realAddr: "finance@company.com", subject: "Expense Approval", body: `<p>Your report is approved.</p>`, phishing: false, read: false }
+];
+
+const CHALLENGE_EMAILS = [
+    { sender: "System Admin", realAddr: "admin@rnicrosoft.com", subject: "Security Patch Required", body: `<p>Critical vulnerability detected in your OS.</p><p>👉 <a href="#" onclick="openFakeSite()">Install Patch</a></p>`, phishing: true, read: false },
+    { sender: "Accounts Payable", realAddr: "billing@paypal-support.co", subject: "Invoice #8821990", body: `<p>Please review the invoice for $499.00.</p><p>👉 <a href="#" onclick="openFakeSite()">View Invoice</a></p>`, phishing: true, read: false },
+    { sender: "Internal HR", realAddr: "hr-portal@compnay.com", subject: "Policy Update", body: `<p>Review the new remote work policy.</p><p>👉 <a href="#" onclick="openFakeSite()">Review Policy</a></p>`, phishing: true, read: false },
+    { sender: "DocuSign", realAddr: "docusign@signatures-online.org", subject: "Sign: Performance Review", body: `<p>You have a new document waiting.</p><p>👉 <a href="#" onclick="openFakeSite()">Review Document</a></p>`, phishing: true, read: false },
+    { sender: "Finance Colleague", realAddr: "finance@company.com", subject: "Meeting Notes", body: `<p>Here are the notes from Tuesday.</p>`, phishing: false, read: false },
+    { sender: "IT Support", realAddr: "it-support@company.com", subject: "New Password Policy", body: `<p>New 16-character minimum starts Monday.</p>`, phishing: false, read: false }
+];
+
 let mode = "guided";
-let guidedIndex = 0;
+let score = 0;
+let breaches = 0;
+let caught = 0;
+let totalPhish = 4;
+let selectedEmail = null;
+let currentFolder = 'inbox';
+let folders = { inbox: [], starred: [], trash: [] };
+
+function resetGame() {
+    score = 0; breaches = 0; caught = 0; selectedEmail = null; currentFolder = 'inbox';
+    folders.starred = []; folders.trash = [];
+    document.getElementById('scoreDisplay').innerText = `Score: 0`;
+    document.getElementById('lootLog').innerHTML = `<div class="log-entry">[SYSTEM] Session Reset. Monitoring activities...</div>`;
+    document.getElementById('emailView').innerHTML = `<p style="padding:40px; text-align:center; color: #64748b;">Select an email to investigate.</p>`;
+    closeAll();
+    openModeSelection();
+}
+
+function openModeSelection() {
+  document.getElementById('introOverlay').style.display = 'flex';
+}
 
 function selectMode(m) {
   mode = m;
+  const template = (mode === 'challenge') ? CHALLENGE_EMAILS : GUIDED_EMAILS;
+  folders.inbox = JSON.parse(JSON.stringify(template));
   document.getElementById('introOverlay').style.display = 'none';
-  document.getElementById('backDifficulty').style.display = 'inline-block';
-
-  document.getElementById("modeDesc").innerText = mode === "guided"
-    ? "Guided mode: Next phishing email will be highlighted in yellow."
-    : "Challenge mode: No hints. Find phishing emails on your own.";
-
   renderList();
-  if (mode === "guided") {
-    highlightNextPhishing();
-  }
-}
-
-// --- EMAIL DATA ---
-let folders = {
-  inbox: [
-    { sender: "IT Security Ops", subject: "Unusual Login Detected", body: `<p>During a recent automated security assessment, unusual activity was detected on your account...</p><p>👉 <a href="#" onclick="openFakeSite()">Verify account security</a></p>`, phishing: true, read: false },
-    { sender: "HR Dept", subject: "Remote Work Guidelines", body: `<p>Hello,</p><p>Human Resources has published updates...</p>`, phishing: false, read: false },
-    { sender: "Bank Fraud Alert", subject: "Suspicious Transaction Detected", body: `<p>Dear Customer,</p><p>To ensure your account remains secure, please review:</p><p>👉 <a href="#" onclick="openFakeSite()">Review transaction details</a></p>`, phishing: true, read: false },
-    { sender: "Finance Dept", subject: "Invoice Confirmation", body: `<p>Hello,</p><p>Payment has been successfully processed...</p>`, phishing: false, read: false }
-  ],
-  starred: [
-    { sender: "Microsoft 365 Team", subject: "Mailbox Almost Full", body: `<p>Your mailbox is at 98% capacity...</p><p>👉 <a href="#" onclick="openFakeSite()">Review mailbox storage options</a></p>`, phishing: true, read: false },
-    { sender: "Learning Platform", subject: "Course Certificate Ready", body: `<p>Congratulations,</p><p>Your certificate is available for download.</p>`, phishing: false, read: false }
-  ],
-  spam: [
-    { sender: "Cheap Meds Online", subject: "Buy meds at 90% off!", body: `<p>Special limited offer!</p>`, phishing: true, read: false },
-    { sender: "Lottery Winner", subject: "You've Won $1,000,000!", body: `<p>Claim your prize immediately!</p>`, phishing: true, read: false }
-  ],
-  trash: []
-};
-
-let currentFolder = 'inbox';
-let selectedEmail = null;
-
-const emailList = document.getElementById('emailList');
-const emailView = document.getElementById('emailView');
-
-function getAllEmails() {
-  return [].concat(folders.inbox, folders.starred, folders.spam);
 }
 
 function renderList() {
-  emailList.innerHTML = '';
+  const list = document.getElementById('emailList');
+  list.innerHTML = '';
   folders[currentFolder].forEach((email, index) => {
     const row = document.createElement('div');
     row.className = 'email-row ' + (email.read ? '' : 'unread');
-
+    if (mode === 'guided' && email.phishing) row.classList.add('highlight');
     row.innerHTML = `
       <input type="checkbox">
-      <div class="star ${currentFolder==='starred'?'active':''}">★</div>
-      <div>${email.sender}</div>
+      <div class="star">★</div>
+      <div>${email.sender} <span class="email-hint">${email.read ? '(' + email.realAddr + ')' : ''}</span></div>
       <div>${email.subject}</div>
       <div class="time">Today</div>
     `;
-
-    row.onclick = () => openEmail(email, index, row);
-
-    row.querySelector('.star').onclick = e => {
-      e.stopPropagation();
-      e.target.classList.toggle('active');
-      if (row.querySelector('.star').classList.contains('active') && !folders.starred.includes(email)) {
-        folders.starred.push(email);
-      } else {
-        folders.starred = folders.starred.filter(em => em!==email);
-      }
-    };
-
-    emailList.appendChild(row);
+    row.onclick = () => openEmail(email, index);
+    list.appendChild(row);
   });
-
-  if (mode === "guided") {
-    highlightNextPhishing();
-  }
 }
 
-function openEmail(email, index, row) {
+function openEmail(email, index) {
   email.read = true;
-  row.classList.remove('unread');
   selectedEmail = { email, index };
-
-  emailView.innerHTML = `
-    <h2>${email.subject}</h2>
-    <p><strong>From:</strong> ${email.sender}</p>
-    <hr>
-    ${email.body}
+  renderList();
+  document.getElementById('emailView').innerHTML = `
+    <h2 style="margin-top:0">${email.subject}</h2>
+    <p><strong>From:</strong> ${email.sender} &lt;${email.realAddr}&gt;</p>
+    <hr style="border:0; border-top: 1px solid #ddd; margin: 20px 0;">
+    <div style="min-height:150px; font-size: 16px;">${email.body}</div>
     <div class="actions">
-      <button class="delete" onclick="deleteEmail()">Delete</button>
-      <button class="report" onclick="reportEmail()">Report</button>
+      <button class="delete" onclick="deleteEmail()">Move to Trash</button>
+      <button class="report" onclick="submitReport()">Report as Phishing</button>
     </div>
   `;
 }
 
+function logTerm(msg, isCritical = false) {
+    const log = document.getElementById('lootLog');
+    const entry = document.createElement('div');
+    entry.className = isCritical ? 'log-entry log-critical' : 'log-entry';
+    entry.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    log.prepend(entry);
+}
+
 function deleteEmail() {
+  if (!selectedEmail) return;
   const { email, index } = selectedEmail;
+  if(email.phishing) { updateScore(-10); logTerm("THREAT IGNORED: Evidence trashed without report.", true); }
   folders.trash.push(email);
   folders[currentFolder].splice(index,1);
   selectedEmail = null;
+  document.getElementById('emailView').innerHTML = `<p style="padding:40px; text-align:center; color: #64748b;">Email moved to trash.</p>`;
   renderList();
-  emailView.innerHTML = `<p>Email moved to Trash.</p>`;
   checkCompletion();
-}
-
-function reportEmail() {
-  document.getElementById('reportModal').style.display = 'flex';
 }
 
 function submitReport() {
+  if (!selectedEmail) return;
   const { email, index } = selectedEmail;
-
-  if (mode === "guided") {
-    const next = getNextPhishing();
-    if (!next || email.subject !== next.subject) {
-      showPopup("Wrong email", "This is not the highlighted phishing email. Report the yellow one.");
-      return;
-    }
-  }
-
+  if (email.phishing) { updateScore(15); caught++; showPopup("Threat Neutralized", "Verified. Phishing attempt blocked."); }
+  else { updateScore(-20); logTerm("ALERT: False positive reported.", true); showPopup("False Alarm", "This was a safe email."); }
   folders[currentFolder].splice(index,1);
   selectedEmail = null;
   renderList();
-  emailView.innerHTML = `<p>Email reported successfully.</p>`;
-  closeAll();
+  document.getElementById('emailView').innerHTML = `<p style="padding:40px; text-align:center; color: #64748b;">Investigation closed.</p>`;
   checkCompletion();
-}
-
-function switchFolder(folder, el) {
-  currentFolder = folder;
-  document.querySelectorAll('.sidebar div').forEach(d=>d.classList.remove('active'));
-  el.classList.add('active');
-  renderList();
-  emailView.innerHTML = `<p>Select an email and decide how to respond.</p>`;
-  checkCompletion();
-}
-
-function getNextPhishing() {
-  return getAllEmails().find(e => e.phishing);
-}
-
-function highlightNextPhishing() {
-  const next = getNextPhishing();
-  document.querySelectorAll('.email-row').forEach(row => row.classList.remove('highlight'));
-
-  if (!next) return;
-
-  folders[currentFolder].forEach((email, idx) => {
-    if (email.subject === next.subject && email.phishing) {
-      document.querySelectorAll('.email-row')[idx]?.classList.add('highlight');
-    }
-  });
 }
 
 function openFakeSite() {
-  document.getElementById('fakeSite').style.display = 'flex';
-  const t = document.getElementById('loadingText');
-  t.textContent = "Collecting credentials…";
-  setTimeout(() => t.textContent = "Uploading data…", 1500);
-  setTimeout(() => {
-    closeAll();
-    showPopup("Account Compromised","Your information has been collected without permission. This simulates a phishing attack.");
-  }, 3000);
+  const { index } = selectedEmail;
+  updateScore(-40); breaches++;
+  logTerm("CRITICAL: Breach detected. Remote access granted.", true);
+  folders[currentFolder].splice(index, 1);
+  selectedEmail = null;
+  renderList();
+  document.getElementById('emailView').innerHTML = `<p style="padding:40px; text-align:center; color: #dc2626; font-weight: bold;">⚠️ CONNECTION INTERRUPTED: Source deleted.</p>`;
+  showPopup("🚨 SYSTEM BREACHED", "The attacker has compromised the system.");
+  checkCompletion();
 }
 
-function showPopup(title,text) {
-  document.getElementById('popupTitle').textContent = title;
-  document.getElementById('popupText').textContent = text;
+function updateScore(pts) {
+  score += pts;
+  document.getElementById('scoreDisplay').innerText = `Score: ${score}`;
+  if (score <= -50) triggerFailure();
+}
+
+function showPopup(title, text) {
+  document.getElementById('popupTitle').innerText = title;
+  document.getElementById('popupText').innerText = text;
   document.getElementById('popup').style.display = 'flex';
 }
 
-function closeAll() {
-  document.querySelectorAll('.overlay').forEach(o=>o.style.display='none');
+function closeAll() { document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none'); }
+
+function switchFolder(folder, el) {
+  currentFolder = folder;
+  document.querySelectorAll('.sidebar div').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+function triggerFailure() {
+    document.getElementById('endTitle').innerText = "❌ CRITICAL SECURITY FAILURE";
+    document.getElementById('endStats').innerHTML = `<p><strong>Result:</strong> Risk Level Critical</p><p><strong>Score:</strong> ${score}</p>`;
+    document.getElementById('endpoint').style.display = 'flex';
 }
 
 function checkCompletion() {
-  const phishingRemaining = getAllEmails().some(e => e.phishing);
-  if (!phishingRemaining) {
+  const remaining = folders.inbox.some(e => e.phishing);
+  if (!remaining) {
+    document.getElementById('endTitle').innerText = "✅ Simulation Results";
+    document.getElementById('endStats').innerHTML = `<p><strong>Caught:</strong> ${caught} / ${totalPhish}</p><p><strong>Final Score:</strong> ${score}</p>`;
     document.getElementById('endpoint').style.display = 'flex';
   }
 }
 
-function goToMain() {
-  window.location.href = 'index.html';
-}
-function exitSimulation() {
-  document.body.innerHTML = "<h2 style='padding:40px;text-align:center'>Simulation ended. You may close this window.</h2>";
-}
-
-function showDifficulty() {
-  document.getElementById('introOverlay').style.display = 'flex';
-  document.getElementById('backDifficulty').style.display = 'none';
-}
-
-// --- NEW FUNCTION ---
-function goToSimulationSelection() {
-  window.location.href = 'solutions.html';
-}
+resetGame();
 </script>
-
 </body>
 </html>
-
