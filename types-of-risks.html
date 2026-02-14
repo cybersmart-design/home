@@ -14,7 +14,7 @@
     font-family: Arial, sans-serif;
 }
 
-/* GLOBAL (MATCHES LOBBY) */
+/* GLOBAL */
 body {
     background-color: #0b132b;
     color: #ffffff;
@@ -61,7 +61,7 @@ header {
     color: #5bc0be;
 }
 
-/* HERO (IDENTICAL STYLE TO LOBBY) */
+/* HERO */
 .hero {
     padding: 110px 20px 90px;
 }
@@ -105,7 +105,7 @@ header {
     text-align: left;
 }
 
-/* CARDS (MATCH LOBBY INFO BLOCKS) */
+/* CARDS */
 .card {
     background-color: #1c2541;
     border-radius: 10px;
@@ -123,7 +123,24 @@ header {
 }
 
 .card strong {
-    color: #cbd5e1;
+    color: #5bc0be;
+}
+
+/* CITATION STYLES */
+.card small {
+    display: block;
+    color: #94a3b8;
+    margin: 10px 0;
+    font-size: 0.85rem;
+}
+
+.card a.source-link {
+    color: #5bc0be;
+    text-decoration: none;
+}
+
+.card a.source-link:hover {
+    text-decoration: underline;
 }
 
 /* VIDEOS */
@@ -170,7 +187,6 @@ footer {
 
 <body>
 
-<!-- NAVIGATION -->
 <header>
     <nav class="navbar">
         <div class="logo">CyberSmart</div>
@@ -181,74 +197,73 @@ footer {
     </nav>
 </header>
 
-<!-- HERO -->
 <section class="hero">
     <h1>Types of Risks & Threats</h1>
     <p>
-        Understand the most common cybersecurity risks and learn how to protect
-        yourself online.
+        Cybersecurity doesn't have to be confusing. Let's break down the most common digital risks and learn how to protect yourself online.
     </p>
     <a href="#learn" class="btn">Start Learning</a>
 </section>
 
-<!-- VIDEOS -->
 <div class="video-section">
     <iframe src="https://www.youtube.com/embed/6aLwNv3tyhg" allowfullscreen></iframe>
     <iframe src="https://www.youtube.com/embed/qjmDDGaGmys" allowfullscreen></iframe>
 </div>
 
-<!-- RISKS -->
 <section class="section" id="learn">
 
     <div class="card">
-        <h3>Malware</h3>
+        <h3>Malware (The Digital Sickness)</h3>
         <p>
-            Malware is harmful software such as viruses and ransomware.
-            <br><strong>Solution:</strong> Keep software updated, use antivirus tools, and back up data.
+            Malware, short for "malicious software," is like a digital cold for your devices. It includes viruses and ransomware designed to sneak onto your computer, break your systems, or steal your private information.
         </p>
+        <small><em>Source: Simplified from the <a href="https://www.cisa.gov/sites/default/files/publications/Malware_1.pdf" target="_blank" class="source-link">Cybersecurity & Infrastructure Security Agency (CISA)</a></em></small>
+        <p><strong>How to stay safe:</strong> Keep your apps and devices updated, use reliable antivirus software, and always back up your important files.</p>
     </div>
 
     <div class="card">
-        <h3>Phishing</h3>
+        <h3>Phishing (The Digital Disguise)</h3>
         <p>
-            Fake emails or websites trick users into revealing sensitive data.
-            <br><strong>Solution:</strong> Check links carefully and enable two-factor authentication.
+            Phishing is a scam where criminals send fake emails or texts pretending to be a person or company you trust. Their goal is to trick you into clicking a dangerous link or typing in your passwords.
         </p>
+        <small><em>Source: Simplified from the <a href="https://www.cisa.gov/sites/default/files/2023-02/phishing-infographic-508c.pdf" target="_blank" class="source-link">Cybersecurity & Infrastructure Security Agency (CISA)</a></em></small>
+        <p><strong>How to stay safe:</strong> Double-check email addresses, never click suspicious links, and turn on two-factor authentication (2FA) for your accounts.</p>
     </div>
 
     <div class="card">
-        <h3>Data Breaches</h3>
+        <h3>Data Breaches (The Digital Break-In)</h3>
         <p>
-            Unauthorized access to private information.
-            <br><strong>Solution:</strong> Use strong passwords and monitor accounts regularly.
+            A data breach happens when hackers successfully break into a secure database and steal private information. This could include passwords, credit card numbers, or personal messages.
         </p>
+        <small><em>Source: Simplified from <a href="https://www.ibm.com/think/topics/data-breach" target="_blank" class="source-link">IBM</a></em></small>
+        <p><strong>How to stay safe:</strong> Use long, unique passwords for every account so that if one website gets breached, your other accounts stay locked.</p>
     </div>
 
     <div class="card">
-        <h3>Social Engineering</h3>
+        <h3>Social Engineering (The Mind Game)</h3>
         <p>
-            Manipulation techniques used to trick people.
-            <br><strong>Solution:</strong> Verify identities and never share sensitive info unexpectedly.
+            Instead of hacking computers, social engineering "hacks" people. Attackers use lies and manipulation to build trust, convincing you to break safety rules or hand over sensitive information voluntarily.
         </p>
+        <small><em>Source: Simplified from the <a href="https://csrc.nist.gov/glossary/term/social_engineering" target="_blank" class="source-link">National Institute of Standards and Technology (NIST)</a></em></small>
+        <p><strong>How to stay safe:</strong> Always be skeptical of urgent requests for money or personal details, and verify the person's identity before helping.</p>
     </div>
 
     <div class="card">
-        <h3>Denial of Service (DoS)</h3>
+        <h3>Denial of Service - DoS (The Traffic Jam)</h3>
         <p>
-            Attacks that overload systems and cause downtime.
-            <br><strong>Solution:</strong> Use firewalls and traffic monitoring tools.
+            A Denial of Service (DoS) attack creates a massive digital traffic jam. Attackers flood a website or network with so much fake traffic that it overloads and crashes, blocking real users from getting in.
         </p>
+        <small><em>Source: Simplified from the <a href="https://www.cisa.gov/news-events/news/understanding-denial-service-attacks" target="_blank" class="source-link">Cybersecurity & Infrastructure Security Agency (CISA)</a></em></small>
+        <p><strong>How to stay safe:</strong> While mostly a threat to website owners, everyday users can help by keeping devices virus-free so they aren't secretly used to generate this fake traffic.</p>
     </div>
 
 </section>
 
-<!-- NAV BUTTONS -->
 <div class="nav-buttons">
     <a href="lobby.html" class="btn">← Back to Home</a>
     <a href="solutions.html" class="btn">Explore Solutions →</a>
 </div>
 
-<!-- FOOTER -->
 <footer>© 2026 CyberSmart. Stay Safe Online.</footer>
 
 </body>
