@@ -3,243 +3,129 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CyberSmart | SIM_CORE v3.1_SCROLL_FIX</title>
+    <title>CyberSmart | Academy Glitch_v5</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@900&display=swap" rel="stylesheet" />
     <style>
         :root {
-            --bg: #010409;
-            --accent: #03fc84;
-            --cyan: #09eef5;
-            --red: #ff3e3e;
-            --panel: rgba(2, 8, 18, 0.9);
-            --border: rgba(9, 238, 245, 0.2);
+            --bg: #010409; --accent: #03fc84; --cyan: #09eef5; --red: #ff3e3e;
+            --panel: #161b22; --tooltip: #21262d; --border: #30363d;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        /* FIX: Allow scrolling on body */
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'JetBrains Mono', monospace; 
-            overflow-x: hidden;
-            overflow-y: auto; 
-        }
-
+        body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; overflow: hidden; }
         #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
-        /* --- THE CORE LAYOUT --- */
-        .simulator-grid {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            min-height: 100vh;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        /* Sidebar remains fixed height or grows with content */
-        .protocol-sidebar {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            height: fit-content;
-            position: sticky;
-            top: 20px;
-        }
-
-        .protocol-tab {
-            padding: 15px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: 0.3s;
-            position: relative;
-            background: rgba(0,0,0,0.3);
-        }
-
-        .protocol-tab:hover, .protocol-tab.active {
-            background: rgba(9, 238, 245, 0.1);
-            border-color: var(--cyan);
-        }
-
-        /* --- MAIN VIEWPORT --- */
-        .core-viewport {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 40px;
-            position: relative;
-            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 50px 50px;
-            /* FIX: Ensure container can expand */
-            min-height: calc(100vh - 40px);
-        }
-
-        .status-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-            font-size: 10px;
-            color: var(--cyan);
-        }
-
-        .main-content-split {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 30px;
-            margin-bottom: 40px; /* Space before button */
-        }
-
-        .content-display h2 { 
-            font-family: 'Outfit', sans-serif; 
-            font-size: 3.5rem; 
-            margin-bottom: 10px; 
-            text-transform: uppercase;
-        }
-
-        .solution-box {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 15px;
-            border-left: 3px solid var(--accent);
-            margin-bottom: 10px;
-        }
-
-        /* --- RIGHT SIDE FEED --- */
-        .live-terminal {
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            height: 400px; /* Fixed height for terminal */
-        }
-
-        #feed-container {
-            padding: 15px;
-            overflow-y: hidden;
-            flex-grow: 1;
-            font-size: 11px;
-        }
-
-        /* --- BUTTON FIX --- */
-        .btn-launch {
-            display: block;
-            width: 100%;
-            padding: 25px;
-            background: transparent;
-            border: 2px solid var(--accent);
-            color: var(--accent);
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            letter-spacing: 5px;
-            transition: 0.3s;
-            margin-top: auto; /* Pushes to bottom of container */
-        }
-
-        .btn-launch:hover { background: var(--accent); color: #000; box-shadow: 0 0 30px var(--accent); }
-
-        /* Glitch Animation */
+        /* --- GLITCH CSS EFFECT --- */
         @keyframes glitch {
             0% { transform: translate(0); }
             20% { transform: translate(-2px, 2px); }
             40% { transform: translate(2px, -2px); }
             100% { transform: translate(0); }
         }
-        .glitch-text:hover { animation: glitch 0.3s infinite; text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); }
+        .glitch-text:hover, .active-glitch { 
+            animation: glitch 0.3s infinite; 
+            text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); 
+        }
+
+        /* --- UI LAYOUT --- */
+        #selector, .end-screen { 
+            position: fixed; inset: 0; background: rgba(1, 4, 9, 0.98); z-index: 500; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .card { border: 1px solid var(--border); padding: 40px; margin: 15px; width: 350px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .card:hover { border-color: var(--cyan); background: rgba(9, 238, 245, 0.05); }
+
+        .top-nav {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 15px 25px;
+            display: flex; justify-content: space-between; z-index: 100;
+            background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border);
+        }
+        .nav-link { color: #8b949e; text-decoration: none; font-size: 11px; cursor: pointer; padding: 5px 10px; }
+
+        /* --- EDUCATIONAL MODAL --- */
+        #guide-modal {
+            position: absolute; top: 15%; left: 50%; transform: translateX(-50%);
+            width: 550px; background: var(--tooltip); border: 1px solid var(--border);
+            border-radius: 8px; z-index: 600; display: none; padding: 30px;
+        }
+        .logic-box { background: rgba(0,0,0,0.3); padding: 15px; margin-top: 15px; border-radius: 4px; font-size: 13px; border-left: 3px solid var(--accent); }
+
+        /* --- WORKSPACE --- */
+        .layout { display: grid; grid-template-columns: 1fr 350px; height: 100vh; padding: 80px 25px 25px 25px; gap: 20px; transition: 0.4s; }
+        .workspace { background: var(--panel); border: 1px solid var(--border); padding: 50px; display: flex; flex-direction: column; position: relative; }
+        input { background: #0d1117; border: 1px solid var(--border); color: var(--accent); padding: 20px; font-size: 20px; outline: none; width: 80%; text-align: center; margin: 20px 0; font-family: inherit; }
+        
+        .sidebar { background: var(--panel); border: 1px solid var(--border); padding: 20px; }
+        #threat-fill { height: 100%; background: var(--red); width: 0%; transition: 0.5s linear; }
+        .done { color: var(--accent) !important; opacity: 1 !important; font-weight: bold; }
+        .hidden { display: none !important; }
+        .modal-btn { background: #238636; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; font-family: 'Outfit'; }
     </style>
 </head>
 <body>
 
 <canvas id="bgCanvas"></canvas>
 
-<div class="simulator-grid">
-    <aside class="protocol-sidebar">
-        <h3 style="color: var(--cyan); font-size: 14px; margin-bottom: 10px;">> THREAT_INDEX</h3>
-        <div class="protocol-tab active" onclick="loadCore(0)">
-            <small>01</small>
-            <h4 class="scramble">DATA_BREACH</h4>
-        </div>
-        <div class="protocol-tab" onclick="loadCore(1)">
-            <small>02</small>
-            <h4 class="scramble">PHISHING_LINK</h4>
-        </div>
-        <div class="protocol-tab" onclick="loadCore(2)">
-            <small>03</small>
-            <h4 class="scramble">MALWARE_X</h4>
-        </div>
-    </aside>
+<div class="top-nav">
+    <a href="solutions.html" class="nav-link">← BACK TO SOLUTIONS</a>
+    <div class="nav-link" onclick="resetToMenu()">↺ RESELECT MODE</div>
+</div>
 
-    <main class="core-viewport">
-        <div class="status-header">
-            <span>CORE_STATUS: <span id="status-text" style="color: var(--accent);">READY</span></span>
-            <span>SYSTEM_TIME: 2026.02.15</span>
+<div id="selector">
+    <h1 id="menu-title" class="glitch-text active-glitch" style="font-family:'Outfit'; margin-bottom: 30px; letter-spacing: 2px; font-size: 3rem;">ACADEMY_BOOTCAMP_2026</h1>
+    <div style="display:flex;">
+        <div class="card" onclick="init('tutorial')"><h2>1. GUIDED MODE</h2><p>Training overlays active.</p></div>
+        <div class="card" onclick="init('sim')"><h2>2. CHALLENGE MODE</h2><p>Hacker timer active. No guide.</p></div>
+    </div>
+</div>
+
+<div id="guide-modal">
+    <div style="color:var(--cyan); font-size:10px; margin-bottom:10px;">> SECURITY_PRINCIPLE</div>
+    <div id="guide-content" style="font-size:14px; line-height:1.6; color:#c9d1d9;"></div>
+    <div id="guide-logic" class="logic-box"></div>
+    <button class="modal-btn" onclick="closeModal()">I UNDERSTAND</button>
+</div>
+
+<div id="victory-screen" class="end-screen hidden">
+    <h1 class="glitch-text active-glitch" style="color:var(--accent); font-family:'Outfit'; font-size:4rem;">SYSTEM_SECURED</h1>
+    <button class="modal-btn" style="background:var(--cyan); color:#000;" onclick="location.href='solutions.html'">COMPLETE SESSION</button>
+</div>
+
+<div id="fail-screen" class="end-screen hidden">
+    <h1 class="glitch-text active-glitch" style="color:var(--red); font-family:'Outfit'; font-size:4rem;">CRITICAL_BREACH</h1>
+    <button class="modal-btn" style="background:var(--red);" onclick="resetToMenu()">RETRY PROTOCOL</button>
+</div>
+
+<div class="layout" id="main-ui" style="opacity: 0; pointer-events: none;">
+    <main class="workspace">
+        <div style="text-align:center;">
+            <h2 id="task-title" class="glitch-text" style="font-family:'Outfit'; margin-bottom:10px; font-size: 2.5rem;"></h2>
+            <p id="task-desc" style="color:#8b949e;"></p>
+            <input type="text" id="user-input" placeholder="Type response..." autocomplete="off">
+            <div id="feedback" style="font-size:11px; min-height:15px; letter-spacing: 2px;"></div>
         </div>
-
-        <div class="main-content-split">
-            <div id="core-content" class="content-display">
-                </div>
-
-            <div class="live-terminal">
-                <div style="background:var(--border); padding:5px 10px; font-size:9px; color:var(--cyan);">LIVE_CORE_FEED</div>
-                <div id="feed-container"></div>
-            </div>
-        </div>
-
-        <a href="#" id="launch-btn" class="btn-launch glitch-text">INITIALIZE SIMULATION CORE</a>
     </main>
+
+    <aside class="sidebar">
+        <div style="border:1px solid var(--red); padding:15px; text-align:center; margin-bottom:25px;">
+            <div style="font-size:10px; color:var(--red);">THREAT_LEVEL</div>
+            <div style="background:#000; height:10px; margin:10px 0; overflow:hidden;"><div id="threat-fill"></div></div>
+            <div id="threat-pct" style="color:var(--red); font-size:18px;">0%</div>
+        </div>
+        <ul id="checklist">
+            <li>1. Unique Passwords</li><li>2. 2FA Cipher</li><li>3. Software Updates</li><li>4. Public Wi-Fi VPN</li>
+            <li>5. Device Logic</li><li>6. Phishing Forensics</li><li>7. Sharing Limits</li><li>8. Cloud Access</li>
+            <li>9. Log Anomaly</li><li>10. Human Link</li>
+        </ul>
+    </aside>
 </div>
 
 <script>
-    // [Same protocolData from previous response]
-    const protocolData = [
-        {
-            title: "Data Breach",
-            desc: "Unauthorized exfiltration of sensitive organizational assets and PII data.",
-            solutions: [
-                ["MFA_ENFORCE", "Implement 2-factor authentication for terminal entry."],
-                ["PATCH_MGMT", "Automated synchronization of system updates."],
-                ["ENCRYPTION", "Resting data encrypted via FIPS 140-2 standards."],
-                ["AUDIT_LOGS", "Monitoring failed login spikes for brute-force."]
-            ],
-            feed: ["> Sniffing port 80...", "> Intercepting SQL packet", "!! ALERT: DB EXFIL ATTEMPT"],
-            link: "databreach.html",
-            color: "#09eef5"
-        },
-        {
-            title: "Phishing",
-            desc: "Deceptive social engineering campaigns targeting human vulnerability.",
-            solutions: [
-                ["DOMAIN_CHECK", "Verification of SPF, DKIM, and DMARC records."],
-                ["URL_SCAN", "Automated sandbox detonation of embedded hyperlinks."],
-                ["USER_AWARE", "Simulation-based training for character-spoofing."],
-                ["REPORT_TOOL", "One-click reporting to IT forensics."]
-            ],
-            feed: ["> Scanning SMTP...", "> SPF check: PASS", "!! ALERT: SPOOFED DOMAIN"],
-            link: "phishing.html",
-            color: "#03fc84"
-        },
-        {
-            title: "Malware",
-            desc: "Malicious code execution designed for system persistence.",
-            solutions: [
-                ["SEGMENTATION", "VLAN isolation to prevent lateral spread."],
-                ["EDR_DEPLOY", "Detection and Response to kill processes."],
-                ["AIR_GAP", "Offline backups for ransomware recovery."],
-                ["SANDBOXING", "Running suspicious .exe in virtual environments."]
-            ],
-            feed: ["> Registry scan...", "> Trojan identified", "!! ALERT: PERSISTENCE ATTEMPT"],
-            link: "malwareattack.html",
-            color: "#ff3e3e"
-        }
-    ];
+    let step = 1, threat = 0, mode = 'tutorial', active = false;
+    let dynamicShift = 1;
+    let dynamicKey = "SECURE";
 
+    // --- SCRAMBLE EFFECT ---
     function scrambleText(element, finalMessage) {
         const chars = "!<>-_\\/[]{}—=+*^?#________";
         let iteration = 0;
@@ -253,73 +139,110 @@
         }, 30);
     }
 
-    let feedInterval;
-
-    function loadCore(index) {
-        const data = protocolData[index];
-        const display = document.getElementById('core-content');
-        const launchBtn = document.getElementById('launch-btn');
-
-        document.querySelectorAll('.protocol-tab').forEach((t, i) => t.classList.toggle('active', i === index));
-
-        display.innerHTML = `
-            <h2 id="main-title" class="glitch-text" style="color: ${data.color}">${data.title}</h2>
-            <p id="main-desc" style="color: #a3b8cc; font-size: 13px; margin-bottom: 20px;"></p>
-            <div class="solution-grid">
-                ${data.solutions.map((s, i) => `
-                    <div class="solution-box" style="border-left-color: ${data.color}">
-                        <strong id="sol-title-${i}" style="color: ${data.color}"></strong>
-                        <p id="sol-desc-${i}" style="font-size: 11px; margin-top:5px; color: #a3b8cc;"></p>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-
-        scrambleText(document.getElementById('main-title'), data.title);
-        scrambleText(document.getElementById('main-desc'), data.desc);
-        data.solutions.forEach((s, i) => {
-            scrambleText(document.getElementById(`sol-title-${i}`), s[0]);
-            scrambleText(document.getElementById(`sol-desc-${i}`), s[1]);
-        });
-
-        launchBtn.href = data.link;
-        launchBtn.style.borderColor = data.color;
-        launchBtn.style.color = data.color;
-        startFeed(data.feed, data.color);
+    function caesarShift(text, shift) {
+        return text.split('').map(char => {
+            if (char === '_') return char;
+            if (/[0-9]/.test(char)) return (parseInt(char) + shift) % 10;
+            let code = char.charCodeAt(0);
+            if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+            return char;
+        }).join('');
     }
 
-    function startFeed(messages, color) {
-        const container = document.getElementById('feed-container');
-        container.innerHTML = "";
-        clearInterval(feedInterval);
-        feedInterval = setInterval(() => {
-            const msg = messages[Math.floor(Math.random() * messages.length)];
-            const line = document.createElement('div');
-            line.style.color = msg.includes('!!') ? '#ff3e3e' : color;
-            line.innerHTML = `<span style="opacity:0.4">> [${new Date().toLocaleTimeString()}]</span> ${msg}`;
-            container.prepend(line);
-            if (container.childNodes.length > 10) container.removeChild(container.lastChild);
-        }, 1500);
+    // --- 10 NUMERIC STEPS ---
+    const data = {
+        1: { title: "1. Strong Passwords", guide: "Complexity stops brute force. Answer: 'Security#2026!'", logic: "Use 12+ chars and special symbols.", check: (v) => v.length >= 12 && (v.match(/[!@#$%^&*]/g)||[]).length >= 2 },
+        2: { title: "2. 2FA Handshake", getDesc: () => `Key: '${dynamicKey}_99' (Shift +${dynamicShift})`, guide: "Substitution ciphers obscure handshake data.", getLogic: () => `Calculate shift. Answer: ${caesarShift(dynamicKey + "_99", dynamicShift)}`, check: (v) => v.toUpperCase() === caesarShift(dynamicKey + "_99", dynamicShift) },
+        3: { title: "3. Software Updates", guide: "Patches fix known security holes.", logic: "Update v3.4.1 to next patch. Answer: '3.4.2'", check: (v) => v === "3.4.2" },
+        4: { title: "4. Public Wi-Fi", guide: "Encrypted tunnels protect traffic.", logic: "VPN is the standard tool. Answer: 'VPN'", check: (v) => v.toUpperCase() === "VPN" },
+        5: { title: "5. Device Logic", guide: "Math PINs foil automated scripts.", logic: "PIN sum must be 24. Answer: '6666'", check: (v) => v.split('').reduce((a, b) => parseInt(a) + parseInt(b), 0) === 24 },
+        6: { title: "6. Phishing Forensics", guide: "Inspect the final domain segment.", logic: "Is 'scam.net' safe? Answer: 'SCAM'", check: (v) => v.toLowerCase() === "scam" },
+        7: { title: "7. Privacy Settings", guide: "Apply 'Least Privilege' rules.", logic: "Deny location requests. Answer: 'DENY'", check: (v) => v.toUpperCase() === "DENY" },
+        8: { title: "8. Cloud Permissions", guide: "Octal: Read(4), Write(2), Exec(1).", logic: "Total permissions sum: '7'", check: (v) => v === "7" },
+        9: { title: "9. Log Anomaly", guide: "External IPs denote outside actors.", logic: "Threat is: 77.44.11.2", check: (v) => v === "77.44.11.2" },
+        10: { title: "10. Human Factor", guide: "Manipulation is the top threat.", logic: "The weakest link is? Answer: 'HUMANS'", check: (v) => v.toLowerCase().includes("human") }
+    };
+
+    function init(m) {
+        mode = m; active = true; step = 1; threat = 0;
+        dynamicShift = (mode === 'sim') ? Math.floor(Math.random() * 3) + 1 : 1; 
+        document.getElementById('selector').classList.add('hidden');
+        document.getElementById('main-ui').style.opacity = "1";
+        document.getElementById('main-ui').style.pointerEvents = "auto";
+        document.getElementById('threat-fill').style.width = "0%";
+        document.querySelectorAll('#checklist li').forEach(li => li.classList.remove('done'));
+        if(mode === 'tutorial') showModal();
+        render();
     }
 
-    loadCore(0);
+    function resetToMenu() {
+        active = false;
+        document.getElementById('selector').classList.remove('hidden');
+        document.getElementById('victory-screen').classList.add('hidden');
+        document.getElementById('fail-screen').classList.add('hidden');
+        document.getElementById('main-ui').style.opacity = "0";
+    }
 
-    // Three.js Background
+    function showModal() {
+        if(mode !== 'tutorial') return;
+        document.getElementById('guide-modal').style.display = "block";
+        scrambleText(document.getElementById('guide-content'), data[step].guide);
+        scrambleText(document.getElementById('guide-logic'), data[step].getLogic ? data[step].getLogic() : data[step].logic);
+        document.getElementById('main-ui').style.opacity = "0.2";
+    }
+
+    function closeModal() {
+        document.getElementById('guide-modal').style.display = "none";
+        document.getElementById('main-ui').style.opacity = "1";
+        document.getElementById('main-ui').style.pointerEvents = "auto";
+        document.getElementById('user-input').focus();
+    }
+
+    function render() {
+        const item = data[step];
+        if(!item) { active = false; document.getElementById('victory-screen').classList.remove('hidden'); return; }
+        scrambleText(document.getElementById('task-title'), item.title);
+        document.getElementById('task-desc').innerText = item.getDesc ? item.getDesc() : "Follow protocol instructions.";
+        document.getElementById('user-input').value = "";
+    }
+
+    document.getElementById('user-input').addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') {
+            if(data[step].check(e.target.value)) {
+                document.querySelectorAll('#checklist li')[step-1].classList.add('done');
+                step++;
+                if(mode === 'tutorial' && data[step]) showModal();
+                else render();
+            } else {
+                document.getElementById('feedback').innerText = "ERROR: INVALID_INPUT";
+                document.getElementById('feedback').style.color = "var(--red)";
+                if(mode === 'sim') threat += 10;
+            }
+        }
+    });
+
+    setInterval(() => {
+        if(!active || mode === 'tutorial') return;
+        threat += 0.25; 
+        document.getElementById('threat-fill').style.width = threat + "%";
+        document.getElementById('threat-pct').innerText = Math.floor(threat) + "%";
+        if(threat >= 100) { active = false; document.getElementById('fail-screen').classList.remove('hidden'); }
+    }, 250);
+
+    // Particles
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     const geo = new THREE.BufferGeometry();
     const pos = [];
-    for(let i=0; i<2000; i++) pos.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
+    for(let i=0; i<800; i++) pos.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
     geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.05, transparent: true, opacity: 0.2 });
-    const points = new THREE.Points(geo, mat);
+    const points = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0x09eef5, size: 0.05, transparent: true, opacity: 0.15 }));
     scene.add(points);
     camera.position.z = 50;
     function animate() { requestAnimationFrame(animate); points.rotation.y += 0.001; renderer.render(scene, camera); }
     animate();
 </script>
-
 </body>
 </html>
