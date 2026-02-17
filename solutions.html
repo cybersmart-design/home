@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CyberSmart | SIM_CORE_FIXED_TOP</title>
+    <title>CyberSmart | SIM_CORE_ENHANCED</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@900&display=swap" rel="stylesheet" />
@@ -15,7 +15,7 @@
             --red: #ff3e3e;
             --panel: rgba(2, 8, 18, 0.95);
             --border: rgba(9, 238, 245, 0.2);
-            --header-height: 110px; /* Fixed height for mobile menu */
+            --header-height: 110px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,7 +29,7 @@
 
         #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
 
-        /* --- FIXED TOP NAVIGATION (MOBILE) --- */
+        /* --- NAVIGATION --- */
         .protocol-sidebar {
             background: var(--panel);
             border-bottom: 1px solid var(--border);
@@ -38,7 +38,7 @@
             flex-direction: row;
             overflow-x: auto;
             gap: 10px;
-            position: fixed; /* Always stays at the top */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -60,17 +60,14 @@
             flex-direction: column;
             justify-content: center;
         }
-
-        .protocol-tab h4 { font-size: 11px; }
         .protocol-tab.active {
             background: rgba(9, 238, 245, 0.1);
             border-color: var(--cyan);
-            box-shadow: 0 0 15px rgba(9, 238, 245, 0.2);
         }
 
-        /* --- MAIN VIEWPORT (PUSHED DOWN) --- */
+        /* --- MAIN VIEWPORT --- */
         .simulator-grid {
-            padding-top: var(--header-height); /* Prevents menu from covering content */
+            padding-top: var(--header-height);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -103,6 +100,22 @@
             text-transform: uppercase;
         }
 
+        /* --- NEW: METRIC SECTION --- */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+            background: rgba(255,255,255,0.02);
+        }
+        .metric-val { font-size: 18px; font-weight: bold; display: block; }
+        .metric-label { font-size: 7px; opacity: 0.6; text-transform: uppercase; }
+
         .solution-box {
             background: rgba(255, 255, 255, 0.03);
             padding: 12px;
@@ -110,20 +123,24 @@
             margin-bottom: 10px;
         }
 
+        /* --- TERMINALS --- */
         .live-terminal {
             background: rgba(0, 0, 0, 0.9);
             border: 1px solid var(--border);
-            height: 200px;
+            height: 150px;
             margin-top: 20px;
             display: flex;
             flex-direction: column;
         }
-
-        #feed-container {
-            padding: 10px;
-            overflow: hidden;
-            font-size: 9px;
+        
+        .fact-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed var(--cyan);
+            background: rgba(9, 238, 245, 0.05);
         }
+
+        #feed-container { padding: 10px; overflow: hidden; font-size: 9px; }
 
         .btn-launch {
             display: block;
@@ -136,35 +153,15 @@
             font-weight: bold;
             margin-top: 30px;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        /* --- DESKTOP VIEWPORT (SIDEBAR RESTORED) --- */
+        /* Desktop Adjustments */
         @media (min-width: 992px) {
             :root { --header-height: 0px; }
-            
-            .simulator-grid {
-                display: grid;
-                grid-template-columns: 300px 1fr;
-                padding-top: 0;
-                padding: 20px;
-                gap: 20px;
-            }
-
-            .protocol-sidebar {
-                position: sticky;
-                top: 20px;
-                width: auto;
-                height: fit-content;
-                flex-direction: column;
-                overflow-x: visible;
-                border: 1px solid var(--border);
-            }
-
-            .protocol-tab { flex: none; width: 100%; padding: 15px; }
-            .protocol-tab h4 { font-size: 14px; }
-            
-            .main-content-split { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
-            .live-terminal { height: 400px; margin-top: 0; }
+            .simulator-grid { display: grid; grid-template-columns: 300px 1fr; padding: 20px; gap: 20px; }
+            .protocol-sidebar { position: sticky; top: 20px; width: auto; height: fit-content; flex-direction: column; }
+            .main-content-split { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         }
     </style>
 </head>
@@ -190,16 +187,26 @@
 
     <main class="core-viewport">
         <div class="status-header">
-            <span>CORE_STATUS: <span id="status-text" style="color: var(--accent);">ACTIVE</span></span>
-            <span>2026.02.15</span>
+            <span>CORE_STATUS: <span id="status-text" style="color: var(--accent);">OPERATIONAL</span></span>
+            <span id="clock">00:00:00</span>
         </div>
 
         <div class="main-content-split">
             <div id="core-content" class="content-display"></div>
             
-            <div class="live-terminal">
-                <div style="background:var(--border); padding:5px 10px; font-size:9px; color:var(--cyan);">LIVE_CORE_FEED</div>
-                <div id="feed-container"></div>
+            <div>
+                <div class="metric-grid" id="metrics">
+                    </div>
+
+                <div class="live-terminal">
+                    <div style="background:var(--border); padding:5px 10px; font-size:9px; color:var(--cyan);">NETWORK_TRAFFIC_LOGS</div>
+                    <div id="feed-container"></div>
+                </div>
+
+                <div class="fact-box">
+                    <small style="color: var(--cyan); display:block; margin-bottom:5px;">> INTELLIGENCE_BRIEF</small>
+                    <p id="fact-text" style="font-size: 11px; color: #a3b8cc; line-height: 1.4;"></p>
+                </div>
             </div>
         </div>
 
@@ -211,34 +218,43 @@
     const protocolData = [
         {
             title: "Data Breach",
-            desc: "Unauthorized exfiltration of sensitive organizational assets.",
+            desc: "The unauthorized movement or disclosure of sensitive information to an untrusted environment.",
+            metrics: { danger: "94%", complexity: "High", vector: "SQLi" },
+            fact: "The average cost of a data breach in 2024 reached $4.88 million. Speed of detection is the most critical factor in cost reduction.",
             solutions: [
-                ["MFA_ENFORCE", "Enable 2-factor authentication."],
-                ["ENCRYPTION", "Resting data AES-256."]
+                ["MFA_LEVEL_3", "Biometric and hardware token enforcement."],
+                ["ZERO_TRUST", "Never trust, always verify protocol."],
+                ["DLP_SHIELD", "Data Loss Prevention monitoring at the gateway."]
             ],
-            feed: ["> Sniffing port 80...", "!! ALERT: DB EXFIL"],
+            feed: ["> Scanning DB...", "!! Leak detected", "> Blocking IP: 192.168.1.104"],
             link: "databreach.html",
             color: "#09eef5"
         },
         {
             title: "Phishing",
-            desc: "Deceptive social engineering campaigns.",
+            desc: "Social engineering where attackers masquerade as a trusted entity to steal credentials.",
+            metrics: { danger: "88%", complexity: "Med", vector: "SMTP" },
+            fact: "Over 90% of successful cyberattacks start with a phishing email. Attackers now use AI to create perfectly written lures.",
             solutions: [
-                ["DOMAIN_CHECK", "Verify SPF records."],
-                ["URL_SCAN", "Sandbox detonation."]
+                ["SPF_ENFORCE", "Sender Policy Framework record verification."],
+                ["URL_SANDBOX", "Scanning all incoming links in a safe zone."],
+                ["USER_EDU", "Ongoing simulation training for personnel."]
             ],
-            feed: ["> Scanning SMTP...", "!! ALERT: SPOOFED"],
+            feed: ["> Analyzing headers...", "> SPF check: FAIL", "!! SPOOF DETECTED"],
             link: "phishing.html",
             color: "#03fc84"
         },
         {
             title: "Malware",
-            desc: "Malicious code designed for persistence.",
+            desc: "Malicious software designed to infiltrate, damage, or gain unauthorized access to a computer system.",
+            metrics: { danger: "97%", complexity: "Max", vector: "Binary" },
+            fact: "Ransomware-as-a-Service (RaaS) has made it possible for even low-skilled criminals to launch devastating attacks.",
             solutions: [
-                ["SEGMENTATION", "VLAN isolation."],
-                ["EDR_DEPLOY", "Kill processes."]
+                ["EDR_SENTINEL", "Endpoint Detection and Response active monitoring."],
+                ["VLAN_ISOLATE", "Isolating infected nodes from the core."],
+                ["BACKUP_CORE", "Encrypted offline recovery points."]
             ],
-            feed: ["> Registry scan...", "!! ALERT: TROJAN"],
+            feed: ["> Checking Registry...", "!! Trojan-X found", "> Killing process ID: 9921"],
             link: "malwareattack.html",
             color: "#ff3e3e"
         }
@@ -255,8 +271,55 @@
             }).join("");
             if(iteration >= finalMessage.length) clearInterval(interval);
             iteration += 1 / 3;
-        }, 30);
+        }, 20);
     }
+
+    function loadCore(index) {
+        const data = protocolData[index];
+        const display = document.getElementById('core-content');
+        const metrics = document.getElementById('metrics');
+        const factText = document.getElementById('fact-text');
+        const launchBtn = document.getElementById('launch-btn');
+
+        document.querySelectorAll('.protocol-tab').forEach((t, i) => t.classList.toggle('active', i === index));
+
+        display.innerHTML = `
+            <h2 id="main-title" style="color: ${data.color}">${data.title}</h2>
+            <p id="main-desc" style="color: #a3b8cc; font-size: 13px; margin-bottom: 20px; line-height:1.5;"></p>
+            <div class="solution-grid">
+                ${data.solutions.map((s, i) => `
+                    <div class="solution-box" style="border-left-color: ${data.color}">
+                        <strong id="sol-title-${i}" style="color: ${data.color}"></strong>
+                        <p id="sol-desc-${i}" style="font-size: 11px; margin-top:5px; color: #a3b8cc;"></p>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        metrics.innerHTML = `
+            <div class="metric-card"><span class="metric-val" style="color:${data.color}">${data.metrics.danger}</span><span class="metric-label">Danger</span></div>
+            <div class="metric-card"><span class="metric-val" style="color:${data.color}">${data.metrics.complexity}</span><span class="metric-label">Complex</span></div>
+            <div class="metric-card"><span class="metric-val" style="color:${data.color}">${data.metrics.vector}</span><span class="metric-label">Vector</span></div>
+        `;
+
+        scrambleText(document.getElementById('main-title'), data.title);
+        scrambleText(document.getElementById('main-desc'), data.desc);
+        scrambleText(factText, data.fact);
+        data.solutions.forEach((s, i) => {
+            scrambleText(document.getElementById(`sol-title-${i}`), s[0]);
+            scrambleText(document.getElementById(`sol-desc-${i}`), s[1]);
+        });
+
+        launchBtn.href = data.link;
+        launchBtn.style.borderColor = data.color;
+        launchBtn.style.color = data.color;
+        startFeed(data.feed, data.color);
+    }
+
+    // [Time and Logic from previous response preserved]
+    setInterval(() => {
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+    }, 1000);
 
     let feedInterval;
     function startFeed(messages, color) {
@@ -269,45 +332,13 @@
             line.style.color = msg.includes('!!') ? '#ff3e3e' : color;
             line.innerHTML = `> [${new Date().toLocaleTimeString()}] ${msg}`;
             container.prepend(line);
-            if (container.childNodes.length > 8) container.removeChild(container.lastChild);
-        }, 1500);
-    }
-
-    function loadCore(index) {
-        const data = protocolData[index];
-        const display = document.getElementById('core-content');
-        const launchBtn = document.getElementById('launch-btn');
-
-        document.querySelectorAll('.protocol-tab').forEach((t, i) => t.classList.toggle('active', i === index));
-
-        display.innerHTML = `
-            <h2 id="main-title" style="color: ${data.color}">${data.title}</h2>
-            <p id="main-desc" style="color: #a3b8cc; font-size: 13px; margin-bottom: 20px;"></p>
-            <div class="solution-grid">
-                ${data.solutions.map((s, i) => `
-                    <div class="solution-box" style="border-left-color: ${data.color}">
-                        <strong id="sol-title-${i}" style="color: ${data.color}"></strong>
-                        <p id="sol-desc-${i}" style="font-size: 11px; margin-top:5px; color: #a3b8cc;"></p>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-
-        scrambleText(document.getElementById('main-title'), data.title);
-        scrambleText(document.getElementById('main-desc'), data.desc);
-        data.solutions.forEach((s, i) => {
-            scrambleText(document.getElementById(`sol-title-${i}`), s[0]);
-            scrambleText(document.getElementById(`sol-desc-${i}`), s[1]);
-        });
-
-        launchBtn.href = data.link;
-        launchBtn.style.borderColor = data.color;
-        launchBtn.style.color = data.color;
-        startFeed(data.feed, data.color);
+            if (container.childNodes.length > 5) container.removeChild(container.lastChild);
+        }, 2000);
     }
 
     loadCore(0);
 
+    // Three.js Background
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), alpha: true });
@@ -322,12 +353,6 @@
     camera.position.z = 50;
     function animate() { requestAnimationFrame(animate); points.rotation.y += 0.0008; renderer.render(scene, camera); }
     animate();
-
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
 </script>
 </body>
 </html>
