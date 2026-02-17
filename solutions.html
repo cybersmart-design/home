@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CyberSmart | SIM_CORE v3.1_SCROLL_FIX</title>
+    <title>CyberSmart | SIM_CORE_FIXED_TOP</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@900&display=swap" rel="stylesheet" />
@@ -13,71 +13,77 @@
             --accent: #03fc84;
             --cyan: #09eef5;
             --red: #ff3e3e;
-            --panel: rgba(2, 8, 18, 0.9);
+            --panel: rgba(2, 8, 18, 0.95);
             --border: rgba(9, 238, 245, 0.2);
+            --header-height: 110px; /* Fixed height for mobile menu */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* FIX: Allow scrolling on body */
         body { 
             background: var(--bg); 
             color: #fff; 
             font-family: 'JetBrains Mono', monospace; 
             overflow-x: hidden;
-            overflow-y: auto; 
         }
 
-        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; }
+        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
 
-        /* --- THE CORE LAYOUT --- */
-        .simulator-grid {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            min-height: 100vh;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        /* Sidebar remains fixed height or grows with content */
+        /* --- FIXED TOP NAVIGATION (MOBILE) --- */
         .protocol-sidebar {
             background: var(--panel);
-            border: 1px solid var(--border);
-            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            padding: 15px;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            height: fit-content;
-            position: sticky;
-            top: 20px;
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 10px;
+            position: fixed; /* Always stays at the top */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            z-index: 1000;
+            scrollbar-width: none;
+            backdrop-filter: blur(15px);
         }
+        .protocol-sidebar::-webkit-scrollbar { display: none; }
 
         .protocol-tab {
-            padding: 15px;
+            flex: 0 0 140px;
+            padding: 10px;
             border: 1px solid var(--border);
             cursor: pointer;
+            background: rgba(0,0,0,0.5);
             transition: 0.3s;
-            position: relative;
-            background: rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .protocol-tab:hover, .protocol-tab.active {
+        .protocol-tab h4 { font-size: 11px; }
+        .protocol-tab.active {
             background: rgba(9, 238, 245, 0.1);
             border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(9, 238, 245, 0.2);
         }
 
-        /* --- MAIN VIEWPORT --- */
+        /* --- MAIN VIEWPORT (PUSHED DOWN) --- */
+        .simulator-grid {
+            padding-top: var(--header-height); /* Prevents menu from covering content */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
         .core-viewport {
             background: var(--panel);
             border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 40px;
-            position: relative;
+            margin: 10px;
+            padding: 25px 15px;
             background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 50px 50px;
-            /* FIX: Ensure container can expand */
-            min-height: calc(100vh - 40px);
+            background-size: 30px 30px;
+            flex-grow: 1;
         }
 
         .status-header {
@@ -85,74 +91,81 @@
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
             padding-bottom: 10px;
-            margin-bottom: 30px;
-            font-size: 10px;
+            margin-bottom: 20px;
+            font-size: 8px;
             color: var(--cyan);
-        }
-
-        .main-content-split {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 30px;
-            margin-bottom: 40px; /* Space before button */
         }
 
         .content-display h2 { 
             font-family: 'Outfit', sans-serif; 
-            font-size: 3.5rem; 
-            margin-bottom: 10px; 
+            font-size: clamp(1.8rem, 8vw, 3.5rem); 
+            margin-bottom: 15px; 
             text-transform: uppercase;
         }
 
         .solution-box {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
             border-left: 3px solid var(--accent);
             margin-bottom: 10px;
         }
 
-        /* --- RIGHT SIDE FEED --- */
         .live-terminal {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             border: 1px solid var(--border);
+            height: 200px;
+            margin-top: 20px;
             display: flex;
             flex-direction: column;
-            height: 400px; /* Fixed height for terminal */
         }
 
         #feed-container {
-            padding: 15px;
-            overflow-y: hidden;
-            flex-grow: 1;
-            font-size: 11px;
+            padding: 10px;
+            overflow: hidden;
+            font-size: 9px;
         }
 
-        /* --- BUTTON FIX --- */
         .btn-launch {
             display: block;
-            width: 100%;
-            padding: 25px;
+            padding: 20px;
             background: transparent;
             border: 2px solid var(--accent);
             color: var(--accent);
             text-align: center;
             text-decoration: none;
             font-weight: bold;
-            letter-spacing: 5px;
-            transition: 0.3s;
-            margin-top: auto; /* Pushes to bottom of container */
+            margin-top: 30px;
+            text-transform: uppercase;
         }
 
-        .btn-launch:hover { background: var(--accent); color: #000; box-shadow: 0 0 30px var(--accent); }
+        /* --- DESKTOP VIEWPORT (SIDEBAR RESTORED) --- */
+        @media (min-width: 992px) {
+            :root { --header-height: 0px; }
+            
+            .simulator-grid {
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                padding-top: 0;
+                padding: 20px;
+                gap: 20px;
+            }
 
-        /* Glitch Animation */
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+            .protocol-sidebar {
+                position: sticky;
+                top: 20px;
+                width: auto;
+                height: fit-content;
+                flex-direction: column;
+                overflow-x: visible;
+                border: 1px solid var(--border);
+            }
+
+            .protocol-tab { flex: none; width: 100%; padding: 15px; }
+            .protocol-tab h4 { font-size: 14px; }
+            
+            .main-content-split { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
+            .live-terminal { height: 400px; margin-top: 0; }
         }
-        .glitch-text:hover { animation: glitch 0.3s infinite; text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); }
     </style>
 </head>
 <body>
@@ -161,7 +174,6 @@
 
 <div class="simulator-grid">
     <aside class="protocol-sidebar">
-        <h3 style="color: var(--cyan); font-size: 14px; margin-bottom: 10px;">> THREAT_INDEX</h3>
         <div class="protocol-tab active" onclick="loadCore(0)">
             <small>01</small>
             <h4 class="scramble">DATA_BREACH</h4>
@@ -178,69 +190,62 @@
 
     <main class="core-viewport">
         <div class="status-header">
-            <span>CORE_STATUS: <span id="status-text" style="color: var(--accent);">READY</span></span>
-            <span>SYSTEM_TIME: 2026.02.15</span>
+            <span>CORE_STATUS: <span id="status-text" style="color: var(--accent);">ACTIVE</span></span>
+            <span>2026.02.15</span>
         </div>
 
         <div class="main-content-split">
-            <div id="core-content" class="content-display">
-                </div>
-
+            <div id="core-content" class="content-display"></div>
+            
             <div class="live-terminal">
                 <div style="background:var(--border); padding:5px 10px; font-size:9px; color:var(--cyan);">LIVE_CORE_FEED</div>
                 <div id="feed-container"></div>
             </div>
         </div>
 
-        <a href="#" id="launch-btn" class="btn-launch glitch-text">INITIALIZE SIMULATION CORE</a>
+        <a href="#" id="launch-btn" class="btn-launch">Initialize Simulation</a>
     </main>
 </div>
 
 <script>
-    // [Same protocolData from previous response]
     const protocolData = [
         {
             title: "Data Breach",
-            desc: "Unauthorized exfiltration of sensitive organizational assets and PII data.",
+            desc: "Unauthorized exfiltration of sensitive organizational assets.",
             solutions: [
-                ["MFA_ENFORCE", "Implement 2-factor authentication for terminal entry."],
-                ["PATCH_MGMT", "Automated synchronization of system updates."],
-                ["ENCRYPTION", "Resting data encrypted via FIPS 140-2 standards."],
-                ["AUDIT_LOGS", "Monitoring failed login spikes for brute-force."]
+                ["MFA_ENFORCE", "Enable 2-factor authentication."],
+                ["ENCRYPTION", "Resting data AES-256."]
             ],
-            feed: ["> Sniffing port 80...", "> Intercepting SQL packet", "!! ALERT: DB EXFIL ATTEMPT"],
+            feed: ["> Sniffing port 80...", "!! ALERT: DB EXFIL"],
             link: "databreach.html",
             color: "#09eef5"
         },
         {
             title: "Phishing",
-            desc: "Deceptive social engineering campaigns targeting human vulnerability.",
+            desc: "Deceptive social engineering campaigns.",
             solutions: [
-                ["DOMAIN_CHECK", "Verification of SPF, DKIM, and DMARC records."],
-                ["URL_SCAN", "Automated sandbox detonation of embedded hyperlinks."],
-                ["USER_AWARE", "Simulation-based training for character-spoofing."],
-                ["REPORT_TOOL", "One-click reporting to IT forensics."]
+                ["DOMAIN_CHECK", "Verify SPF records."],
+                ["URL_SCAN", "Sandbox detonation."]
             ],
-            feed: ["> Scanning SMTP...", "> SPF check: PASS", "!! ALERT: SPOOFED DOMAIN"],
+            feed: ["> Scanning SMTP...", "!! ALERT: SPOOFED"],
             link: "phishing.html",
             color: "#03fc84"
         },
         {
             title: "Malware",
-            desc: "Malicious code execution designed for system persistence.",
+            desc: "Malicious code designed for persistence.",
             solutions: [
-                ["SEGMENTATION", "VLAN isolation to prevent lateral spread."],
-                ["EDR_DEPLOY", "Detection and Response to kill processes."],
-                ["AIR_GAP", "Offline backups for ransomware recovery."],
-                ["SANDBOXING", "Running suspicious .exe in virtual environments."]
+                ["SEGMENTATION", "VLAN isolation."],
+                ["EDR_DEPLOY", "Kill processes."]
             ],
-            feed: ["> Registry scan...", "> Trojan identified", "!! ALERT: PERSISTENCE ATTEMPT"],
+            feed: ["> Registry scan...", "!! ALERT: TROJAN"],
             link: "malwareattack.html",
             color: "#ff3e3e"
         }
     ];
 
     function scrambleText(element, finalMessage) {
+        if (!element) return;
         const chars = "!<>-_\\/[]{}—=+*^?#________";
         let iteration = 0;
         const interval = setInterval(() => {
@@ -254,6 +259,19 @@
     }
 
     let feedInterval;
+    function startFeed(messages, color) {
+        const container = document.getElementById('feed-container');
+        container.innerHTML = "";
+        clearInterval(feedInterval);
+        feedInterval = setInterval(() => {
+            const msg = messages[Math.floor(Math.random() * messages.length)];
+            const line = document.createElement('div');
+            line.style.color = msg.includes('!!') ? '#ff3e3e' : color;
+            line.innerHTML = `> [${new Date().toLocaleTimeString()}] ${msg}`;
+            container.prepend(line);
+            if (container.childNodes.length > 8) container.removeChild(container.lastChild);
+        }, 1500);
+    }
 
     function loadCore(index) {
         const data = protocolData[index];
@@ -263,7 +281,7 @@
         document.querySelectorAll('.protocol-tab').forEach((t, i) => t.classList.toggle('active', i === index));
 
         display.innerHTML = `
-            <h2 id="main-title" class="glitch-text" style="color: ${data.color}">${data.title}</h2>
+            <h2 id="main-title" style="color: ${data.color}">${data.title}</h2>
             <p id="main-desc" style="color: #a3b8cc; font-size: 13px; margin-bottom: 20px;"></p>
             <div class="solution-grid">
                 ${data.solutions.map((s, i) => `
@@ -288,38 +306,28 @@
         startFeed(data.feed, data.color);
     }
 
-    function startFeed(messages, color) {
-        const container = document.getElementById('feed-container');
-        container.innerHTML = "";
-        clearInterval(feedInterval);
-        feedInterval = setInterval(() => {
-            const msg = messages[Math.floor(Math.random() * messages.length)];
-            const line = document.createElement('div');
-            line.style.color = msg.includes('!!') ? '#ff3e3e' : color;
-            line.innerHTML = `<span style="opacity:0.4">> [${new Date().toLocaleTimeString()}]</span> ${msg}`;
-            container.prepend(line);
-            if (container.childNodes.length > 10) container.removeChild(container.lastChild);
-        }, 1500);
-    }
-
     loadCore(0);
 
-    // Three.js Background
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     const geo = new THREE.BufferGeometry();
     const pos = [];
-    for(let i=0; i<2000; i++) pos.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
+    for(let i=0; i<1000; i++) pos.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
     geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.05, transparent: true, opacity: 0.2 });
+    const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.1, transparent: true, opacity: 0.2 });
     const points = new THREE.Points(geo, mat);
     scene.add(points);
     camera.position.z = 50;
-    function animate() { requestAnimationFrame(animate); points.rotation.y += 0.001; renderer.render(scene, camera); }
+    function animate() { requestAnimationFrame(animate); points.rotation.y += 0.0008; renderer.render(scene, camera); }
     animate();
-</script>
 
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
 </body>
 </html>
