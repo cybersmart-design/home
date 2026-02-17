@@ -25,27 +25,51 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: var(--dark-bg);
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
         /* Hero & Background */
         .hero {
-            position: relative; height: 100vh; width: 100%;
-            display: flex; align-items: center; justify-content: center;
+            position: relative; 
+            min-height: 100vh; 
+            width: 100%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
             overflow: hidden;
             background: radial-gradient(circle at center, #0a101a 0%, #04080f 100%);
+            padding: 80px 20px;
         }
-        #heroCanvas { position: absolute; inset: 0; z-index: 1; }
-        .hero-content { position: relative; z-index: 2; text-align: center; padding: 20px; }
+        
+        #heroCanvas { 
+            position: absolute; 
+            inset: 0; 
+            z-index: 1; 
+            pointer-events: none; /* Prevents 3D points from blocking touch-scrolling */
+        }
+        
+        .hero-content { 
+            position: relative; 
+            z-index: 2; 
+            text-align: center; 
+            width: 100%;
+            max-width: 900px;
+        }
         
         .section-tag {
             font-family: var(--font-mono);
             color: var(--neon-cyan);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 15px;
@@ -54,57 +78,124 @@
 
         .hero-title {
             font-family: 'Outfit', sans-serif;
-            font-size: clamp(2rem, 7vw, 5rem);
-            text-shadow: 0 0 25px var(--neon-cyan);
-            margin-bottom: 15px;
+            font-size: clamp(2.2rem, 8vw, 5rem);
+            text-shadow: 0 0 25px rgba(9, 238, 245, 0.5);
+            margin-bottom: 20px;
             text-transform: uppercase;
             line-height: 1.1;
+            word-wrap: break-word;
         }
 
-        /* Content Grid (Repurposed from Lobby Structure) */
+        /* Content Grid - Responsive */
         .content-container {
-            width: 95%; max-width: 1400px; margin: 0 auto;
-            padding: 80px 0; display: grid;
-            grid-template-columns: 1fr 1.5fr; gap: 40px;
+            width: 90%; 
+            max-width: 1400px; 
+            margin: 0 auto;
+            padding: 60px 0; 
+            display: grid;
+            grid-template-columns: 1fr; /* Stacked by default */
+            gap: 30px;
         }
-        @media (max-width: 992px) { .content-container { grid-template-columns: 1fr; } }
+
+        @media (min-width: 992px) {
+            .content-container {
+                grid-template-columns: 1fr 1.5fr; /* Side-by-side on desktop */
+                gap: 40px;
+                padding: 100px 0;
+            }
+        }
 
         .glass {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 16px;
+            padding: clamp(20px, 5vw, 40px);
         }
 
         /* Card Elements */
         .info-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid var(--glass-border);
-            padding: 20px; margin-bottom: 15px;
-            border-radius: 8px; transition: 0.3s;
+            padding: 20px; 
+            margin-bottom: 15px;
+            border-radius: 12px; 
+            transition: 0.3s;
         }
         .info-card h4 { color: var(--neon-cyan); margin-bottom: 8px; font-family: 'Outfit'; }
-        .info-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+        .info-card p { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* Quick Tips Grid Fix */
+        .tips-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 600px) {
+            .tips-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
 
         /* Step List */
         .step-item {
-            display: flex; gap: 20px; margin-bottom: 25px;
+            display: flex; 
+            gap: 20px; 
+            margin-bottom: 30px;
         }
+        
+        @media (max-width: 480px) {
+            .step-item {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
         .step-num {
-            font-family: 'Outfit'; font-size: 1.5rem; color: var(--neon-green); font-weight: 800;
+            font-family: 'Outfit'; 
+            font-size: 1.5rem; 
+            color: var(--neon-green); 
+            font-weight: 800;
+            line-height: 1;
         }
 
         /* Buttons */
         .btn {
-            padding: 16px 32px; border-radius: 5px; cursor: pointer; border: none;
-            font-weight: 700; font-family: var(--font-mono); transition: 0.3s;
-            text-transform: uppercase; text-decoration: none; display: inline-block;
+            padding: 18px 32px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            border: none;
+            font-weight: 700; 
+            font-family: var(--font-mono); 
+            transition: 0.3s;
+            text-transform: uppercase; 
+            text-decoration: none; 
+            display: inline-block;
+            text-align: center;
         }
-        .btn-primary { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 25px var(--neon-cyan); }
+        
+        .btn-primary { 
+            background: var(--neon-cyan); 
+            color: #000; 
+            box-shadow: 0 0 20px rgba(9, 238, 245, 0.3); 
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
 
-        footer { text-align: center; padding: 40px; color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.8rem; border-top: 1px solid var(--glass-border); }
+        footer { 
+            text-align: center; 
+            padding: 60px 20px; 
+            color: var(--text-secondary); 
+            font-family: var(--font-mono); 
+            font-size: 0.8rem; 
+            border-top: 1px solid var(--glass-border); 
+        }
     </style>
 </head>
 <body>
@@ -113,10 +204,9 @@
         <canvas id="heroCanvas"></canvas>
         <div class="hero-content">
             <span class="section-tag">CyberSmart Education</span>
-            <h1 class="hero-title">Empower Yourself Against<br>Cyber Threats</h1>
-            <p style="color: var(--text-secondary); margin-bottom: 35px; font-size: 1.15rem; max-width: 750px; margin-inline: auto;">
-                CyberSmart teaches you the skills to understand, prevent, and respond to digital risks. 
-                Start by learning the theory, then test your knowledge in challenge-style simulations.
+            <h1 class="hero-title">Empower Your Digital Life</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 35px; font-size: clamp(1rem, 4vw, 1.15rem); max-width: 750px; margin-inline: auto;">
+                CyberSmart teaches you the skills to understand, prevent, and respond to digital risks through theory and interactive simulations.
             </p>
             <a href="#explore" class="btn btn-primary">Start Your Journey</a>
         </div>
@@ -127,48 +217,45 @@
         <div class="glass">
             <span class="section-tag">The Mission</span>
             <h2 style="margin-bottom: 20px; font-family: 'Outfit';">Why Knowledge Matters</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 0.95rem;">
-                Every device and online interaction carries potential risks. Understanding these threats empowers you to protect your digital life.
-            </p>
             
             <div class="info-card">
                 <h4>Protect Your Data</h4>
-                <p>Learn how breaches occur and how sensitive data can be exposed — and how to prevent it.</p>
+                <p>Learn how breaches occur and how sensitive data can be exposed.</p>
             </div>
 
             <div class="info-card">
                 <h4>Recognize Scams</h4>
-                <p>Understand phishing and other online scams so you can identify threats before they impact you.</p>
+                <p>Identify phishing and social engineering before they impact you.</p>
             </div>
 
             <div class="info-card">
                 <h4>Prevent Malware</h4>
-                <p>Discover malware types, how they spread, and steps to secure your devices.</p>
+                <p>Discover malware types and steps to secure your devices.</p>
             </div>
 
             <div class="info-card">
                 <h4>Maintain Privacy</h4>
-                <p>Learn how personal data is collected, tracked, and how to safeguard your digital footprint.</p>
+                <p>Learn how to safeguard your digital footprint in an connected world.</p>
             </div>
         </div>
 
         <div class="glass">
             <span class="section-tag">Our Methodology</span>
-            <h2 style="margin-bottom: 30px; font-family: 'Outfit';">Practical Solutions & Learning</h2>
+            <h2 style="margin-bottom: 30px; font-family: 'Outfit';">Learning Path</h2>
             
             <div class="step-item">
                 <div class="step-num">01</div>
                 <div>
                     <h4 style="color: var(--neon-green);">Step 1: Learn</h4>
-                    <p style="color: var(--text-secondary);">Understand different cyber risks and their real-world implications through curated theory.</p>
+                    <p style="color: var(--text-secondary);">Understand different cyber risks through curated theory modules.</p>
                 </div>
             </div>
 
             <div class="step-item">
                 <div class="step-num">02</div>
                 <div>
-                    <h4 style="color: var(--neon-green);">Step 2: Understand Solutions</h4>
-                    <p style="color: var(--text-secondary);">Discover actionable strategies like Strong Passwords, 2FA, and Safe Browsing to mitigate threats.</p>
+                    <h4 style="color: var(--neon-green);">Step 2: Solve</h4>
+                    <p style="color: var(--text-secondary);">Discover actionable strategies like Strong Passwords and 2FA.</p>
                 </div>
             </div>
 
@@ -176,25 +263,25 @@
                 <div class="step-num">03</div>
                 <div>
                     <h4 style="color: var(--neon-green);">Step 3: Apply</h4>
-                    <p style="color: var(--text-secondary);">Test your skills in interactive, challenge-style simulations (Coming Soon).</p>
+                    <p style="color: var(--text-secondary);">Test your skills in interactive simulations (Coming Soon).</p>
                 </div>
             </div>
 
             <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 30px 0;">
 
-            <h3 style="margin-bottom: 20px; font-family: 'Outfit';">Quick Tips for Today</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <h3 style="margin-bottom: 10px; font-family: 'Outfit';">Quick Tips</h3>
+            <div class="tips-grid">
                 <div class="info-card" style="margin-bottom: 0;">
-                    <h4 style="font-size: 1rem;">Regular Updates</h4>
-                    <p style="font-size: 0.8rem;">Keep your software and apps up to date to patch vulnerabilities.</p>
+                    <h4 style="font-size: 1rem;">Keep Updated</h4>
+                    <p style="font-size: 0.8rem;">Patch vulnerabilities by keeping software current.</p>
                 </div>
                 <div class="info-card" style="margin-bottom: 0;">
-                    <h4 style="font-size: 1rem;">Think Before Clicking</h4>
-                    <p style="font-size: 0.8rem;">Always verify links and attachments before interacting.</p>
+                    <h4 style="font-size: 1rem;">Stay Alert</h4>
+                    <p style="font-size: 0.8rem;">Verify links and attachments before clicking.</p>
                 </div>
             </div>
 
-            <a href="types-of-risks.html" class="btn btn-primary" style="width: 100%; margin-top: 30px; text-align: center;">Explore Risks & Solutions</a>
+            <a href="types-of-risks.html" class="btn btn-primary btn-block" style="margin-top: 30px;">Explore Risks & Solutions</a>
         </div>
     </div>
 
@@ -204,26 +291,31 @@
     </footer>
 
     <script>
-        // Three.js Background Implementation
+        // Three.js Background
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('heroCanvas'), alpha: true, antialias: true });
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('heroCanvas'), 
+            alpha: true, 
+            antialias: true 
+        });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Performance optimization
 
         const geo = new THREE.BufferGeometry();
         const pos = [];
-        for(let i=0; i<3000; i++) {
+        for(let i=0; i<2000; i++) {
             pos.push(THREE.MathUtils.randFloatSpread(25), THREE.MathUtils.randFloatSpread(25), THREE.MathUtils.randFloatSpread(25));
         }
         geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-        const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.025 });
+        const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.03 });
         const points = new THREE.Points(geo, mat);
         scene.add(points);
         camera.position.z = 10;
 
         function animate() {
             requestAnimationFrame(animate);
-            points.rotation.y += 0.0006;
+            points.rotation.y += 0.0005;
             points.rotation.x += 0.0001;
             renderer.render(scene, camera);
         }
@@ -236,8 +328,8 @@
         });
 
         // Entrance GSAP
-        gsap.from(".hero-title", { duration: 1.2, y: 50, opacity: 0, ease: "power3.out" });
-        gsap.from(".hero-content p", { duration: 1.2, y: 30, opacity: 0, delay: 0.3, ease: "power3.out" });
+        gsap.from(".hero-title", { duration: 1.2, y: 40, opacity: 0, ease: "power3.out" });
+        gsap.from(".hero-content p", { duration: 1.2, y: 20, opacity: 0, delay: 0.3, ease: "power3.out" });
     </script>
 </body>
 </html>
