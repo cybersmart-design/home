@@ -1,271 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CyberSmart | Forensic_Lab_2026</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@600;900&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEC-OPS Training Module v7.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --bg: #010409; --accent: #03fc84; --cyan: #09eef5; --red: #ff3e3e;
-            --panel: #161b22; --border: #30363d;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100vh; }
-        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; }
-
-        /* --- 1. TARGETED GLITCH ANIMATIONS --- */
-        @keyframes systemJitter {
-            0% { transform: translate(0); }
-            2% { transform: translate(3px, -1px); }
-            4% { transform: translate(-2px, 2px); }
-            100% { transform: translate(0); }
-        }
-
-        @keyframes textGlitchPulse {
-            0% { text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); }
-            50% { text-shadow: -2px 0 var(--red), 2px 0 var(--cyan); transform: skew(1deg); }
-            100% { text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); }
-        }
-
-        .glitch-frame { animation: systemJitter 3s infinite steps(1); }
-        .glitch-text { animation: textGlitchPulse 0.12s infinite; font-family: 'JetBrains Mono'; }
-
-        /* --- LAYOUT --- */
-        .layout { display: grid; grid-template-columns: 1fr 350px; height: 100vh; padding: 80px 25px 25px 25px; gap: 20px; }
-        .workspace-frame { background: #0d1117; display: flex; flex-direction: column; overflow: hidden; border-radius: 8px; border: 1px solid var(--border); }
-        .window-header { background: #161b22; padding: 10px 15px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: #30363d; }
-
-        /* --- 2. STABLE INBOX UI --- */
-        .inbox-container { display: flex; flex: 1; background: #fff; color: #333; overflow: hidden; position: relative; }
-        .inbox-nav { width: 180px; background: #f3f5f8; border-right: 1px solid #ddd; padding: 15px 10px; }
-        .nav-link { padding: 10px 15px; border-radius: 6px; cursor: pointer; margin-bottom: 5px; font-size: 14px; color: #444; }
-        .nav-link.active { background: #d3e3fd; color: #0b57d0; font-weight: bold; }
-
-        .email-list { width: 45%; border-right: 1px solid #ddd; overflow-y: auto; background: #fff; }
-        .email-row { display: grid; grid-template-columns: 30px 30px 1fr 60px; padding: 12px 10px; border-bottom: 1px solid #eee; cursor: pointer; align-items: center; font-size: 13px; color: #333; }
-        .email-row.unread { font-weight: bold; background: #f8fbff; }
-        .email-row.highlight { background: #fff5b1; border-left: 4px solid #f59e0b; }
-
-        .email-view { flex: 1; padding: 25px; background: #fff; overflow-y: auto; color: #333; }
-        .actions { margin-top: 30px; display: flex; gap: 10px; }
-        .btn-ui { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; }
-        .btn-trash { background: #64748b; color: #fff; }
-        .btn-report { background: #dc2626; color: #fff; }
-
-        /* --- 3. CYBER SIDEBAR --- */
-        .sidebar { background: var(--panel); padding: 20px; display: flex; flex-direction: column; border: 1px solid var(--border); }
-        .stat-card { border: 1px solid var(--border); padding: 20px; text-align: center; margin-bottom: 20px; font-family: 'JetBrains Mono'; background: #0d1117; }
-        .hacker-log { flex: 1; background: #000; border: 1px solid var(--border); padding: 10px; font-size: 11px; color: var(--accent); overflow-y: auto; font-family: 'JetBrains Mono'; }
-
-        /* --- 4. CYBER SELECTION MODAL --- */
-        .overlay { position: fixed; inset: 0; background: rgba(1, 4, 9, 0.98); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .cyber-modal { background: #0d1117; padding: 40px; width: 480px; border: 1px solid var(--cyan); text-align: center; box-shadow: 0 0 50px rgba(9, 238, 245, 0.1); }
-        .btn-primary { 
-            background: transparent; border: 1px solid var(--border); color: #fff; width: 100%; padding: 16px; 
-            font-weight: bold; cursor: pointer; margin-top: 15px; font-family: 'JetBrains Mono'; text-align: left;
-        }
-        .btn-primary:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(9, 238, 245, 0.05); }
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; height: 100vh; }
+        .inbox-item.active { border-left: 6px solid #0078d4; background: #f0f7ff; }
         .hidden { display: none !important; }
-
-        #link-tooltip {
-            position: fixed; pointer-events: none; background: #0d1117; color: #fff; padding: 12px;
-            font-family: 'JetBrains Mono'; font-size: 11px; border: 1px solid var(--cyan); z-index: 9999; display: none;
-        }
+        #status-bar { position: fixed; bottom: 0; left: 0; background: #222; padding: 4px 12px; font-size: 12px; color: #00ff00; border: 1px solid #444; z-index: 1000; display: none; font-family: monospace; }
+        .modal-overlay { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); }
+        .email-body p { margin-bottom: 1.25rem; line-height: 1.6; }
     </style>
 </head>
-<body>
+<body class="bg-[#f3f2f1] flex flex-col">
 
-<canvas id="bgCanvas"></canvas>
-
-<div id="link-tooltip">
-    <div style="color:var(--cyan); font-size: 10px; margin-bottom: 4px; border-bottom: 1px solid #30363d;">PACKET_SOURCE_URL</div>
-    <div id="tooltip-url" style="word-break: break-all; font-weight: bold;"></div>
-    <div id="tooltip-desc" style="color: #abb2bf; font-size: 10px; margin-top: 8px;"></div>
-</div>
-
-<div class="overlay" id="introOverlay">
-    <div class="cyber-modal glitch-frame">
-        <h2 class="glitch-text" style="font-size: 24px; color: var(--cyan); margin-bottom: 10px;">SYSTEM_INITIALIZE</h2>
-        <p style="color: #4b5563; font-size: 11px; margin-bottom: 30px; letter-spacing: 2px;">SECURE FORENSIC ENVIRONMENT V3.0</p>
-        
-        <button class="btn-primary" style="border-color: #4b5563; color: #8b949e; margin-bottom: 10px;" onclick="window.location.href='solutions.html'">
-            << 00. BACK_TO_HUB
-        </button>
-
-        <button class="btn-primary" onclick="initSim('guided')">>> 01. LOAD_GUIDED_PROTOCOL</button>
-        <button class="btn-primary" onclick="initSim('challenge')">>> 02. LOAD_CHALLENGE_PROTOCOL</button>
-        
-        <button id="completeBtn" class="btn-primary" style="border-color: var(--accent); color: var(--accent); display:none;" onclick="window.location.href='solutions.html'">
-            >> 03. COMPLETED
-        </button>
+    <div id="modal-intro" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center p-4">
+        <div class="bg-white max-w-3xl w-full rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-[#0078d4] p-10 text-white">
+                <div class="flex items-center space-x-4 mb-4">
+                    <i class="fas fa-user-shield text-4xl"></i>
+                    <h1 class="text-4xl font-black tracking-tight">Advanced Phishing Defense</h1>
+                </div>
+                <p class="opacity-90 text-lg">Level: Professional Certification (10 Unique Scenarios)</p>
+            </div>
+            <div class="p-10 overflow-y-auto space-y-8">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-xl mb-3"><i class="fas fa-search-dollar mr-2 text-blue-600"></i>The Analysis Rule</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">Emails are now longer and more complex. Phishers hide malicious intent inside legitimate-looking corporate jargon. You must read the **entire** message to find the inconsistency.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest text-center">Protocol Reminders</h4>
+                        <div class="space-y-3 text-[13px]">
+                            <div class="flex items-center text-red-600 font-semibold"><i class="fas fa-exclamation-triangle mr-3"></i>Check Sender Domains</div>
+                            <div class="flex items-center text-blue-600 font-semibold"><i class="fas fa-link mr-3"></i>Hover to inspect URLs</div>
+                            <div class="flex items-center text-orange-600 font-semibold"><i class="fas fa-clock mr-3"></i>Ignore False Urgency</div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeIntro()" class="w-full bg-[#0078d4] text-white py-4 rounded-lg font-black hover:bg-[#005a9e] transition uppercase tracking-widest text-lg shadow-lg">Start Examination</button>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="layout">
-    <main class="workspace-frame" id="mainFrame">
-        <div class="window-header">
-            <div class="dot"></div><div class="dot"></div><div class="dot" style="background:var(--red)"></div>
-            <span style="font-size: 10px; color: #8b949e; font-family: 'JetBrains Mono'; margin-left: 10px;">FORENSIC_INBOX_STABLE</span>
-        </div>
-        
-        <div class="inbox-container">
-            <div class="inbox-nav">
-                <div class="nav-link active" id="nav-inbox" onclick="switchFolder('inbox')">Inbox</div>
-                <div class="nav-link" id="nav-trash" onclick="switchFolder('trash')">Quarantine</div>
+    <div id="modal-completion" class="fixed inset-0 z-[100] modal-overlay hidden flex items-center justify-center p-6">
+        <div class="bg-white max-w-xl w-full rounded-2xl shadow-2xl p-10 text-center border-b-8 border-[#0078d4]">
+            <div class="h-20 w-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-trophy text-4xl"></i>
             </div>
-            <div class="email-list" id="emailList"></div>
-            <div class="email-view" id="emailView">
-                <div style="height:100%; display:flex; align-items:center; justify-content:center; color: #94a3b8;">Awaiting packet selection...</div>
+            <h2 class="text-3xl font-black text-gray-900 mb-2">Final Evaluation</h2>
+            <div class="bg-slate-100 rounded-xl p-8 mb-8 border border-slate-200">
+                <p class="text-6xl font-black text-blue-600 mb-2" id="final-score">0</p>
+                <p class="text-sm font-bold text-slate-400 uppercase tracking-[0.2em]">Total Score</p>
             </div>
+            <div id="advice-box" class="text-base text-gray-600 leading-relaxed mb-10 text-left px-4 border-l-4 border-blue-200 py-2"></div>
+            <button onclick="location.reload()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-black transition-all transform hover:scale-[1.02]">Return to Terminal</button>
         </div>
-    </main>
+    </div>
 
-    <aside class="sidebar glitch-frame" id="sideFrame">
-        <div class="stat-card">
-            <div style="font-size: 10px; color: var(--cyan); letter-spacing: 2px;">NETWORK_INTEGRITY</div>
-            <div id="scoreDisplay" class="glitch-text" style="font-size: 48px; color: var(--accent);">0</div>
+    <header class="h-14 bg-[#0078d4] flex items-center justify-between px-6 text-white shrink-0 shadow-lg">
+        <div class="flex items-center space-x-6">
+            <i class="fas fa-th-large text-xl"></i>
+            <span class="font-bold text-lg tracking-tight uppercase">SEC-OPS Terminal v7.0</span>
+            <div class="h-6 w-[1px] bg-white/20"></div>
+            <div class="text-[11px] font-mono bg-blue-900/50 px-4 py-1.5 rounded-md border border-white/10">
+                REMAINING: <span id="sync-count" class="text-yellow-300 font-bold">10</span>
+            </div>
         </div>
-        <div class="hacker-log" id="lootLog"><div>[READY] Listening for incoming traffic...</div></div>
-        
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <button class="btn-primary" style="font-size:11px;" onclick="showReselect()">RESELECT MODE</button>
-            <button class="btn-primary" style="font-size:11px; border-color: #4b5563; color: #8b949e;" onclick="window.location.href='solutions.html'">BACK TO HUB</button>
+        <div class="flex items-center space-x-8">
+            <div class="text-right">
+                <p class="text-[10px] uppercase opacity-60 font-bold">Current Score</p>
+                <p id="stat-score" class="text-xl font-black text-yellow-300">1000</p>
+            </div>
+            <div class="h-10 w-10 bg-white/10 rounded-lg flex items-center justify-center border border-white/20">
+                <i class="fas fa-user-secret"></i>
+            </div>
         </div>
-    </aside>
-</div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <aside class="w-64 bg-white border-r flex flex-col shrink-0">
+            <div class="p-6 space-y-2 mt-4">
+                <button onclick="switchFolder('inbox')" id="btn-inbox" class="w-full flex items-center justify-between p-3 bg-blue-50 text-[#0078d4] rounded-lg text-sm font-bold transition-all">
+                    <span><i class="fas fa-inbox mr-4"></i>Primary Inbox</span>
+                    <span id="badge-inbox" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px]">0</span>
+                </button>
+                <button onclick="switchFolder('junk')" id="btn-junk" class="w-full flex items-center justify-between p-3 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-medium transition-all">
+                    <span><i class="fas fa-biohazard mr-4 text-orange-500"></i>Junk/Threats</span>
+                    <span id="badge-junk" class="text-[10px]">0</span>
+                </button>
+            </div>
+            <div class="mt-auto p-6 bg-slate-50 border-t">
+                <p class="text-[10px] text-slate-400 font-bold uppercase mb-2">Security Status</p>
+                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-blue-500 w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+        </aside>
+
+        <aside class="w-96 bg-white border-r flex flex-col shrink-0 overflow-hidden">
+            <div class="h-12 bg-slate-50 border-b flex items-center px-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                <span id="folder-title">Focused Inbox</span>
+            </div>
+            <div id="email-list-container" class="flex-1 overflow-y-auto divide-y divide-gray-100"></div>
+        </aside>
+
+        <main class="flex-1 bg-white flex flex-col overflow-hidden relative border-r">
+            <div id="toolbar" class="hidden h-14 border-b flex items-center px-8 space-x-4 bg-white z-10 shrink-0 shadow-sm">
+                <button onclick="recordDecision('report')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] font-black px-6 py-2 rounded-md uppercase shadow-lg transition-transform active:scale-95">Report Threat</button>
+                <button onclick="recordDecision('safe')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-black px-6 py-2 rounded-md uppercase border border-slate-300 transition-all">Mark as Safe</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-16">
+                <div id="empty-state" class="text-center mt-40 opacity-10">
+                    <i class="fas fa-envelope-open-text text-9xl mb-6"></i>
+                    <p class="text-xl font-black uppercase tracking-[0.3em]">System Idle</p>
+                </div>
+                <div id="mail-content" class="hidden max-w-3xl mx-auto">
+                    <h2 id="view-subject" class="text-3xl font-light text-gray-900 mb-10 leading-snug"></h2>
+                    <div class="flex items-center mb-10 pb-8 border-b border-slate-100">
+                        <div id="view-icon" class="h-14 w-14 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-white text-2xl mr-5 shadow-inner"></div>
+                        <div class="flex-1">
+                            <p id="view-sender" class="font-black text-base text-gray-900"></p>
+                            <p id="view-addr" class="text-xs text-slate-400 font-mono mt-1"></p>
+                        </div>
+                    </div>
+                    <div id="view-body" class="email-body text-base leading-relaxed text-gray-700"></div>
+                </div>
+            </div>
+            <div id="status-bar" class="absolute bottom-4 left-4 rounded shadow-2xl"></div>
+        </main>
+
+        <aside class="w-[450px] bg-slate-50 flex flex-col shrink-0 p-10 shadow-inner">
+            <div class="flex items-center space-x-3 mb-8 border-b pb-6">
+                <i class="fas fa-vial text-blue-500 text-xl"></i>
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Incident Analysis Telemetry</h3>
+            </div>
+            <div id="debrief-container" class="space-y-6">
+                <div class="py-32 text-center">
+                    <i class="fas fa-radar text-slate-200 text-6xl mb-6 block"></i>
+                    <p class="text-sm text-slate-400 font-medium px-12 leading-relaxed">Analyzing decisions for patterns of security awareness. Neutralize a threat to begin telemetry.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
 
 <script>
-    const GUIDED_DATA = [
-        { id: 1, sender: "IT Help", addr: "admin@corp-verify.net", subject: "Password Reset", body: "Action required. <a href='#' onmouseover='showTooltip(\"http://corp-verify.net/reset\", \"TLD HIJACK: Official site is .com, not .net\")' onmouseout='hideTooltip()' onclick='breach()'>Reset Now</a>", phishing: true },
-        { id: 2, sender: "HR Dept", addr: "hr@company.com", subject: "Holiday Policy", body: "View the 2026 schedule.", phishing: false }
+    // EXPANDED, LONGER, RANDOMIZED SCENARIOS
+    const SCENARIOS = [
+        { 
+            id: 1, type: 'phish', sender: 'Microsoft 365 Security', addr: 'no-reply@microsoft-security-verify.net', 
+            subject: 'CRITICAL: Unauthorized Access Attempt Detected in Your Region', 
+            body: `
+                <p>Hello User,</p>
+                <p>This is an automated security notification regarding your Microsoft 365 Work Account. Our Global Threat Intelligence Center has detected a suspicious login attempt originating from an unrecognized device in **St. Petersburg, Russia** at 04:12 AM GMT.</p>
+                <p>Because you have not marked this location as a trusted zone, we have temporarily restricted access to your cloud documents and Outlook mailbox to prevent potential data exfiltration. This is a mandatory protective measure under the Corporate Cyber-Security Act of 2026.</p>
+                <p>To restore full access to your workspace and verify your identity, you must complete a two-factor authentication challenge via our secure external portal immediately. Failure to verify within the next 2 hours will result in a permanent account lockout and IT service ticket escalation.</p>
+                <p><a href="#" onmouseover="tip(true, 'http://182.22.1.0/auth/ms-verify/session_id=8821')" onmouseout="tip(false)" style="display:inline-block; background:#0078d4; color:white; padding:12px 24px; text-decoration:none; font-weight:bold; border-radius:4px;">Secure Your Account Now</a></p>
+                <p>Thank you for helping us keep your workspace secure.<br><b>Microsoft 365 Defense Team</b></p>
+            `, 
+            flags: ['Sender uses .net instead of .com','Link points to a raw IP address (182.xx)','Extreme urgency and threat of "Permanent Lockout"'] 
+        },
+        { 
+            id: 2, type: 'safe', sender: 'Corporate HR', addr: 'hr-portal@internal-corp.com', 
+            subject: 'Mandatory: 2026 Annual Employee Benefits Enrollment Period', 
+            body: `
+                <p>Dear Team,</p>
+                <p>It is once again time for our Annual Benefits Enrollment. Between now and the end of the month, you have the opportunity to review and update your health insurance, dental coverage, and 401(k) contributions for the upcoming fiscal year.</p>
+                <p>We have introduced several new tiers this year, including an enhanced mental health support package and remote-work equipment stipends. It is vital that you review these changes as your current selections will not automatically roll over in the same format.</p>
+                <p>Please do not click any links in external emails regarding benefits. To complete your enrollment, log in directly to the **Company Intranet Dashboard** using your standard SSO credentials and navigate to the "HR & Benefits" tab. No external login is required.</p>
+                <p>Regards,<br><b>The HR Excellence Team</b></p>
+            `, 
+            flags: ['Verified internal domain','Explicitly tells user NOT to click links','Directs to known internal portal'] 
+        },
+        { 
+            id: 3, type: 'phish', sender: 'IT Service Desk', addr: 'support@it-corp-help.online', 
+            subject: 'ACTION REQUIRED: Mailbox Migration and Storage Quota Increase', 
+            body: `
+                <p>Attention Employee,</p>
+                <p>Our server infrastructure is currently undergoing a mandatory migration to a new high-performance cloud cluster. This upgrade is designed to improve mail delivery speeds and increase individual mailbox storage limits from 50GB to 100GB.</p>
+                <p>During this transition, some users may experience temporary synchronization delays. To ensure your existing archive and sent items are migrated correctly without data loss, you are required to manually sync your workspace permissions using our temporary migration tool.</p>
+                <p>If you do not sync your account before the server cutoff at 5:00 PM today, your incoming emails may be bounced back to the sender as "Undeliverable" until the manual reconciliation process is completed by an IT technician.</p>
+                <p><a href="#" onmouseover="tip(true, 'http://bit.ly/corp-mail-sync-v2')" onmouseout="tip(false)" style="color:#0078d4; font-weight:bold; text-decoration:underline;">Click Here to Sync Your Mailbox Now</a></p>
+                <p>Best regards,<br><b>Internal IT Systems Management</b></p>
+            `, 
+            flags: ['IT using a .online domain','Bitly shortener masks the destination','Pressure to act before a specific "cutoff" time'] 
+        },
+        { 
+            id: 4, type: 'phish', sender: 'Executive Office', addr: 'ceo.office.global@gmail.com', 
+            subject: 'Confidential Request: Assistance with Client Incentives', 
+            body: `
+                <p>Hi,</p>
+                <p>I hope you're having a productive morning. I'm currently tied up in a back-to-back board meeting and my corporate card is being declined for an international transaction. I need your immediate assistance with a confidential client project.</p>
+                <p>I need to send out 10 gift cards ($100 each) to our top-tier partners as a "thank you" for the Q1 results. Can you please go out and purchase these Apple or Steam gift cards and send me the clear photos of the codes on the back? I will ensure you are reimbursed personally by the end of the day with an additional bonus for the trouble.</p>
+                <p>Please keep this discrete as it is a surprise for the partners. Let me know as soon as you have them. I am relying on you.</p>
+                <p>Sent from my iPhone<br><b>Executive Leadership Team</b></p>
+            `, 
+            flags: ['CEO using a Gmail address','Highly unusual request for gift cards','Request for secrecy/discretion'] 
+        },
+        { 
+            id: 5, type: 'safe', sender: 'Facilities Management', addr: 'building-ops@internal-corp.com', 
+            subject: 'Urgent Building Update: Scheduled Power Outage (Wing C)', 
+            body: `
+                <p>Good afternoon,</p>
+                <p>Please be advised that the local utility company will be performing emergency maintenance on the transformer serving Wing C of our main campus. As a result, there will be a total power shutdown in this wing on Saturday, March 14th, from 08:00 to 18:00.</p>
+                <p>If your workspace is located in Wing C, please ensure that all sensitive electronic equipment is powered down and unplugged before you leave on Friday evening to prevent damage from potential power surges when service is restored.</p>
+                <p>Access to the building will be restricted to essential personnel only during this time. Please coordinate with your manager if you require weekend access. Thank you for your cooperation.</p>
+                <p>Best,<br><b>Facilities & Operations</b></p>
+            `, 
+            flags: ['Internal domain','Logically consistent with building ops','No links or credential requests'] 
+        },
+        { 
+            id: 6, type: 'phish', sender: 'DocuSign System', addr: 'docusign@notice-docusgn.com', 
+            subject: 'Signature Requested: 2026 Employee Compensation & Bonus Structure', 
+            body: `
+                <p>You have received a new document for electronic signature.</p>
+                <p><b>Document Name:</b> 2026_Q1_Bonus_Schedule_Final.pdf<br><b>Sender:</b> Finance Department (via DocuSign)</p>
+                <p>Please review and sign this document to acknowledge your participation in the 2026 bonus incentive program. Your signature is required before the payroll processing cycle closes on Friday to ensure timely disbursement of funds.</p>
+                <p>This link is unique to your email address and should not be shared with others for security reasons.</p>
+                <p><a href="#" onmouseover="tip(true, 'https://docusgn-verify-portal.net/d/a8k2js')" onmouseout="tip(false)" style="display:inline-block; background:#2185d0; color:white; padding:10px 20px; text-decoration:none; font-weight:bold;">Review Document</a></p>
+                <p>Trouble with the link? Copy and paste the URL into your browser to continue.</p>
+            `, 
+            flags: ['Typo in domain (Docusgn)','Using .net for a commercial service','Money/Bonus lure to trigger emotional response'] 
+        },
+        { 
+            id: 7, type: 'phish', sender: 'Legal Support', addr: 'legal@finance-claims.net', 
+            subject: 'NOTICE OF LITIGATION: Outstanding Invoice #INV-99281', 
+            body: `
+                <p><b>FINAL LEGAL NOTICE</b></p>
+                <p>This email serves as a formal notification that your account is now 90 days past due. Despite multiple attempts to contact your accounting department, invoice #INV-99281 remains unpaid. Total balance due: $14,200.50.</p>
+                <p>Failure to settle this balance or provide proof of payment by tomorrow at 12:00 PM will result in the immediate escalation of this file to our external collections agency and the filing of a formal legal claim against your organization.</p>
+                <p>Please find the original contract and the unpaid invoice attached as a secure HTML document for your review. You must open this file to verify the billing details.</p>
+                <p><b>Attachment:</b> Invoice_Details_032026.html (45KB)</p>
+                <p><b>Global Finance & Legal Associates</b></p>
+            `, 
+            flags: ['Dangerous .html attachment','Aggressive legal threats','External .net domain for internal finance'] 
+        },
+        { 
+            id: 8, type: 'safe', sender: 'Global Benefits', addr: 'benefits@internal-corp.com', 
+            subject: 'Wellness Initiative: Free Gym Membership & Health Coaching', 
+            body: `
+                <p>Hello Everyone,</p>
+                <p>As part of our 2026 Wellness Initiative, we are excited to announce a new partnership with local fitness centers across all regions. Effective immediately, all full-time employees are eligible for a fully subsidized premium gym membership.</p>
+                <p>In addition to gym access, you can also sign up for 1-on-1 health coaching sessions and nutritional planning at no additional cost. We believe that a healthy team is a happy and productive team!</p>
+                <p>To view the list of participating gyms and sign up, please visit the **Employee Wellness** section on our company SharePoint site. You do not need to provide any credit card information to the gym directly; simply present your employee ID badge.</p>
+                <p>Stay healthy!<br><b>The Benefits Team</b></p>
+            `, 
+            flags: ['Verified internal domain','Directs to SharePoint (internal)','No suspicious links'] 
+        },
+        { 
+            id: 9, type: 'phish', sender: 'LinkedIn Security', addr: 'security@linkedin-notifications.net', 
+            subject: 'Security Alert: Your Profile Was Accessed from a New Device', 
+            body: `
+                <p>Hi there,</p>
+                <p>Your LinkedIn account was recently used to sign in from a Chrome browser on a Linux device in **Lagos, Nigeria**. If this was you, you can safely ignore this email.</p>
+                <p>If you do not recognize this activity, your account password may have been compromised. We recommend that you reset your password and review your active sessions immediately to protect your professional network and private messages.</p>
+                <p><a href="#" onmouseover="tip(true, 'https://linkedin-secure.com/reset/a93j')" onmouseout="tip(false)" style="color:#0078d4; font-weight:bold;">Review My Account Now</a></p>
+                <p>LinkedIn takes your privacy seriously. Thank you for staying vigilant.</p>
+                <p>The LinkedIn Security Team</p>
+            `, 
+            flags: ['Using .net for LinkedIn notifications','External reset link','Social media alert sent to work email'] 
+        },
+        { 
+            id: 10, type: 'phish', sender: 'IT Admin', addr: 'admin@corp-it-desk.xyz', 
+            subject: 'MANDATORY: Workplace Device Policy Update (Action Required)', 
+            body: `
+                <p>Dear Employee,</p>
+                <p>As part of our ongoing commitment to data security and compliance with international privacy standards, we have updated the Workplace Device Security Policy. All employees are required to review and digitally acknowledge these changes by the end of the day.</p>
+                <p>This update includes new requirements for password complexity, screen timeout settings, and the use of approved VPN software when working remotely. Failure to acknowledge this policy will result in a temporary suspension of your VPN access starting at midnight.</p>
+                <p>Please use the link below to access the policy document and submit your electronic acknowledgment.</p>
+                <p><a href="#" onmouseover="tip(true, 'https://it-policy-portal.xyz/verify')" onmouseout="tip(false)" style="color:#0078d4; text-decoration:underline;">Review and Acknowledge Policy v4.2</a></p>
+                <p>Thank you,<br><b>IT Compliance & Security Office</b></p>
+            `, 
+            flags: ['Using .xyz domain (highly untrusted)','Threat of VPN suspension','Urgency regarding policy compliance'] 
+        }
     ];
 
-    const CHALLENGE_DATA = [
-        { id: 101, sender: "CEO Office", addr: "ceo@rnicrosoft.com", subject: "Urgent Payment", body: "Please review: <a href='#' onmouseover='showTooltip(\"http://rnicrosoft.com/invoice\")' onmouseout='hideTooltip()' onclick='breach()'>Invoice_92.pdf</a>", phishing: true },
-        { id: 102, sender: "Apple Cloud", addr: "no-reply@lcloud-apple.com", subject: "Storage Full", body: "<a href='#' onmouseover='showTooltip(\"http://lcloud-apple.com/storage\")' onmouseout='hideTooltip()' onclick='breach()'>Add Space</a>", phishing: true },
-        { id: 103, sender: "Finance", addr: "finance@company.com", subject: "Q1 Projections", body: "Attached are the projections.", phishing: false }
-    ];
+    let inbox = [];
+    let junk = [];
+    let historyIds = [];
+    let processedCount = 0;
+    let stats = { score: 1000, passed: 0 };
+    let currentMail = null;
+    let currentFolder = 'inbox';
+    let availableScenarios = [];
 
-    let emails = { inbox: [], trash: [] }, mode = "guided", score = 0, currentFolder = 'inbox';
+    // INITIALIZATION
+    function closeIntro() {
+        document.getElementById('modal-intro').classList.add('hidden');
+        
+        // SHUFFLE THE SCENARIOS SO EVERY SESSION IS UNIQUE
+        availableScenarios = [...SCENARIOS].sort(() => Math.random() - 0.5);
+        
+        deliverInitialBatch();
+        startSyncTimer();
+    }
 
-    function initSim(m) {
-        mode = m; score = 0; updateScore();
-        emails.inbox = (mode === 'guided') ? [...GUIDED_DATA] : [...CHALLENGE_DATA];
-        emails.trash = [];
-        document.getElementById('introOverlay').classList.add('hidden');
-        renderList();
+    function deliverInitialBatch() {
+        for(let i=0; i<3; i++) deliverOne();
+    }
+
+    function startSyncTimer() {
+        const interval = setInterval(() => {
+            if (processedCount + inbox.length < 10) {
+                deliverOne();
+            } else {
+                clearInterval(interval);
+            }
+        }, 15000); 
+    }
+
+    function deliverOne() {
+        if (availableScenarios.length > 0) {
+            const next = availableScenarios.shift();
+            inbox.unshift({ ...next, instanceId: Math.random() });
+            updateUI();
+        }
+    }
+
+    function updateUI() {
+        const list = document.getElementById('email-list-container');
+        const activeList = currentFolder === 'inbox' ? inbox : junk;
+        
+        document.getElementById('badge-inbox').innerText = inbox.length;
+        document.getElementById('badge-junk').innerText = junk.length;
+        document.getElementById('sync-count').innerText = (10 - processedCount);
+        document.getElementById('stat-score').innerText = stats.score;
+        document.getElementById('progress-bar').style.width = (processedCount * 10) + "%";
+
+        list.innerHTML = activeList.map(m => `
+            <div onclick="openEmail(${m.instanceId})" id="item-${m.instanceId}" class="inbox-item p-6 cursor-pointer hover:bg-slate-50 border-b relative group transition-all">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-black text-slate-900 truncate pr-4">${m.sender}</span>
+                    <span class="text-[9px] text-blue-500 font-bold tracking-widest">ENCRYPTED</span>
+                </div>
+                <p class="text-[13px] font-bold text-[#0078d4] leading-tight mb-1">${m.subject}</p>
+                <p class="text-[11px] text-slate-400 truncate">Security Policy v7.0: Analyzing payload...</p>
+            </div>
+        `).join('') || '<div class="p-20 text-center text-slate-300 italic text-sm">No items in this folder.</div>';
+    }
+
+    function openEmail(instanceId) {
+        const list = currentFolder === 'inbox' ? inbox : junk;
+        currentMail = list.find(m => m.instanceId === instanceId);
+        
+        document.getElementById('mail-content').classList.remove('hidden');
+        document.getElementById('empty-state').classList.add('hidden');
+        document.getElementById('toolbar').classList.toggle('hidden', currentFolder === 'junk');
+
+        document.getElementById('view-subject').innerText = currentMail.subject;
+        document.getElementById('view-sender').innerText = currentMail.sender;
+        document.getElementById('view-addr').innerText = `<${currentMail.addr}>`;
+        document.getElementById('view-icon').innerText = currentMail.sender[0];
+        document.getElementById('view-body').innerHTML = currentMail.body;
+
+        document.querySelectorAll('.inbox-item').forEach(i => i.classList.remove('active'));
+        document.getElementById(`item-${instanceId}`).classList.add('active');
+    }
+
+    function recordDecision(type) {
+        if (!currentMail) return;
+        const isPhish = currentMail.type === 'phish';
+        const win = (type === 'report' && isPhish) || (type === 'safe' && !isPhish);
+
+        if (win) { stats.score += 100; stats.passed++; }
+        else { stats.score -= 200; }
+        
+        processedCount++;
+        showDebrief(win);
+
+        if (type === 'report') { junk.unshift(currentMail); } 
+        else { historyIds.push(currentMail.id); }
+
+        inbox = inbox.filter(m => m.instanceId !== currentMail.instanceId);
+        closeReader();
+        updateUI();
+
+        if (processedCount >= 10) {
+            setTimeout(showCompletion, 2000);
+        }
+    }
+
+    function showDebrief(success) {
+        const container = document.getElementById('debrief-container');
+        container.innerHTML = `
+            <div class="p-8 rounded-2xl border-2 shadow-sm ${success ? 'border-green-500 bg-green-50/50' : 'border-red-500 bg-red-50/50'}">
+                <div class="flex items-center space-x-3 mb-6">
+                    <i class="fas ${success ? 'fa-check-circle text-green-600' : 'fa-times-circle text-red-600'} text-2xl"></i>
+                    <span class="font-black text-sm uppercase tracking-[0.2em]">${success ? 'Threat Blocked' : 'Security Breach'}</span>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-[13px] font-black text-slate-800 border-b pb-4">${currentMail.subject}</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Red Flags Detected:</p>
+                    <div class="space-y-3">
+                        ${currentMail.flags.map(f => `<div class="text-[12px] flex items-start text-slate-600 leading-relaxed font-medium"><i class="fas fa-caret-right text-blue-400 mt-1 mr-3"></i>${f}</div>`).join('')}
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-slate-200 flex justify-between items-center">
+                    <span class="text-[10px] font-black text-slate-400">TELEMETRY: ${success ? 'POSITIVE' : 'NEGATIVE'}</span>
+                    <span class="text-[12px] font-black px-4 py-1 rounded-full ${success ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">${success ? '+100' : '-200'}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function showCompletion() {
+        const modal = document.getElementById('modal-completion');
+        const advice = document.getElementById('advice-box');
+        document.getElementById('final-score').innerText = stats.score;
+        modal.classList.remove('hidden');
+
+        if (stats.score < 1200) {
+            advice.innerHTML = `
+                <p class="font-black text-orange-600 mb-4">TACTICAL ASSESSMENT: ADDITIONAL TRAINING REQUIRED</p>
+                <p class="mb-4">It looks like a few sophisticated threats managed to bypass your analysis. **Phishers rely on human speed; they want you to click before you think.**</p>
+                <p class="font-bold text-slate-800">Critical Skills to Develop:</p>
+                <ul class="list-disc ml-5 mt-2 space-y-2 text-sm">
+                    <li>Always verify the **Domain Extension** (e.g., .net vs .com).</li>
+                    <li>Be suspicious of "System Errors" that require immediate login.</li>
+                    <li>If an email from a CEO feels "weird," it's almost certainly a scam.</li>
+                </ul>
+            `;
+        } else {
+            advice.innerHTML = `
+                <p class="font-black text-green-600 mb-4">TACTICAL ASSESSMENT: ELITE DEFENDER STATUS</p>
+                <p class="mb-4">Outstanding work. You navigated all 10 complex scenarios with precision. Your ability to detect subtle domain typos and masked links is at a professional security level.</p>
+                <p class="font-bold text-slate-800">Next Steps for Mastery:</p>
+                <ul class="list-disc ml-5 mt-2 space-y-2 text-sm">
+                    <li>Teach your colleagues the "Hover Before You Click" rule.</li>
+                    <li>Report real-world phishing attempts to your IT department immediately.</li>
+                    <li>Stay updated on **Zero-Day** phishing tactics involving QR codes and AI-generated voice.</li>
+                </ul>
+            `;
+        }
     }
 
     function switchFolder(folder) {
         currentFolder = folder;
-        document.getElementById('nav-inbox').classList.toggle('active', folder === 'inbox');
-        document.getElementById('nav-trash').classList.toggle('active', folder === 'trash');
-        renderList();
+        closeReader();
+        document.getElementById('btn-inbox').className = folder === 'inbox' ? 'w-full flex items-center justify-between p-3 bg-blue-50 text-[#0078d4] rounded-lg text-sm font-bold transition-all' : 'w-full flex items-center p-3 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-medium';
+        document.getElementById('btn-junk').className = folder === 'junk' ? 'w-full flex items-center justify-between p-3 bg-orange-50 text-orange-600 rounded-lg text-sm font-bold transition-all' : 'w-full flex items-center p-3 text-gray-500 hover:bg-gray-100 rounded-lg text-sm font-medium';
+        updateUI();
     }
 
-    function showReselect() {
-        document.getElementById('introOverlay').classList.remove('hidden');
-        document.getElementById('completeBtn').style.display = 'none';
+    function closeReader() {
+        currentMail = null;
+        document.getElementById('mail-content').classList.add('hidden');
+        document.getElementById('empty-state').classList.remove('hidden');
+        document.getElementById('toolbar').classList.add('hidden');
     }
 
-    function showTooltip(url, desc = "") {
-        document.getElementById('tooltip-url').innerText = `DESTINATION: ${url}`;
-        const descEl = document.getElementById('tooltip-desc');
-        if (mode === 'guided') {
-            descEl.innerText = `ANALYTICS: ${desc}`;
-            descEl.style.display = 'block';
-        } else {
-            descEl.style.display = 'none';
-        }
-        document.getElementById('link-tooltip').style.display = 'block';
+    function tip(v, u) {
+        const b = document.getElementById('status-bar');
+        if (v) { b.innerText = `LINK ANALYSIS: ${u}`; b.style.display = 'block'; }
+        else { b.style.display = 'none'; }
     }
-
-    function hideTooltip() { document.getElementById('link-tooltip').style.display = 'none'; }
-
-    window.addEventListener('mousemove', (e) => {
-        let x = e.clientX + 20, y = e.clientY + 20;
-        if (x + 300 > window.innerWidth) x = e.clientX - 320;
-        document.getElementById('link-tooltip').style.left = x + 'px';
-        document.getElementById('link-tooltip').style.top = y + 'px';
-    });
-
-    function renderList() {
-        const list = document.getElementById('emailList');
-        list.innerHTML = emails[currentFolder].map(e => `
-            <div class="email-row ${e.read ? '' : 'unread'} ${mode === 'guided' && e.phishing && currentFolder === 'inbox' ? 'highlight' : ''}" onclick="openEmail(${e.id})">
-                <input type="checkbox">
-                <div style="font-size: 14px;">★</div>
-                <div>${e.sender}</div>
-                <div style="color:#888; font-size:10px; text-align:right;">10:41 PM</div>
-            </div>`).join('');
-        checkWin();
-    }
-
-    function openEmail(id) {
-        const e = emails[currentFolder].find(item => item.id === id);
-        if(!e) return;
-        e.read = true; renderList();
-        document.getElementById('emailView').innerHTML = `
-            <h2>${e.subject}</h2><p>From: <b>${e.sender}</b> (${e.addr})</p><hr style="margin:15px 0; border-top:1px solid #eee;">
-            <div style="min-height:100px; font-size:15px;">${e.body}</div>
-            <div class="actions">
-                <button class="btn-ui btn-trash" onclick="move(${id})">Move to Quarantine</button>
-                <button class="btn-ui btn-report" onclick="report(${id})">Report Phishing</button>
-            </div>`;
-    }
-
-    function move(id) {
-        const emailIdx = emails[currentFolder].findIndex(e => e.id === id);
-        emails.trash.push(emails[currentFolder][emailIdx]);
-        emails[currentFolder].splice(emailIdx, 1);
-        renderList(); document.getElementById('emailView').innerHTML = "[ Packet Moved to Quarantine ]";
-    }
-
-    function report(id) {
-        const e = emails[currentFolder].find(item => item.id === id);
-        if(e.phishing) { score += 20; log("THREAT NEUTRALIZED", "var(--accent)"); }
-        else { score -= 15; log("FALSE POSITIVE", "var(--red)"); }
-        emails[currentFolder] = emails[currentFolder].filter(item => item.id !== id);
-        updateScore(); renderList();
-        document.getElementById('emailView').innerHTML = "[ Analysis Logged ]";
-    }
-
-    function breach() {
-        score -= 50; updateScore();
-        log("CRITICAL BREACH!", "var(--red)");
-        setTimeout(() => {
-            document.getElementById('introOverlay').classList.remove('hidden');
-        }, 800);
-    }
-
-    function checkWin() {
-        if (emails.inbox.length === 0 && score > 0) {
-            document.getElementById('completeBtn').style.display = 'block';
-            document.getElementById('introOverlay').classList.remove('hidden');
-        }
-    }
-
-    function updateScore() { document.getElementById('scoreDisplay').innerText = score; }
-    function log(msg, color) {
-        const logBox = document.getElementById('lootLog');
-        logBox.innerHTML = `<div style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</div>` + logBox.innerHTML;
-    }
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    const geo = new THREE.BufferGeometry();
-    const pos = [];
-    for(let i=0; i<300; i++) pos.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    const points = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0x09eef5, size: 0.1 }));
-    scene.add(points); camera.position.z = 50;
-    function animate() { requestAnimationFrame(animate); points.rotation.y += 0.001; renderer.render(scene, camera); }
-    animate();
 </script>
 </body>
 </html>
