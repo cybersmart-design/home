@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Account Hijack Response Trainer | CyberSmart iOS Simulator</title>
+    <style>
+        :root {
+            --bg-color: #000;
+            --ios-blue: #007aff;
+            --ios-green: #34c759;
+            --ios-red: #ff3b30;
+            --ios-orange: #ff9500;
+            --ios-yellow: #ffcc00;
+            --ios-gray: #8e8e93;
+            --safe-top: 44px;
+            --safe-bottom: 34px;
+            --wallpaper: linear-gradient(135deg, #1f4037, #99f2c8);
+            --brightness: 0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+
+        /* --- TRAINING HUD --- */
+        .training-hud {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white; padding: 10px 20px; z-index: 99999;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--ios-blue);
+            font-size: 13px;
+        }
+        .hud-left { display: flex; align-items: center; gap: 15px; }
+        .hud-logo { font-size: 18px; font-weight: 700; color: var(--ios-blue); }
+        .hud-scenario { background: var(--ios-red); padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; animation: hudPulse 2s infinite; }
+        .hud-right { display: flex; align-items: center; gap: 15px; }
+        .hud-score { display: flex; align-items: center; gap: 5px; }
+        .hud-score .points { color: var(--ios-green); font-weight: 700; font-size: 16px; }
+        .hud-progress { display: flex; gap: 4px; }
+        .hud-step { width: 24px; height: 6px; background: #333; border-radius: 3px; transition: 0.5s; }
+        .hud-step.done { background: var(--ios-green); }
+        .hud-step.current { background: var(--ios-blue); animation: hudPulse 1s infinite; }
+        .hud-step.missed { background: var(--ios-red); }
+        .hud-timer { font-family: 'Courier New', monospace; font-size: 14px; color: var(--ios-yellow); font-weight: 700; }
+        .hud-btn { background: var(--ios-blue); border: none; color: white; padding: 5px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .hud-btn:hover { filter: brightness(1.2); }
+        .hud-btn.danger { background: var(--ios-red); }
+        @keyframes hudPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        /* --- COACH TOOLTIP --- */
+        .coach-bubble {
+            position: fixed; bottom: 20px; left: 20px; right: 400px;
+            background: linear-gradient(135deg, #0a0a23, #1a1a3e);
+            border: 1px solid var(--ios-blue); border-radius: 16px;
+            padding: 15px 20px; color: white; z-index: 99998;
+            display: flex; align-items: flex-start; gap: 12px;
+            box-shadow: 0 10px 40px rgba(0,122,255,0.3);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            max-width: 500px;
+        }
+        .coach-bubble.hidden { transform: translateY(200px); opacity: 0; pointer-events: none; }
+        .coach-avatar { width: 40px; height: 40px; background: var(--ios-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .coach-content { flex: 1; }
+        .coach-content .coach-name { font-size: 11px; color: var(--ios-blue); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .coach-content .coach-msg { font-size: 14px; margin-top: 4px; line-height: 1.4; }
+        .coach-content .coach-hint { font-size: 12px; color: var(--ios-yellow); margin-top: 8px; font-style: italic; }
+        .coach-dismiss { background: none; border: none; color: var(--ios-gray); font-size: 18px; cursor: pointer; }
+
+        /* --- HARDWARE FRAME --- */
+        .iphone-frame {
+            width: 375px; height: 812px;
+            background: #000; border-radius: 55px;
+            position: relative;
+            box-shadow: 0 0 0 4px #444, 0 0 0 12px #111, 0 20px 50px rgba(0,0,0,0.8);
+            border: 8px solid #000;
+            display: flex; flex-direction: column; overflow: hidden;
+            margin-top: 50px;
+        }
+        .btn-mute { position: absolute; width: 3px; height: 25px; background: #222; left: -11px; top: 110px; border-radius: 2px 0 0 2px; }
+        .btn-vol-up { position: absolute; width: 3px; height: 50px; background: #222; left: -11px; top: 160px; border-radius: 2px 0 0 2px; }
+        .btn-vol-down { position: absolute; width: 3px; height: 50px; background: #222; left: -11px; top: 230px; border-radius: 2px 0 0 2px; }
+        .btn-power { position: absolute; width: 3px; height: 80px; background: #222; right: -11px; top: 180px; border-radius: 0 2px 2px 0; }
+
+        .screen {
+            flex: 1; position: relative; background: var(--wallpaper);
+            border-radius: 45px; overflow: hidden; background-size: cover; background-position: center;
+        }
+        .brightness-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0, var(--brightness)); pointer-events: none; z-index: 9998;
+        }
+
+        .status-bar {
+            position: absolute; top: 0; width: 100%; height: var(--safe-top);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px; color: white; font-size: 14px; font-weight: bold; z-index: 9000;
+            pointer-events: none; transition: color 0.3s;
+        }
+        .dynamic-island {
+            position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 32px; background: #000; border-radius: 20px;
+            z-index: 9001; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .dynamic-island.alert-active {
+            width: 200px; height: 36px; background: linear-gradient(135deg, #1a0000, #330000);
+            border: 1px solid var(--ios-red);
+        }
+        .dynamic-island.alert-active::after {
+            content: '🔴 SECURITY ALERT'; font-size: 10px; color: var(--ios-red); font-weight: 700;
+        }
+        .home-indicator {
+            position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+            width: 130px; height: 5px; background: white; border-radius: 10px;
+            z-index: 10000; cursor: pointer; transition: 0.3s;
+        }
+
+        /* --- LOCK SCREEN --- */
+        #lock-screen {
+            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center;
+            background: inherit; z-index: 8000; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lock-time { font-size: 75px; font-weight: 200; color: white; margin-top: 100px; line-height: 1; }
+        .lock-date { font-size: 20px; font-weight: 500; color: white; margin-top: 5px; }
+        .swipe-hint { position: absolute; bottom: 50px; color: white; font-size: 14px; opacity: 0.8; animation: pulse 2s infinite; cursor: pointer; }
+
+        /* Lock screen notification cards */
+        .lock-notifs { position: absolute; bottom: 100px; left: 15px; right: 15px; display: flex; flex-direction: column; gap: 8px; }
+        .lock-notif-card {
+            background: rgba(255,255,255,0.15); backdrop-filter: blur(20px);
+            border-radius: 16px; padding: 12px 15px; display: flex; gap: 10px; align-items: center;
+            cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .lock-notif-card:active { transform: scale(0.97); }
+        .lock-notif-card .ln-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 18px; flex-shrink: 0; }
+        .lock-notif-card .ln-text { flex: 1; color: white; }
+        .lock-notif-card .ln-text .ln-app { font-size: 12px; font-weight: 600; opacity: 0.8; }
+        .lock-notif-card .ln-text .ln-msg { font-size: 13px; margin-top: 2px; }
+        .lock-notif-card .ln-time { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+        /* --- HOME SCREEN --- */
+        #home-screen {
+            position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between;
+            padding-top: var(--safe-top); padding-bottom: 20px; z-index: 1000;
+        }
+        .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px 10px; padding: 20px; }
+        .app-icon-wrapper { display: flex; flex-direction: column; align-items: center; cursor: pointer; position: relative; }
+        .app-icon { width: 60px; height: 60px; border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.1s; position: relative; }
+        .app-icon:active { transform: scale(0.9); }
+        .app-label { color: white; font-size: 11px; margin-top: 5px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); font-weight: 500; }
+        .app-badge { position: absolute; top: -5px; right: -5px; background: var(--ios-red); color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .dock { margin: 0 15px; padding: 15px 10px; background: rgba(255,255,255,0.3); backdrop-filter: blur(20px); border-radius: 30px; display: flex; justify-content: space-around; }
+
+        /* Highlight ring for training */
+        .training-highlight .app-icon {
+            box-shadow: 0 0 0 3px var(--ios-blue), 0 0 15px rgba(0,122,255,0.5);
+            animation: highlightPulse 1.5s infinite;
+        }
+        @keyframes highlightPulse {
+            0%,100% { box-shadow: 0 0 0 3px var(--ios-blue), 0 0 15px rgba(0,122,255,0.5); }
+            50% { box-shadow: 0 0 0 3px var(--ios-blue), 0 0 25px rgba(0,122,255,0.8); }
+        }
+
+        /* --- APP VIEWS --- */
+        .app-view {
+            position: absolute; inset: 0; background: #f2f2f7; z-index: 5000;
+            transform: scale(0.8) translateY(100%); opacity: 0; pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column;
+        }
+        .app-view.active { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+        .app-header { padding: 50px 20px 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d1d6; background: rgba(242,242,247,0.9); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        .app-content { flex: 1; overflow-y: auto; padding-bottom: 80px; -webkit-overflow-scrolling: touch; }
+
+        .menu-group { margin: 20px 15px; background: #fff; border-radius: 10px; overflow: hidden; }
+        .menu-group-header { padding: 8px 15px; font-size: 13px; color: var(--ios-gray); text-transform: uppercase; }
+        .menu-item { padding: 12px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 16px; transition: background 0.2s; }
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:active { background: #e5e5ea; }
+        .menu-item-left { display: flex; align-items: center; gap: 12px; }
+        .menu-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: white; }
+        .toggle { width: 50px; height: 30px; background: #e9e9eb; border-radius: 15px; position: relative; transition: 0.3s; cursor: pointer; flex-shrink: 0; }
+        .toggle.on { background: var(--ios-green); }
+        .toggle::after { content: ''; position: absolute; width: 26px; height: 26px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .toggle.on::after { transform: translateX(20px); }
+
+        /* --- CONTROL CENTER --- */
+        #control-center {
+            position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); z-index: 8500;
+            transform: translateY(-100%); transition: 0.4s; padding: 60px 20px; display: flex; flex-direction: column; gap: 20px;
+        }
+        #control-center.open { transform: translateY(0); }
+        .cc-row { display: flex; gap: 15px; }
+        .cc-box { background: rgba(255,255,255,0.2); border-radius: 20px; padding: 15px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; cursor: pointer; transition: 0.3s; }
+        .cc-box.active { background: rgba(255,255,255,0.9); color: black; }
+        .cc-slider { width: 100%; -webkit-appearance: none; background: rgba(255,255,255,0.3); height: 30px; border-radius: 15px; outline: none; margin-top: 10px; overflow: hidden; }
+        .cc-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; background: white; border-radius: 50%; box-shadow: -100vw 0 0 100vw rgba(255,255,255,0.8); }
+
+        /* --- NOTIFICATION BANNER --- */
+        .notification-banner {
+            position: absolute; top: -100px; left: 15px; right: 15px; background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; z-index: 10500;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; gap: 10px; align-items: center;
+        }
+        .notification-banner.show { top: 50px; }
+        .notification-banner.urgent { border: 2px solid var(--ios-red); }
+        .notif-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 20px; flex-shrink: 0; }
+
+        /* --- EMAIL APP --- */
+        .email-item { display: flex; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; gap: 12px; transition: background 0.2s; }
+        .email-item:active { background: #e5e5ea; }
+        .email-item.unread { background: #f0f4ff; }
+        .email-item.phishing { }
+        .email-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--ios-blue); margin-top: 5px; flex-shrink: 0; }
+        .email-dot.read { background: transparent; }
+        .email-body { flex: 1; overflow: hidden; }
+        .email-sender { font-weight: 600; font-size: 15px; }
+        .email-subject { font-size: 14px; margin-top: 2px; }
+        .email-preview { font-size: 13px; color: var(--ios-gray); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .email-time { font-size: 12px; color: var(--ios-gray); flex-shrink: 0; }
+        
+        .email-detail { padding: 20px; }
+        .email-detail-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
+        .email-detail-subject { font-size: 20px; font-weight: 700; }
+        .email-detail-meta { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--ios-gray); }
+        .email-detail-body { font-size: 15px; line-height: 1.6; }
+        .email-detail-body a { color: var(--ios-blue); text-decoration: underline; cursor: pointer; }
+        .email-detail-body .suspicious-link { color: var(--ios-red); }
+
+        /* Phishing indicators overlay */
+        .phishing-indicator {
+            background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px;
+            padding: 10px 15px; margin: 10px 0; font-size: 13px; display: none;
+        }
+        .phishing-indicator.show { display: flex; align-items: center; gap: 8px; }
+
+        /* --- SMS APP --- */
+        .sms-thread { padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .sms-bubble { max-width: 75%; padding: 10px 15px; border-radius: 18px; font-size: 15px; line-height: 1.4; }
+        .sms-bubble.received { background: #e9e9eb; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .sms-bubble.sent { background: var(--ios-blue); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .sms-bubble.suspicious { background: #ffe5e5; border: 1px solid var(--ios-red); }
+        .sms-time { font-size: 11px; color: var(--ios-gray); text-align: center; margin: 5px 0; }
+        .sms-contact-header { padding: 5px 0; text-align: center; }
+        .sms-contact-header .contact-avatar { width: 50px; height: 50px; background: var(--ios-gray); border-radius: 50%; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
+
+        /* --- SECURITY DASHBOARD --- */
+        .security-card { margin: 15px; background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .security-card-header { padding: 15px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #eee; }
+        .security-card-header .sc-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .security-card-body { padding: 15px; }
+        .threat-level { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+        .threat-bar { flex: 1; height: 8px; background: #e9e9eb; border-radius: 4px; overflow: hidden; }
+        .threat-bar-fill { height: 100%; border-radius: 4px; transition: width 1s; }
+        .threat-label { font-size: 12px; font-weight: 600; width: 60px; }
+
+        .device-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .device-item:last-child { border-bottom: none; }
+        .device-info { display: flex; align-items: center; gap: 10px; }
+        .device-icon { font-size: 24px; }
+        .device-actions button { background: none; border: 1px solid var(--ios-red); color: var(--ios-red); padding: 5px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .device-actions button:active { background: var(--ios-red); color: white; }
+
+        /* Action Checklist */
+        .checklist { padding: 0; }
+        .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .checklist-item:last-child { border-bottom: none; }
+        .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #d1d1d6; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; cursor: pointer; transition: 0.3s; }
+        .check-circle.done { background: var(--ios-green); border-color: var(--ios-green); color: white; }
+        .check-text { flex: 1; font-size: 15px; }
+        .check-text.done-text { text-decoration: line-through; color: var(--ios-gray); }
+        .check-priority { font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        .check-priority.critical { background: #ffe5e5; color: var(--ios-red); }
+        .check-priority.high { background: #fff3e0; color: var(--ios-orange); }
+        .check-priority.medium { background: #e8f5e9; color: var(--ios-green); }
+
+        /* --- PASSWORD CHANGE SCREEN --- */
+        .password-form { padding: 20px; }
+        .form-field { margin-bottom: 15px; }
+        .form-label { font-size: 13px; color: var(--ios-gray); margin-bottom: 5px; display: block; }
+        .form-input { width: 100%; padding: 12px 15px; border: 1px solid #d1d1d6; border-radius: 10px; font-size: 16px; outline: none; background: white; transition: 0.3s; }
+        .form-input:focus { border-color: var(--ios-blue); box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        .form-input.error { border-color: var(--ios-red); background: #fff5f5; }
+        .form-input.success { border-color: var(--ios-green); background: #f0fff0; }
+        .form-hint { font-size: 12px; margin-top: 4px; }
+        .form-hint.error { color: var(--ios-red); }
+        .form-hint.success { color: var(--ios-green); }
+        .password-strength { display: flex; gap: 4px; margin-top: 8px; }
+        .strength-bar { flex: 1; height: 4px; background: #e9e9eb; border-radius: 2px; transition: 0.3s; }
+        .ios-button { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .ios-button:active { transform: scale(0.98); }
+        .ios-button.primary { background: var(--ios-blue); color: white; }
+        .ios-button.danger { background: var(--ios-red); color: white; }
+        .ios-button.success { background: var(--ios-green); color: white; }
+        .ios-button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* 2FA Setup */
+        .totp-display { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
+        .totp-digit { width: 45px; height: 55px; background: white; border: 2px solid #d1d1d6; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; font-family: 'Courier New', monospace; }
+        .totp-digit.filled { border-color: var(--ios-blue); background: #f0f4ff; }
+        .qr-placeholder { width: 180px; height: 180px; background: white; border: 2px solid #ddd; border-radius: 10px; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 50px; }
+
+        /* --- TIMELINE / ACTIVITY LOG --- */
+        .timeline { padding: 0 20px; }
+        .timeline-item { display: flex; gap: 12px; padding: 12px 0; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: 15px; top: 40px; bottom: -12px; width: 2px; background: #e9e9eb; }
+        .timeline-item:last-child::before { display: none; }
+        .timeline-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; z-index: 1; }
+        .timeline-dot.danger { background: #ffe5e5; }
+        .timeline-dot.warning { background: #fff3e0; }
+        .timeline-dot.info { background: #e3f2fd; }
+        .timeline-dot.success { background: #e8f5e9; }
+        .timeline-content { flex: 1; }
+        .timeline-title { font-weight: 600; font-size: 14px; }
+        .timeline-desc { font-size: 13px; color: var(--ios-gray); margin-top: 2px; }
+        .timeline-time { font-size: 11px; color: var(--ios-gray); }
+
+        /* --- QUIZ/DECISION SCREENS --- */
+        .quiz-container { padding: 20px; }
+        .quiz-question { font-size: 18px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+        .quiz-option { background: white; border: 2px solid #e9e9eb; border-radius: 12px; padding: 15px; margin-bottom: 10px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 12px; }
+        .quiz-option:active { transform: scale(0.98); }
+        .quiz-option.selected { border-color: var(--ios-blue); background: #f0f4ff; }
+        .quiz-option.correct { border-color: var(--ios-green); background: #e8f5e9; }
+        .quiz-option.wrong { border-color: var(--ios-red); background: #ffe5e5; }
+        .quiz-letter { width: 30px; height: 30px; border-radius: 50%; background: #e9e9eb; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+        .quiz-option.correct .quiz-letter { background: var(--ios-green); color: white; }
+        .quiz-option.wrong .quiz-letter { background: var(--ios-red); color: white; }
+        .quiz-explanation { margin-top: 15px; padding: 15px; background: #f0f4ff; border-radius: 12px; font-size: 14px; line-height: 1.5; display: none; }
+        .quiz-explanation.show { display: block; }
+
+        /* --- COMPLETION SCREEN --- */
+        .completion-screen { text-align: center; padding: 30px 20px; }
+        .completion-badge { font-size: 80px; margin-bottom: 15px; }
+        .completion-title { font-size: 24px; font-weight: 700; margin-bottom: 5px; }
+        .completion-subtitle { font-size: 15px; color: var(--ios-gray); margin-bottom: 20px; }
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; border: 6px solid var(--ios-green); margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .score-number { font-size: 36px; font-weight: 700; color: var(--ios-green); }
+        .score-label { font-size: 12px; color: var(--ios-gray); }
+        .stat-row { display: flex; justify-content: space-around; margin: 20px 0; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 24px; font-weight: 700; }
+        .stat-label { font-size: 12px; color: var(--ios-gray); }
+        .tips-section { text-align: left; margin-top: 20px; background: #f8f8f8; border-radius: 12px; padding: 15px; }
+        .tips-section h4 { margin-bottom: 10px; }
+        .tips-section li { font-size: 14px; margin-bottom: 8px; line-height: 1.4; padding-left: 5px; }
+
+        /* --- CUSTOM MODAL --- */
+        .modal-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 11000;
+            display: none; justify-content: center; align-items: center; opacity: 0; transition: 0.3s;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .custom-modal { background: rgba(242,242,247,0.97); backdrop-filter: blur(20px); width: 270px; border-radius: 14px; text-align: center; display: flex; flex-direction: column; overflow: hidden; transform: scale(0.9); transition: 0.3s; }
+        .modal-overlay.show .custom-modal { transform: scale(1); }
+        .modal-text { padding: 20px 15px; font-size: 14px; line-height: 1.4; }
+        .modal-title { font-weight: 600; font-size: 17px; margin-bottom: 5px; }
+        .modal-buttons { display: flex; flex-direction: column; border-top: 1px solid #ccc; }
+        .modal-btn { background: none; border: none; padding: 15px; font-size: 17px; color: var(--ios-blue); cursor: pointer; border-bottom: 1px solid #ccc; transition: background 0.2s; }
+        .modal-btn:last-child { border-bottom: none; }
+        .modal-btn:active { background: rgba(0,0,0,0.05); }
+        .modal-btn.danger { color: var(--ios-red); font-weight: 600; }
+        .modal-btn.bold { font-weight: 600; }
+
+        /* --- CUSTOM KEYBOARD --- */
+        .keyboard {
+            position: absolute; bottom: 0; left: 0; width: 100%; background: #d1d5db; padding: 10px 5px 30px;
+            display: none; flex-direction: column; gap: 8px; z-index: 6000; transform: translateY(100%); transition: 0.3s;
+        }
+        .keyboard.show { display: flex; transform: translateY(0); }
+        .kb-row { display: flex; justify-content: center; gap: 6px; }
+        .kb-key { background: #fff; border: none; border-radius: 5px; padding: 12px 0; flex: 1; font-size: 18px; font-weight: 500; box-shadow: 0 1px 1px rgba(0,0,0,0.2); cursor: pointer; transition: background 0.1s; }
+        .kb-key:active { background: #bbb; }
+        .kb-special { background: #a5a9b1; flex: 1.5; font-size: 14px; }
+
+        /* Calculator */
+        #calc-display { background: #000; color: white; font-size: 60px; text-align: right; padding: 40px 20px 10px; height: 150px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; background: #000; height: calc(100% - 150px); }
+        .calc-btn { border-radius: 50%; border: none; background: #333; color: white; font-size: 28px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: filter 0.1s; }
+        .calc-btn.op { background: #ff9f0a; }
+        .calc-btn.top { background: #a5a5a5; color: black; }
+        .calc-btn:active { filter: brightness(1.5); }
+        .calc-btn.zero { grid-column: span 2; border-radius: 35px; justify-content: flex-start; padding-left: 30px; }
+
+        /* Camera */
+        #camera-feed { width: 100%; height: 100%; object-fit: cover; background: #000; }
+        .camera-controls { position: absolute; bottom: 50px; width: 100%; display: flex; justify-content: center; z-index: 5001; }
+        .shutter-btn { width: 70px; height: 70px; border-radius: 50%; background: white; border: 4px solid #ccc; box-shadow: 0 0 0 3px white; cursor: pointer; transition: 0.1s; }
+        .shutter-btn:active { transform: scale(0.9); }
+
+        /* Notes */
+        #notes-input { width: 100%; height: 100%; border: none; padding: 20px; font-size: 18px; resize: none; outline: none; background: #fff; }
+
+        @keyframes pulse { 0% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-5px); } 100% { opacity: 0.5; transform: translateY(0); } }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-up { animation: fadeInUp 0.5s ease-out; }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .coach-bubble { right: 20px; bottom: 10px; max-width: calc(100vw - 40px); }
+            .training-hud { flex-wrap: wrap; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TRAINING HUD -->
+<div class="training-hud" id="trainingHud">
+    <div class="hud-left">
+        <span class="hud-logo">🛡️ CyberSmart</span>
+        <span class="hud-scenario" id="hudScenario">SCENARIO: ACCOUNT HIJACK</span>
+    </div>
+    <div class="hud-right">
+        <div class="hud-progress" id="hudProgress">
+            <div class="hud-step" data-step="0"></div>
+            <div class="hud-step" data-step="1"></div>
+            <div class="hud-step" data-step="2"></div>
+            <div class="hud-step" data-step="3"></div>
+            <div class="hud-step" data-step="4"></div>
+            <div class="hud-step" data-step="5"></div>
+            <div class="hud-step" data-step="6"></div>
+            <div class="hud-step" data-step="7"></div>
+        </div>
+        <div class="hud-score">🏆 <span class="points" id="hudScore">0</span></div>
+        <span class="hud-timer" id="hudTimer">05:00</span>
+        <button class="hud-btn" onclick="showHint()">💡 Hint</button>
+        <button class="hud-btn danger" onclick="restartTraining()">↻ Restart</button>
+    </div>
+</div>
+
+<!-- COACH BUBBLE -->
+<div class="coach-bubble" id="coachBubble">
+    <div class="coach-avatar">🤖</div>
+    <div class="coach-content">
+        <div class="coach-name">CyberCoach</div>
+        <div class="coach-msg" id="coachMsg">Welcome! Your Apple ID account has been compromised. You'll receive suspicious notifications. Let's walk through the correct incident response steps.</div>
+        <div class="coach-hint" id="coachHint">👆 Tap the lock screen to begin.</div>
+    </div>
+    <button class="coach-dismiss" onclick="dismissCoach()">✕</button>
+</div>
+
+<!-- iPHONE FRAME -->
+<div class="iphone-frame">
+    <div class="btn-mute"></div>
+    <div class="btn-vol-up"></div>
+    <div class="btn-vol-down"></div>
+    <div class="btn-power"></div>
+
+    <div class="screen" id="main-screen">
+        <div class="brightness-overlay" id="brightnessOverlay"></div>
+
+        <div class="status-bar" id="statusBar">
+            <span id="clock" style="width: 50px;">9:41</span>
+            <div style="display:flex; gap: 5px;">
+                <span id="sb-signal">📶</span>
+                <span id="sb-wifi">🛜</span>
+                <span id="sb-batt">🔋</span>
+            </div>
+        </div>
+
+        <div class="dynamic-island" id="island" onclick="toggleCC()"></div>
+
+        <!-- LOCK SCREEN -->
+        <div id="lock-screen" onclick="unlock()">
+            <div class="lock-time" id="lockTime">09:41</div>
+            <div class="lock-date" id="lockDate">Sunday, March 15</div>
+            <div class="lock-notifs" id="lockNotifs">
+                <div class="lock-notif-card">
+                    <div class="ln-icon" style="background: var(--ios-red);">🚨</div>
+                    <div class="ln-text">
+                        <div class="ln-app">Apple Security</div>
+                        <div class="ln-msg">Your Apple ID was signed in from a new device in Moscow, Russia</div>
+                    </div>
+                    <div class="ln-time">2m ago</div>
+                </div>
+                <div class="lock-notif-card">
+                    <div class="ln-icon" style="background: var(--ios-blue);">✉️</div>
+                    <div class="ln-text">
+                        <div class="ln-app">Mail</div>
+                        <div class="ln-msg">Apple: Your password was changed successfully</div>
+                    </div>
+                    <div class="ln-time">5m ago</div>
+                </div>
+                <div class="lock-notif-card">
+                    <div class="ln-icon" style="background: var(--ios-green);">💬</div>
+                    <div class="ln-text">
+                        <div class="ln-app">Messages</div>
+                        <div class="ln-msg">Your Apple ID verification code is: 847291</div>
+                    </div>
+                    <div class="ln-time">6m ago</div>
+                </div>
+            </div>
+            <div class="swipe-hint">Tap to Unlock — Security Alert Active 🔴</div>
+        </div>
+
+        <!-- HOME SCREEN -->
+        <div id="home-screen">
+            <div class="app-grid" id="appGrid">
+                <div class="app-icon-wrapper" id="app-wrapper-settings" onclick="openApp('app-settings')">
+                    <div class="app-icon" style="background: linear-gradient(#d1d1d6, #8e8e93);">⚙️</div>
+                    <div class="app-badge" id="badge-settings">1</div>
+                    <div class="app-label">Settings</div>
+                </div>
+                <div class="app-icon-wrapper" id="app-wrapper-mail" onclick="openApp('app-mail')">
+                    <div class="app-icon" style="background: linear-gradient(#64b5f6, #1565c0);">✉️</div>
+                    <div class="app-badge" id="badge-mail">3</div>
+                    <div class="app-label">Mail</div>
+                </div>
+                <div class="app-icon-wrapper" id="app-wrapper-notes" onclick="openApp('app-notes')">
+                    <div class="app-icon" style="background: #fff; color: #f4c20d;">📝</div>
+                    <div class="app-label">Notes</div>
+                </div>
+                <div class="app-icon-wrapper" id="app-wrapper-calc" onclick="openApp('app-calc')">
+                    <div class="app-icon" style="background: #000; color: #ff9f0a;">🧮</div>
+                    <div class="app-label">Calculator</div>
+                </div>
+                <div class="app-icon-wrapper" id="app-wrapper-camera" onclick="openApp('app-camera')">
+                    <div class="app-icon" style="background: #e5e5ea; color: #333;">📷</div>
+                    <div class="app-label">Camera</div>
+                </div>
+                <div class="app-icon-wrapper" id="app-wrapper-security" onclick="openApp('app-security')">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #ff3b30, #ff6b6b);">🛡️</div>
+                    <div class="app-badge" style="background: var(--ios-orange);">!</div>
+                    <div class="app-label">Security</div>
+                </div>
+                <div class="app-icon-wrapper" id="app-wrapper-sms" onclick="openApp('app-sms')">
+                    <div class="app-icon" style="background: var(--ios-green); color: white;">💬</div>
+                    <div class="app-badge" id="badge-sms">2</div>
+                    <div class="app-label">Messages</div>
+                </div>
+                <div class="app-icon-wrapper" id="app-wrapper-quiz" onclick="openApp('app-quiz')">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #7c4dff, #448aff);">🧠</div>
+                    <div class="app-label">CyberQuiz</div>
+                </div>
+            </div>
+
+            <div class="dock">
+                <div class="app-icon-wrapper" onclick="openApp('app-sms')">
+                    <div class="app-icon" style="background: #34c759; color: white;">💬</div>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('app-mail')">
+                    <div class="app-icon" style="background: #007aff; color: white;">✉️</div>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('app-security')">
+                    <div class="app-icon" style="background: var(--ios-red); color: white;">🛡️</div>
+                </div>
+                <div class="app-icon-wrapper" onclick="openApp('app-settings')">
+                    <div class="app-icon" style="background: #8e8e93; color: white;">⚙️</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL CENTER -->
+        <div id="control-center">
+            <div class="cc-row">
+                <div style="flex: 1; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="cc-box active" id="cc-wifi" onclick="toggleSetting('wifi')">🛜</div>
+                    <div class="cc-box active" id="cc-bt" onclick="toggleSetting('bluetooth')">📡</div>
+                    <div class="cc-box">✈️</div>
+                    <div class="cc-box active">🗼</div>
+                </div>
+                <div class="cc-box" style="flex: 1;">🎵 Not Playing</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); border-radius: 20px; padding: 15px;">
+                <span style="color:white; font-size: 12px; font-weight: bold;">☀️ Brightness</span>
+                <input type="range" class="cc-slider" id="cc-brightness-slider" min="0" max="70" value="0" oninput="updateBrightness(this.value)">
+            </div>
+        </div>
+
+        <!-- NOTIFICATION BANNER -->
+        <div class="notification-banner" id="notif-banner" onclick="hideNotification()">
+            <div class="notif-icon" id="notif-icon-box" style="background: #34c759; color: white;">💬</div>
+            <div style="flex: 1;">
+                <b style="font-size: 14px;" id="notif-title">Title</b>
+                <p style="font-size: 13px; color: #555; margin-top: 2px;" id="notif-desc">Description</p>
+            </div>
+        </div>
+
+        <!-- ============ SETTINGS APP ============ -->
+        <div class="app-view" id="app-settings">
+            <div class="app-header"><b>Settings</b></div>
+            <div class="app-content">
+                <h1 style="padding: 10px 20px;">Settings</h1>
+                <div class="menu-group">
+                    <div class="menu-item" style="padding: 15px;">
+                        <div style="display:flex; align-items:center; gap: 15px;">
+                            <div style="width: 60px; height: 60px; background: #8e8e93; border-radius: 50%; display:flex; justify-content:center; align-items:center; color:white; font-size:24px;">AM</div>
+                            <div>
+                                <b style="font-size: 18px;">Arnolfo Mojica</b><br>
+                                <small style="color: var(--ios-red); font-weight: 600;">⚠️ Security Alert Active</small>
+                            </div>
+                        </div>
+                        <span style="color: var(--ios-red);">›</span>
+                    </div>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-blue);">🛜</div>
+                            <span>Wi-Fi (<span id="set-wifi-name">SM_LIPA_FREE</span>)</span>
+                        </div>
+                        <div class="toggle on" id="set-wifi" onclick="toggleSetting('wifi')"></div>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-blue);">📡</div>
+                            <span>Bluetooth</span>
+                        </div>
+                        <div class="toggle on" id="set-bt" onclick="toggleSetting('bluetooth')"></div>
+                    </div>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-item" onclick="openSubSettings('settings-password')">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-red);">🔑</div>
+                            <span style="color: var(--ios-red); font-weight: 600;">Password & Security</span>
+                        </div>
+                        <span style="color: var(--ios-red);">⚠️ ›</span>
+                    </div>
+                    <div class="menu-item" onclick="openSubSettings('settings-devices')">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-orange);">📱</div>
+                            <span>Signed-In Devices</span>
+                        </div>
+                        <span style="color: var(--ios-red);">3 devices ›</span>
+                    </div>
+                    <div class="menu-item" onclick="openSubSettings('settings-privacy')">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-blue);">🔒</div>
+                            <span>Privacy & Security</span>
+                        </div>
+                        <span style="color:#8e8e93;">›</span>
+                    </div>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-item" onclick="openSubSettings('settings-wallpaper')">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: #30d158;">🎨</div>
+                            <span>Wallpaper</span>
+                        </div>
+                        <span style="color:#8e8e93;">›</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: PASSWORD & SECURITY -->
+        <div class="app-view" id="settings-password">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('settings-password')">‹ Back</button>
+                <b>Password & Security</b>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="app-content">
+                <div style="padding: 15px; background: #ffe5e5; text-align: center; border-bottom: 1px solid #ffcccc;">
+                    <span style="font-size: 40px;">🚨</span>
+                    <h3 style="color: var(--ios-red); margin-top: 5px;">Password Compromised</h3>
+                    <p style="font-size: 13px; color: #666; margin-top: 5px;">Your password was changed from an unrecognized device on March 15, 2026 at 7:52 PM from Moscow, Russia.</p>
+                </div>
+                <div class="password-form" id="passwordForm">
+                    <h3 style="margin-bottom: 15px;">Change Your Password Now</h3>
+                    <div class="form-field">
+                        <label class="form-label">Current / Recovery Password</label>
+                        <input type="password" class="form-input" id="pw-current" placeholder="Enter current password" oninput="validatePasswordForm()">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-input" id="pw-new" placeholder="Enter strong password" oninput="checkPasswordStrength(); validatePasswordForm()">
+                        <div class="password-strength" id="pw-strength">
+                            <div class="strength-bar" id="str1"></div>
+                            <div class="strength-bar" id="str2"></div>
+                            <div class="strength-bar" id="str3"></div>
+                            <div class="strength-bar" id="str4"></div>
+                        </div>
+                        <div class="form-hint" id="pw-strength-text"></div>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-input" id="pw-confirm" placeholder="Confirm password" oninput="validatePasswordForm()">
+                        <div class="form-hint" id="pw-match-text"></div>
+                    </div>
+                    <button class="ios-button primary" id="pw-submit" disabled onclick="submitPasswordChange()">Change Password</button>
+                    <div style="margin-top: 15px; padding: 12px; background: #f0f4ff; border-radius: 10px;">
+                        <p style="font-size: 13px; font-weight: 600; color: var(--ios-blue);">💡 Strong Password Tips:</p>
+                        <ul style="font-size: 12px; color: #555; padding-left: 15px; margin-top: 5px; line-height: 1.8;">
+                            <li>Use 12+ characters</li>
+                            <li>Mix uppercase, lowercase, numbers & symbols</li>
+                            <li>Don't reuse passwords from other accounts</li>
+                            <li>Avoid personal info (birthdays, pet names)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: DEVICES -->
+        <div class="app-view" id="settings-devices">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('settings-devices')">‹ Back</button>
+                <b>Signed-In Devices</b>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="app-content">
+                <div class="menu-group-header">ACTIVE SESSIONS</div>
+                <div class="menu-group">
+                    <div class="device-item" style="padding: 12px 15px;">
+                        <div class="device-info">
+                            <span class="device-icon">📱</span>
+                            <div>
+                                <b style="font-size: 14px;">iPhone 15 Pro</b> <span style="color:var(--ios-green); font-size: 11px;">● This device</span>
+                                <br><small style="color: var(--ios-gray);">Lipa City, PH — Active now</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="device-item" style="padding: 12px 15px; background: #fff5f5;" id="device-moscow">
+                        <div class="device-info">
+                            <span class="device-icon">💻</span>
+                            <div>
+                                <b style="font-size: 14px; color: var(--ios-red);">Chrome on Windows</b> <span style="color: var(--ios-red); font-size: 11px;">🚨 SUSPICIOUS</span>
+                                <br><small style="color: var(--ios-red);">Moscow, Russia — 8 min ago</small>
+                            </div>
+                        </div>
+                        <div class="device-actions">
+                            <button onclick="revokeDevice('moscow')">Revoke</button>
+                        </div>
+                    </div>
+                    <div class="device-item" style="padding: 12px 15px;" id="device-unknown">
+                        <div class="device-info">
+                            <span class="device-icon">🖥️</span>
+                            <div>
+                                <b style="font-size: 14px;">Safari on Mac</b>
+                                <br><small style="color: var(--ios-gray);">Lipa City, PH — 2 days ago</small>
+                            </div>
+                        </div>
+                        <div class="device-actions">
+                            <button onclick="revokeDevice('unknown')">Revoke</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 15px;">
+                    <button class="ios-button danger" onclick="revokeAllDevices()">⚠️ Sign Out All Other Devices</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: PRIVACY -->
+        <div class="app-view" id="settings-privacy">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('settings-privacy')">‹ Back</button>
+                <b>Privacy & Security</b>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="app-content">
+                <div class="menu-group">
+                    <div class="menu-item" onclick="openSubSettings('settings-2fa')">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-green);">🔐</div>
+                            <span>Two-Factor Authentication</span>
+                        </div>
+                        <span style="color: var(--ios-red);">OFF ›</span>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-blue);">📧</div>
+                            <span>Recovery Email</span>
+                        </div>
+                        <span style="color: var(--ios-gray);">a***@gmail.com ›</span>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: #5856d6;">🔑</div>
+                            <span>Recovery Key</span>
+                        </div>
+                        <span style="color: var(--ios-gray);">Set Up ›</span>
+                    </div>
+                </div>
+                <div class="menu-group">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <div class="menu-icon" style="background: var(--ios-gray);">📍</div>
+                            <span>Location Services</span>
+                        </div>
+                        <span style="color: var(--ios-gray);">On ›</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: 2FA SETUP -->
+        <div class="app-view" id="settings-2fa">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('settings-2fa')">‹ Back</button>
+                <b>Two-Factor Auth</b>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="app-content" style="padding: 20px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <span style="font-size: 50px;">🔐</span>
+                    <h2 style="margin-top: 10px;">Enable Two-Factor Authentication</h2>
+                    <p style="color: var(--ios-gray); margin-top: 5px; font-size: 14px;">Add an extra layer of security. Even if someone has your password, they can't sign in without your second factor.</p>
+                </div>
+                <div class="qr-placeholder">
+                    <span>📱</span>
+                    <small style="font-size: 11px; color: var(--ios-gray); margin-top: 5px;">Scan with Authenticator</small>
+                </div>
+                <p style="text-align: center; font-size: 13px; color: var(--ios-gray); margin-bottom: 15px;">Enter the 6-digit code from your authenticator app:</p>
+                <div class="totp-display" id="totpDisplay">
+                    <div class="totp-digit" id="totp0"></div>
+                    <div class="totp-digit" id="totp1"></div>
+                    <div class="totp-digit" id="totp2"></div>
+                    <div class="totp-digit" id="totp3"></div>
+                    <div class="totp-digit" id="totp4"></div>
+                    <div class="totp-digit" id="totp5"></div>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;" id="totpKeypad">
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('1')">1</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('2')">2</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('3')">3</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('4')">4</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('5')">5</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('6')">6</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('7')">7</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('8')">8</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('9')">9</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #e9e9eb; color: black; border-radius: 8px;" onclick="enterTOTP('0')">0</button>
+                    <button class="ios-button" style="width: 60px; padding: 12px; background: #ffcccc; color: var(--ios-red); border-radius: 8px;" onclick="clearTOTP()">⌫</button>
+                </div>
+                <button class="ios-button success" id="verify2fa" disabled onclick="verify2FA()">Verify & Enable 2FA</button>
+                <div style="margin-top: 15px; padding: 12px; background: #e8f5e9; border-radius: 10px;">
+                    <p style="font-size: 13px; color: var(--ios-green); font-weight: 600;">🎯 For this simulation, enter: 847291</p>
+                    <p style="font-size: 12px; color: #555; margin-top: 5px;">In real life, this code comes from an authenticator app (Google Authenticator, Authy, etc.)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: WALLPAPER -->
+        <div class="app-view" id="settings-wallpaper">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('settings-wallpaper')">‹ Back</button>
+                <b>Wallpaper</b>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="app-content" style="padding: 20px;">
+                <div style="display:flex; gap:10px; flex-wrap: wrap;">
+                    <div onclick="setWallpaper('linear-gradient(135deg, #1f4037, #99f2c8)')" style="flex:1; min-width: 90px; height: 150px; background: linear-gradient(135deg, #1f4037, #99f2c8); border-radius: 10px; cursor: pointer;"></div>
+                    <div onclick="setWallpaper('linear-gradient(135deg, #0f2027, #203a43, #2c5364)')" style="flex:1; min-width: 90px; height: 150px; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); border-radius: 10px; cursor: pointer;"></div>
+                    <div onclick="setWallpaper('linear-gradient(135deg, #ff7e5f, #feb47b)')" style="flex:1; min-width: 90px; height: 150px; background: linear-gradient(135deg, #ff7e5f, #feb47b); border-radius: 10px; cursor: pointer;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ MAIL APP ============ -->
+        <div class="app-view" id="app-mail">
+            <div class="app-header"><b>Mail</b></div>
+            <div class="app-content" id="mail-list">
+                <div class="email-item unread" onclick="openEmail('email-phishing')">
+                    <div class="email-dot"></div>
+                    <div class="email-body">
+                        <div style="display:flex; justify-content: space-between;">
+                            <span class="email-sender" style="color: var(--ios-red);">Apple Security</span>
+                            <span class="email-time">7:55 PM</span>
+                        </div>
+                        <div class="email-subject">⚠️ Urgent: Verify your Apple ID immediately</div>
+                        <div class="email-preview">Dear Customer, We detected unauthorized access to your account. Click here to verify...</div>
+                    </div>
+                </div>
+                <div class="email-item unread" onclick="openEmail('email-legit')">
+                    <div class="email-dot"></div>
+                    <div class="email-body">
+                        <div style="display:flex; justify-content: space-between;">
+                            <span class="email-sender">Apple</span>
+                            <span class="email-time">7:52 PM</span>
+                        </div>
+                        <div class="email-subject">Your Apple ID password was changed</div>
+                        <div class="email-preview">Your Apple ID (arnolfo.m@icloud.com) was used to change your password on a Windows PC...</div>
+                    </div>
+                </div>
+                <div class="email-item unread" onclick="openEmail('email-phishing2')">
+                    <div class="email-dot"></div>
+                    <div class="email-body">
+                        <div style="display:flex; justify-content: space-between;">
+                            <span class="email-sender" style="color: var(--ios-red);">App1e Support</span>
+                            <span class="email-time">7:48 PM</span>
+                        </div>
+                        <div class="email-subject">Your account will be deleted in 24 hours!</div>
+                        <div class="email-preview">We noticed suspicious activity. Confirm your identity now or your account...</div>
+                    </div>
+                </div>
+                <div class="email-item" onclick="openEmail('email-normal')">
+                    <div class="email-dot read"></div>
+                    <div class="email-body">
+                        <div style="display:flex; justify-content: space-between;">
+                            <span class="email-sender">Yanniepot</span>
+                            <span class="email-time">6:30 PM</span>
+                        </div>
+                        <div class="email-subject">Server maintenance schedule</div>
+                        <div class="email-preview">Hey Arnolfo, just wanted to confirm the maintenance window for tonight...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EMAIL DETAIL VIEWS -->
+        <div class="app-view" id="email-phishing">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('email-phishing')">‹ Mail</button>
+                <b></b>
+                <button style="background:none; border:none; color:var(--ios-red); font-size:14px; font-weight:600;" onclick="reportPhishing('email-phishing')">🚩 Report</button>
+            </div>
+            <div class="app-content">
+                <div class="email-detail">
+                    <div class="email-detail-header">
+                        <div class="email-detail-subject">⚠️ Urgent: Verify your Apple ID immediately</div>
+                        <div class="email-detail-meta">
+                            <span>From: <b>security@apple-id-verify.com</b></span>
+                            <span>7:55 PM</span>
+                        </div>
+                    </div>
+                    <div class="phishing-indicator" id="phish-ind-1">
+                        ⚠️ <span><b>Warning:</b> The sender domain "apple-id-verify.com" is NOT an official Apple domain. Official emails come from @apple.com or @id.apple.com</span>
+                    </div>
+                    <div class="email-detail-body">
+                        <p>Dear Valued Customer,</p><br>
+                        <p>We have detected <b>unauthorized access</b> to your Apple ID account. Your account security is our top priority.</p><br>
+                        <p>Please verify your identity immediately by clicking the link below:</p><br>
+                        <p><a class="suspicious-link" onclick="handlePhishingClick('link1')">👉 https://apple-id-verify.com/secure/login</a></p><br>
+                        <p>If you do not verify within 24 hours, your account will be permanently suspended.</p><br>
+                        <p>Best regards,<br>Apple Security Team</p>
+                    </div>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="ios-button danger" style="flex:1;" onclick="handlePhishingClick('link1')">🔗 Click Link</button>
+                        <button class="ios-button primary" style="flex:1;" onclick="reportPhishing('email-phishing')">🚩 Report Phishing</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-view" id="email-phishing2">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('email-phishing2')">‹ Mail</button>
+                <b></b>
+                <button style="background:none; border:none; color:var(--ios-red); font-size:14px; font-weight:600;" onclick="reportPhishing('email-phishing2')">🚩 Report</button>
+            </div>
+            <div class="app-content">
+                <div class="email-detail">
+                    <div class="email-detail-header">
+                        <div class="email-detail-subject">Your account will be deleted in 24 hours!</div>
+                        <div class="email-detail-meta">
+                            <span>From: <b>noreply@app1e-support.net</b></span>
+                            <span>7:48 PM</span>
+                        </div>
+                    </div>
+                    <div class="phishing-indicator" id="phish-ind-2">
+                        ⚠️ <span><b>Warning:</b> "app1e" uses the number "1" instead of letter "l" — this is a classic phishing trick! Also uses urgency/fear tactics.</span>
+                    </div>
+                    <div class="email-detail-body">
+                        <p>URGENT NOTICE</p><br>
+                        <p>Your Apple account has been flagged for <span style="color:red;"><b>IMMEDIATE DELETION</b></span> due to suspicious activity.</p><br>
+                        <p>You MUST confirm your identity within 24 hours or your account, including all purchases, photos, and data will be PERMANENTLY DELETED.</p><br>
+                        <p><a class="suspicious-link" onclick="handlePhishingClick('link2')">👉 CONFIRM IDENTITY NOW</a></p><br>
+                        <p>Apple Support Team</p>
+                    </div>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="ios-button danger" style="flex:1;" onclick="handlePhishingClick('link2')">🔗 Click Link</button>
+                        <button class="ios-button primary" style="flex:1;" onclick="reportPhishing('email-phishing2')">🚩 Report Phishing</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-view" id="email-legit">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('email-legit')">‹ Mail</button>
+                <b></b>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="app-content">
+                <div class="email-detail">
+                    <div class="email-detail-header">
+                        <div class="email-detail-subject">Your Apple ID password was changed</div>
+                        <div class="email-detail-meta">
+                            <span>From: <b>no-reply@id.apple.com</b> ✅</span>
+                            <span>7:52 PM</span>
+                        </div>
+                    </div>
+                    <div class="email-detail-body">
+                        <p>Dear Arnolfo,</p><br>
+                        <p>Your Apple ID (<b>arnolfo.m@icloud.com</b>) password was recently changed.</p><br>
+                        <p><b>Date:</b> March 15, 2026, 7:52 PM<br>
+                        <b>Device:</b> Chrome on Windows<br>
+                        <b>Location:</b> Moscow, Russia<br>
+                        <b>IP Address:</b> 185.237.XX.XX</p><br>
+                        <p>If you did not make this change, go to <b>Settings > Password & Security</b> on your device immediately to reset your password and secure your account.</p><br>
+                        <p style="font-size: 13px; color: var(--ios-gray);">This is a legitimate notification from Apple. Do not click links in suspicious emails — always use your device settings directly.</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="ios-button primary" onclick="closeSubSettings('email-legit'); goHome(); setTimeout(()=>openApp('app-settings'),300);">Go to Settings Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-view" id="email-normal">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="closeSubSettings('email-normal')">‹ Mail</button>
+                <b></b>
+                <div style="width:50px;"></div>
+            </div>
+            <div class="app-content">
+                <div class="email-detail">
+                    <div class="email-detail-header">
+                        <div class="email-detail-subject">Server maintenance schedule</div>
+                        <div class="email-detail-meta">
+                            <span>From: <b>yanniepot@company.com</b></span>
+                            <span>6:30 PM</span>
+                        </div>
+                    </div>
+                    <div class="email-detail-body">
+                        <p>Hey Arnolfo,</p><br>
+                        <p>Just wanted to confirm the maintenance window for tonight's server update. We're looking at 11 PM to 2 AM.</p><br>
+                        <p>Let me know if that works for you.</p><br>
+                        <p>Thanks,<br>Yanniepot</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ SMS APP ============ -->
+        <div class="app-view" id="app-sms">
+            <div class="app-header"><b>Messages</b></div>
+            <div class="app-content">
+                <div class="sms-contact-header">
+                    <div class="contact-avatar">👤</div>
+                    <b>Unknown (+7 495 XXX XX)</b>
+                </div>
+                <div class="sms-thread" id="smsThread">
+                    <div class="sms-time">Today 7:45 PM</div>
+                    <div class="sms-bubble received suspicious">
+                        ⚠️ Apple Alert: Unauthorized login detected on your account. Verify now: <a onclick="handlePhishingClick('sms')" style="color: var(--ios-red); text-decoration: underline; cursor: pointer;">apple-verify.ru/secure</a>
+                    </div>
+                    <div class="sms-time">Today 7:50 PM</div>
+                    <div class="sms-bubble received">
+                        Your Apple ID verification code is: 847291. Don't share this with anyone.
+                    </div>
+                    <div class="sms-time">Today 7:53 PM</div>
+                    <div class="sms-bubble received suspicious">
+                        Hi Arnolfo, this is Apple Support. We see your account was hacked. Please reply with your verification code so we can help secure your account.
+                    </div>
+                </div>
+                <div style="padding: 15px; display: flex; gap: 8px;">
+                    <button class="ios-button danger" style="flex: 1; font-size: 14px;" onclick="handleSMSReply()">Reply with Code</button>
+                    <button class="ios-button primary" style="flex: 1; font-size: 14px;" onclick="blockSMSSender()">🚫 Block & Report</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ SECURITY DASHBOARD ============ -->
+        <div class="app-view" id="app-security">
+            <div class="app-header"><b>🛡️ Security Dashboard</b></div>
+            <div class="app-content">
+                <div class="security-card">
+                    <div class="security-card-header">
+                        <div class="sc-icon" style="background: #ffe5e5;">🚨</div>
+                        <div>
+                            <b>Threat Level</b>
+                            <p style="font-size: 12px; color: var(--ios-gray);" id="threatLevelText">CRITICAL — Immediate action required</p>
+                        </div>
+                    </div>
+                    <div class="security-card-body">
+                        <div class="threat-level">
+                            <span class="threat-label" style="color: var(--ios-red);" id="threatLabel">Critical</span>
+                            <div class="threat-bar">
+                                <div class="threat-bar-fill" id="threatBarFill" style="width: 90%; background: linear-gradient(90deg, var(--ios-orange), var(--ios-red));"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="security-card">
+                    <div class="security-card-header">
+                        <div class="sc-icon" style="background: #e3f2fd;">📋</div>
+                        <div>
+                            <b>Incident Response Checklist</b>
+                            <p style="font-size: 12px; color: var(--ios-gray);" id="checklistProgress">0 of 5 completed</p>
+                        </div>
+                    </div>
+                    <div class="security-card-body">
+                        <div class="checklist" id="securityChecklist">
+                            <div class="checklist-item" id="check-password">
+                                <div class="check-circle" id="check-icon-password">1</div>
+                                <div class="check-text" id="check-text-password">Change compromised password</div>
+                                <span class="check-priority critical">Critical</span>
+                            </div>
+                            <div class="checklist-item" id="check-devices">
+                                <div class="check-circle" id="check-icon-devices">2</div>
+                                <div class="check-text" id="check-text-devices">Revoke suspicious devices</div>
+                                <span class="check-priority critical">Critical</span>
+                            </div>
+                            <div class="checklist-item" id="check-2fa">
+                                <div class="check-circle" id="check-icon-2fa">3</div>
+                                <div class="check-text" id="check-text-2fa">Enable Two-Factor Authentication</div>
+                                <span class="check-priority high">High</span>
+                            </div>
+                            <div class="checklist-item" id="check-phishing">
+                                <div class="check-circle" id="check-icon-phishing">4</div>
+                                <div class="check-text" id="check-text-phishing">Identify & report phishing emails</div>
+                                <span class="check-priority high">High</span>
+                            </div>
+                            <div class="checklist-item" id="check-sms">
+                                <div class="check-circle" id="check-icon-sms">5</div>
+                                <div class="check-text" id="check-text-sms">Block suspicious SMS sender</div>
+                                <span class="check-priority medium">Medium</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="security-card">
+                    <div class="security-card-header">
+                        <div class="sc-icon" style="background: #f3e5f5;">📜</div>
+                        <div>
+                            <b>Activity Timeline</b>
+                            <p style="font-size: 12px; color: var(--ios-gray);">Recent security events</p>
+                        </div>
+                    </div>
+                    <div class="security-card-body">
+                        <div class="timeline" id="activityTimeline">
+                            <div class="timeline-item">
+                                <div class="timeline-dot danger">🔴</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Password changed from unknown device</div>
+                                    <div class="timeline-desc">Chrome on Windows — Moscow, Russia (185.237.XX.XX)</div>
+                                    <div class="timeline-time">7:52 PM</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot warning">🟡</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">New sign-in from unfamiliar location</div>
+                                    <div class="timeline-desc">Windows PC — Moscow, Russia</div>
+                                    <div class="timeline-time">7:50 PM</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot warning">🟡</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Multiple failed login attempts</div>
+                                    <div class="timeline-desc">5 failed attempts before successful login</div>
+                                    <div class="timeline-time">7:45 PM</div>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot info">🔵</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Verification code sent to phone</div>
+                                    <div class="timeline-desc">SMS sent to +63 XXX XXX XXXX</div>
+                                    <div class="timeline-time">7:44 PM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ QUIZ APP ============ -->
+        <div class="app-view" id="app-quiz">
+            <div class="app-header"><b>🧠 CyberQuiz</b></div>
+            <div class="app-content" id="quizContent">
+                <div class="quiz-container" id="quizContainer"></div>
+            </div>
+        </div>
+
+        <!-- ============ NOTES APP ============ -->
+        <div class="app-view" id="app-notes">
+            <div class="app-header">
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="document.getElementById('notes-input').value=''">Clear</button>
+                <b>Notes</b>
+                <button style="background:none; border:none; color:var(--ios-blue); font-size:16px;" onclick="toggleKeyboard(false)">Done</button>
+            </div>
+            <div class="app-content" style="padding-bottom: 0;">
+                <textarea id="notes-input" placeholder="Jot down what you've learned about account hijack response..." onfocus="toggleKeyboard(true, 'notes')" readonly></textarea>
+            </div>
+        </div>
+
+        <!-- ============ CALCULATOR ============ -->
+        <div class="app-view" id="app-calc" style="background: #000;">
+            <div id="calc-display">0</div>
+            <div class="calc-grid">
+                <button class="calc-btn top" onclick="calcInput('C')">C</button>
+                <button class="calc-btn top" onclick="calcInput('±')">±</button>
+                <button class="calc-btn top" onclick="calcInput('%')">%</button>
+                <button class="calc-btn op" onclick="calcInput('/')">÷</button>
+                <button class="calc-btn" onclick="calcInput('7')">7</button>
+                <button class="calc-btn" onclick="calcInput('8')">8</button>
+                <button class="calc-btn" onclick="calcInput('9')">9</button>
+                <button class="calc-btn op" onclick="calcInput('*')">×</button>
+                <button class="calc-btn" onclick="calcInput('4')">4</button>
+                <button class="calc-btn" onclick="calcInput('5')">5</button>
+                <button class="calc-btn" onclick="calcInput('6')">6</button>
+                <button class="calc-btn op" onclick="calcInput('-')">-</button>
+                <button class="calc-btn" onclick="calcInput('1')">1</button>
+                <button class="calc-btn" onclick="calcInput('2')">2</button>
+                <button class="calc-btn" onclick="calcInput('3')">3</button>
+                <button class="calc-btn op" onclick="calcInput('+')">+</button>
+                <button class="calc-btn zero" onclick="calcInput('0')">0</button>
+                <button class="calc-btn" onclick="calcInput('.')">.</button>
+                <button class="calc-btn op" onclick="calcInput('=')">=</button>
+            </div>
+        </div>
+
+        <!-- ============ CAMERA ============ -->
+        <div class="app-view" id="app-camera" style="background: #000;">
+            <video id="camera-feed" autoplay playsinline></video>
+            <div class="camera-controls">
+                <div class="shutter-btn" onclick="shutterEffect()"></div>
+            </div>
+        </div>
+
+        <!-- KEYBOARD -->
+        <div class="keyboard" id="custom-keyboard">
+            <div class="kb-row">
+                <button class="kb-key" onclick="typeKey('q')">q</button>
+                <button class="kb-key" onclick="typeKey('w')">w</button>
+                <button class="kb-key" onclick="typeKey('e')">e</button>
+                <button class="kb-key" onclick="typeKey('r')">r</button>
+                <button class="kb-key" onclick="typeKey('t')">t</button>
+                <button class="kb-key" onclick="typeKey('y')">y</button>
+                <button class="kb-key" onclick="typeKey('u')">u</button>
+                <button class="kb-key" onclick="typeKey('i')">i</button>
+                <button class="kb-key" onclick="typeKey('o')">o</button>
+                <button class="kb-key" onclick="typeKey('p')">p</button>
+            </div>
+            <div class="kb-row" style="padding: 0 10px;">
+                <button class="kb-key" onclick="typeKey('a')">a</button>
+                <button class="kb-key" onclick="typeKey('s')">s</button>
+                <button class="kb-key" onclick="typeKey('d')">d</button>
+                <button class="kb-key" onclick="typeKey('f')">f</button>
+                <button class="kb-key" onclick="typeKey('g')">g</button>
+                <button class="kb-key" onclick="typeKey('h')">h</button>
+                <button class="kb-key" onclick="typeKey('j')">j</button>
+                <button class="kb-key" onclick="typeKey('k')">k</button>
+                <button class="kb-key" onclick="typeKey('l')">l</button>
+            </div>
+            <div class="kb-row">
+                <button class="kb-key kb-special" onclick="toggleKeyboard(false)">Hide</button>
+                <button class="kb-key" onclick="typeKey('z')">z</button>
+                <button class="kb-key" onclick="typeKey('x')">x</button>
+                <button class="kb-key" onclick="typeKey('c')">c</button>
+                <button class="kb-key" onclick="typeKey('v')">v</button>
+                <button class="kb-key" onclick="typeKey('b')">b</button>
+                <button class="kb-key" onclick="typeKey('n')">n</button>
+                <button class="kb-key" onclick="typeKey('m')">m</button>
+                <button class="kb-key kb-special" onclick="typeKey('BACK')">⌫</button>
+            </div>
+            <div class="kb-row">
+                <button class="kb-key" style="flex: 0.5;" onclick="typeKey('123')">123</button>
+                <button class="kb-key" style="flex: 3;" onclick="typeKey(' ')">Space</button>
+                <button class="kb-key" style="flex: 0.5;" onclick="typeKey('\n')">⏎</button>
+            </div>
+        </div>
+
+        <!-- MODAL -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="custom-modal">
+                <div class="modal-text">
+                    <div class="modal-title" id="modalTitle">Alert</div>
+                    <div id="modalDesc">Message</div>
+                </div>
+                <div class="modal-buttons" id="modalButtons"></div>
+            </div>
+        </div>
+
+        <div class="home-indicator" id="homeBar" onclick="goHome()"></div>
+    </div>
+</div>
+
+<script>
+// ========================================
+// STATE MANAGEMENT
+// ========================================
+let state = {
+    wifi: true,
+    bluetooth: true,
+    brightness: 0,
+    wallpaper: 'linear-gradient(135deg, #1f4037, #99f2c8)',
+    locked: true
+};
+
+// ========================================
+// TRAINING ENGINE
+// ========================================
+const training = {
+    score: 0,
+    maxScore: 1000,
+    currentStep: 0,
+    totalSteps: 8,
+    completed: {},
+    mistakes: 0,
+    hintsUsed: 0,
+    startTime: null,
+    timerInterval: null,
+    timerSeconds: 300, // 5 minutes
+
+    steps: [
+        { id: 'unlock', name: 'Recognize the Threat', points: 50 },
+        { id: 'review-email', name: 'Review Suspicious Emails', points: 100 },
+        { id: 'report-phishing', name: 'Report Phishing Emails', points: 150 },
+        { id: 'change-password', name: 'Change Password', points: 200 },
+        { id: 'revoke-devices', name: 'Revoke Unauthorized Devices', points: 150 },
+        { id: 'enable-2fa', name: 'Enable 2FA', points: 150 },
+        { id: 'block-sms', name: 'Block SMS Scammer', points: 100 },
+        { id: 'complete-quiz', name: 'Complete Knowledge Quiz', points: 100 }
+    ],
+
+    hints: {
+        0: "Tap the lock screen to unlock your phone. Notice the suspicious notifications!",
+        1: "Open the Mail app and read the emails carefully. Look for phishing signs.",
+        2: "In phishing emails, tap the '🚩 Report Phishing' button instead of clicking suspicious links.",
+        3: "Go to Settings → Password & Security to change your password. Use a strong one!",
+        4: "Go to Settings → Signed-In Devices and revoke the Moscow session.",
+        5: "Go to Settings → Privacy & Security → Two-Factor Authentication and enter code 847291.",
+        6: "Open Messages and tap 'Block & Report' to stop the scam SMS sender.",
+        7: "Open the CyberQuiz app and answer the questions to test your knowledge!"
+    }
+};
+
+function startTimer() {
+    training.startTime = Date.now();
+    training.timerInterval = setInterval(() => {
+        training.timerSeconds--;
+        if (training.timerSeconds <= 0) {
+            clearInterval(training.timerInterval);
+            training.timerSeconds = 0;
+            updateTimerDisplay();
+            showTimeUp();
+            return;
+        }
+        updateTimerDisplay();
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(training.timerSeconds / 60);
+    const s = training.timerSeconds % 60;
+    document.getElementById('hudTimer').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if (training.timerSeconds <= 60) {
+        document.getElementById('hudTimer').style.color = 'var(--ios-red)';
+    }
+}
+
+function showTimeUp() {
+    customAlert('⏰ Time\'s Up!', `You ran out of time. You completed ${Object.keys(training.completed).length} of ${training.totalSteps} steps.\n\nIn a real attack, speed matters! The longer an attacker has access, the more damage they can do.`, [
+        { text: 'See Results', bold: true, action: () => showCompletion() },
+        { text: 'Try Again', action: () => restartTraining() }
+    ]);
+}
+
+function addScore(points, reason) {
+    training.score += points;
+    document.getElementById('hudScore').innerText = training.score;
+    // Flash effect
+    const el = document.getElementById('hudScore');
+    el.style.transform = 'scale(1.5)';
+    el.style.transition = '0.3s';
+    setTimeout(() => el.style.transform = 'scale(1)', 300);
+    showNotification('🏆 +' + points + ' Points', reason, 'var(--ios-green)');
+}
+
+function deductScore(points, reason) {
+    training.score = Math.max(0, training.score - points);
+    training.mistakes++;
+    document.getElementById('hudScore').innerText = training.score;
+    showNotification('❌ -' + points + ' Points', reason, 'var(--ios-red)');
+}
+
+function completeStep(stepId) {
+    if (training.completed[stepId]) return;
+    training.completed[stepId] = true;
+
+    const idx = training.steps.findIndex(s => s.id === stepId);
+    if (idx >= 0) {
+        addScore(training.steps[idx].points, training.steps[idx].name + ' completed!');
+        const stepEl = document.querySelector(`.hud-step[data-step="${idx}"]`);
+        if (stepEl) {
+            stepEl.classList.remove('current');
+            stepEl.classList.add('done');
+        }
+    }
+
+    // Advance current step indicator
+    training.currentStep = Math.max(training.currentStep, idx + 1);
+    updateHudProgress();
+    updateChecklist();
+    updateThreatLevel();
+
+    // Coach messages
+    advanceCoach(stepId);
+
+    // Check if all complete
+    if (Object.keys(training.completed).length >= training.totalSteps) {
+        setTimeout(() => showCompletion(), 1500);
+    }
+}
+
+function updateHudProgress() {
+    document.querySelectorAll('.hud-step').forEach((el, i) => {
+        const stepId = training.steps[i]?.id;
+        el.classList.remove('done', 'current', 'missed');
+        if (training.completed[stepId]) {
+            el.classList.add('done');
+        } else if (i === training.currentStep) {
+            el.classList.add('current');
+        }
+    });
+}
+
+function updateChecklist() {
+    const checks = ['password', 'devices', '2fa', 'phishing', 'sms'];
+    const mapping = { 'password': 'change-password', 'devices': 'revoke-devices', '2fa': 'enable-2fa', 'phishing': 'report-phishing', 'sms': 'block-sms' };
+    let completed = 0;
+    checks.forEach(c => {
+        const done = training.completed[mapping[c]];
+        const icon = document.getElementById('check-icon-' + c);
+        const text = document.getElementById('check-text-' + c);
+        if (done) {
+            completed++;
+            if (icon) { icon.classList.add('done'); icon.innerText = '✓'; }
+            if (text) text.classList.add('done-text');
+        }
+    });
+    const progress = document.getElementById('checklistProgress');
+    if (progress) progress.innerText = `${completed} of 5 completed`;
+}
+
+function updateThreatLevel() {
+    const total = Object.keys(training.completed).length;
+    const fill = document.getElementById('threatBarFill');
+    const label = document.getElementById('threatLabel');
+    const text = document.getElementById('threatLevelText');
+
+    if (total >= 7) {
+        fill.style.width = '10%'; fill.style.background = 'var(--ios-green)';
+        label.innerText = 'Low'; label.style.color = 'var(--ios-green)';
+        text.innerText = 'Account secured! Great work.';
+    } else if (total >= 5) {
+        fill.style.width = '40%'; fill.style.background = 'var(--ios-yellow)';
+        label.innerText = 'Medium'; label.style.color = 'var(--ios-orange)';
+        text.innerText = 'Good progress — a few steps remaining.';
+    } else if (total >= 3) {
+        fill.style.width = '65%'; fill.style.background = 'var(--ios-orange)';
+        label.innerText = 'High'; label.style.color = 'var(--ios-orange)';
+        text.innerText = 'Account still at risk. Keep going!';
+    } else {
+        fill.style.width = '90%'; fill.style.background = 'linear-gradient(90deg, var(--ios-orange), var(--ios-red))';
+        label.innerText = 'Critical'; label.style.color = 'var(--ios-red)';
+        text.innerText = 'CRITICAL — Immediate action required';
+    }
+}
+
+function advanceCoach(stepId) {
+    const messages = {
+        'unlock': { msg: "Good — you've unlocked the phone. Notice those alarming notifications? Your Apple ID was signed in from Moscow, Russia. Let's investigate.", hint: "📧 Open the Mail app to review the suspicious emails." },
+        'review-email': { msg: "You found the emails. Notice the phishing attempts! Check the sender addresses carefully — 'apple-id-verify.com' and 'app1e-support.net' are FAKE domains.", hint: "🚩 Report the phishing emails instead of clicking their links." },
+        'report-phishing': { msg: "Excellent! You identified the phishing attempts. Real companies will NEVER ask you to click links in panic emails. Always go to settings directly.", hint: "🔑 Now go to Settings → Password & Security to change your password." },
+        'change-password': { msg: "Password changed! Great use of a strong password. Now you need to kick out the attacker from your account.", hint: "📱 Go to Settings → Signed-In Devices to revoke the Moscow session." },
+        'revoke-devices': { msg: "The attacker's session has been terminated! But they could sign in again if they know your password. Let's add an extra layer.", hint: "🔐 Go to Settings → Privacy → Two-Factor Authentication." },
+        'enable-2fa': { msg: "2FA enabled! Even if someone steals your password, they can't access your account without your phone. One more threat to handle...", hint: "💬 Open Messages and block the scam SMS sender." },
+        'block-sms': { msg: "The scam SMS sender is blocked. You've completed almost all security steps! Let's test your knowledge.", hint: "🧠 Open the CyberQuiz app to complete the training." },
+        'complete-quiz': { msg: "🎉 Outstanding! You've completed the full Account Hijack Response training! You now know how to respond when your account is compromised.", hint: "" }
+    };
+    const m = messages[stepId];
+    if (m) setCoach(m.msg, m.hint);
+}
+
+function setCoach(msg, hint) {
+    document.getElementById('coachMsg').innerText = msg;
+    document.getElementById('coachHint').innerText = hint || '';
+    document.getElementById('coachBubble').classList.remove('hidden');
+}
+
+function dismissCoach() {
+    document.getElementById('coachBubble').classList.add('hidden');
+}
+
+function showHint() {
+    training.hintsUsed++;
+    const hint = training.hints[training.currentStep] || "Keep exploring the apps to find security actions!";
+    customAlert('💡 Hint', hint, [{ text: 'Got it!' }]);
+    deductScore(10, 'Hint used (-10 points)');
+}
+
+function restartTraining() {
+    customAlert('Restart Training?', 'This will reset all your progress and score.', [
+        { text: 'Restart', danger: true, action: () => { location.reload(); } },
+        { text: 'Cancel' }
+    ]);
+}
+
+// ========================================
+// PHISHING INTERACTION HANDLERS
+// ========================================
+function handlePhishingClick(source) {
+    deductScore(50, 'Clicked a phishing link!');
+    customAlert('🚨 PHISHING DETECTED!', 
+        'You just clicked a malicious link! In a real attack, this could:\n\n' +
+        '• Steal your login credentials\n' +
+        '• Install malware on your device\n' +
+        '• Give attackers full account access\n\n' +
+        '⚠️ NEVER click links in suspicious emails or texts. Always navigate to the official website/app directly.',
+        [{ text: 'I Understand', bold: true }]
+    );
+    
+    // Show phishing indicators
+    document.querySelectorAll('.phishing-indicator').forEach(el => el.classList.add('show'));
+}
+
+function reportPhishing(emailId) {
+    completeStep('report-phishing');
+    customAlert('✅ Email Reported', 
+        'This email has been flagged as phishing. Well done!\n\n' +
+        '🔍 Red Flags You Should Have Noticed:\n' +
+        '• Fake sender domain\n' +
+        '• Urgency/fear tactics\n' +
+        '• Generic greeting ("Dear Customer")\n' +
+        '• Threats of account deletion\n' +
+        '• Suspicious links',
+        [{ text: 'Continue', bold: true }]
+    );
+    // Show indicators
+    document.querySelectorAll('.phishing-indicator').forEach(el => el.classList.add('show'));
+}
+
+function handleSMSReply() {
+    deductScore(75, 'Shared verification code with scammer!');
+    customAlert('🚨 CRITICAL MISTAKE!',
+        'You almost sent your 2FA code to a scammer!\n\n' +
+        'Apple (and any legitimate company) will NEVER:\n' +
+        '• Ask for your verification code via text\n' +
+        '• Contact you from random phone numbers\n' +
+        '• Ask you to "reply" with sensitive info\n\n' +
+        'Verification codes are for YOUR use only on official login pages.',
+        [{ text: 'I Won\'t Do This Again', bold: true }]
+    );
+}
+
+function blockSMSSender() {
+    completeStep('block-sms');
+    customAlert('🚫 Sender Blocked',
+        'The suspicious SMS sender has been blocked and reported.\n\n' +
+        '✅ Good Practice:\n' +
+        '• Never reply to suspicious texts\n' +
+        '• Never share verification codes\n' +
+        '• Block and report scam numbers\n' +
+        '• Real support never texts from random numbers',
+        [{ text: 'Continue', bold: true }]
+    );
+}
+
+// ========================================
+// PASSWORD CHANGE LOGIC
+// ========================================
+function checkPasswordStrength() {
+    const pw = document.getElementById('pw-new').value;
+    let score = 0;
+    if (pw.length >= 8) score++;
+    if (pw.length >= 12) score++;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw)) score++;
+
+    const colors = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759'];
+    const labels = ['Weak', 'Fair', 'Good', 'Strong'];
+
+    for (let i = 0; i < 4; i++) {
+        const bar = document.getElementById('str' + (i + 1));
+        bar.style.background = i < score ? colors[Math.min(score - 1, 3)] : '#e9e9eb';
+    }
+
+    const text = document.getElementById('pw-strength-text');
+    if (pw.length > 0) {
+        text.innerText = labels[Math.min(score - 1, 3)] || 'Too short';
+        text.style.color = colors[Math.min(score - 1, 3)] || '#ff3b30';
+        text.className = 'form-hint ' + (score >= 3 ? 'success' : 'error');
+    } else {
+        text.innerText = '';
+    }
+}
+
+function validatePasswordForm() {
+    const current = document.getElementById('pw-current').value;
+    const newPw = document.getElementById('pw-new').value;
+    const confirm = document.getElementById('pw-confirm').value;
+    const matchText = document.getElementById('pw-match-text');
+    const btn = document.getElementById('pw-submit');
+
+    let valid = true;
+    if (current.length < 1) valid = false;
+    if (newPw.length < 8) valid = false;
+    if (confirm.length > 0 && confirm !== newPw) {
+        matchText.innerText = 'Passwords do not match';
+        matchText.className = 'form-hint error';
+        valid = false;
+    } else if (confirm.length > 0 && confirm === newPw) {
+        matchText.innerText = 'Passwords match ✓';
+        matchText.className = 'form-hint success';
+    } else {
+        matchText.innerText = '';
+    }
+
+    if (newPw === current && newPw.length > 0) {
+        document.getElementById('pw-strength-text').innerText = 'Cannot reuse old password!';
+        document.getElementById('pw-strength-text').className = 'form-hint error';
+        valid = false;
+    }
+
+    btn.disabled = !valid || confirm !== newPw;
+}
+
+function submitPasswordChange() {
+    const newPw = document.getElementById('pw-new').value;
+    let score = 0;
+    if (newPw.length >= 8) score++;
+    if (newPw.length >= 12) score++;
+    if (/[A-Z]/.test(newPw) && /[a-z]/.test(newPw)) score++;
+    if (/[0-9]/.test(newPw) && /[^A-Za-z0-9]/.test(newPw)) score++;
+
+    if (score < 3) {
+        customAlert('⚠️ Weak Password', 'Your new password is not strong enough. A compromised account needs the strongest possible protection.\n\nTip: Use 12+ characters with upper/lowercase, numbers, and symbols.', [{ text: 'Try Again' }]);
+        deductScore(25, 'Chose a weak password');
+        return;
+    }
+
+    completeStep('change-password');
+    customAlert('✅ Password Changed!', 
+        'Your password has been updated successfully.\n\n' +
+        '🔑 Remember:\n' +
+        '• Never reuse this password elsewhere\n' +
+        '• Store it in a password manager\n' +
+        '• Change passwords regularly\n' +
+        '• Use unique passwords for every account',
+        [{ text: 'Continue', bold: true }]
+    );
+
+    addTimelineEvent('success', '🟢', 'Password changed successfully', 'New strong password set from your iPhone', 'Just now');
+}
+
+// ========================================
+// DEVICE REVOCATION
+// ========================================
+function revokeDevice(device) {
+    const el = document.getElementById('device-' + device);
+    if (el) {
+        el.style.background = '#f0fff0';
+        el.innerHTML = `
+            <div class="device-info">
+                <span class="device-icon">✅</span>
+                <div>
+                    <b style="font-size: 14px; color: var(--ios-green);">Session Terminated</b>
+                    <br><small style="color: var(--ios-gray);">Device has been signed out</small>
+                </div>
+            </div>
+        `;
+    }
+
+    if (device === 'moscow') {
+        completeStep('revoke-devices');
+        customAlert('✅ Suspicious Device Removed',
+            'The session from Moscow, Russia has been terminated.\n\n' +
+            '🛡️ The attacker can no longer access your account from that session.\n\n' +
+            'Always check your signed-in devices after a security incident and remove anything unfamiliar.',
+            [{ text: 'Continue', bold: true }]
+        );
+        addTimelineEvent('success', '🟢', 'Suspicious device revoked', 'Chrome on Windows (Moscow) signed out', 'Just now');
+
+        // Update Dynamic Island
+        document.getElementById('island').classList.remove('alert-active');
+    }
+}
+
+function revokeAllDevices() {
+    revokeDevice('moscow');
+    revokeDevice('unknown');
+    customAlert('✅ All Devices Signed Out', 'All other sessions have been terminated. Only your current iPhone remains signed in.', [{ text: 'OK', bold: true }]);
+}
+
+// ========================================
+// 2FA SETUP
+// ========================================
+let totpCode = '';
+function enterTOTP(digit) {
+    if (totpCode.length >= 6) return;
+    totpCode += digit;
+    for (let i = 0; i < 6; i++) {
+        const el = document.getElementById('totp' + i);
+        el.innerText = totpCode[i] || '';
+        el.classList.toggle('filled', i < totpCode.length);
+    }
+    document.getElementById('verify2fa').disabled = totpCode.length < 6;
+}
+
+function clearTOTP() {
+    totpCode = totpCode.slice(0, -1);
+    for (let i = 0; i < 6; i++) {
+        const el = document.getElementById('totp' + i);
+        el.innerText = totpCode[i] || '';
+        el.classList.toggle('filled', i < totpCode.length);
+    }
+    document.getElementById('verify2fa').disabled = totpCode.length < 6;
+}
+
+function verify2FA() {
+    if (totpCode === '847291') {
+        completeStep('enable-2fa');
+        customAlert('✅ 2FA Enabled!',
+            'Two-Factor Authentication is now active on your account!\n\n' +
+            '🔐 What this means:\n' +
+            '• Every login requires your password + a code from your phone\n' +
+            '• Even if your password is stolen, attackers can\'t sign in\n' +
+            '• You\'ll be notified of every login attempt\n\n' +
+            'This is the SINGLE most effective security measure you can enable.',
+            [{ text: 'Excellent!', bold: true }]
+        );
+        addTimelineEvent('success', '🟢', 'Two-Factor Authentication enabled', 'Account now requires 2FA for all sign-ins', 'Just now');
+
+        // Update privacy menu
+        document.querySelector('#settings-privacy .menu-item span:last-child')
+    } else {
+        deductScore(15, 'Wrong 2FA code entered');
+        customAlert('❌ Incorrect Code', 'That code is wrong. In this simulation, enter: 847291\n\nIn real life, you\'d use a code from your authenticator app.', [{ text: 'Try Again' }]);
+        totpCode = '';
+        for (let i = 0; i < 6; i++) {
+            const el = document.getElementById('totp' + i);
+            el.innerText = '';
+            el.classList.remove('filled');
+        }
+    }
+}
+
+// ========================================
+// TIMELINE
+// ========================================
+function addTimelineEvent(type, emoji, title, desc, time) {
+    const timeline = document.getElementById('activityTimeline');
+    const item = document.createElement('div');
+    item.className = 'timeline-item fade-in-up';
+    item.innerHTML = `
+        <div class="timeline-dot ${type}">${emoji}</div>
+        <div class="timeline-content">
+            <div class="timeline-title">${title}</div>
+            <div class="timeline-desc">${desc}</div>
+            <div class="timeline-time">${time}</div>
+        </div>
+    `;
+    timeline.insertBefore(item, timeline.firstChild);
+}
+
+// ========================================
+// QUIZ ENGINE
+// ========================================
+const quizQuestions = [
+    {
+        q: "You receive an email saying your account will be deleted unless you click a link. What should you do?",
+        options: ["Click the link immediately to save your account", "Reply asking for more information", "Ignore the email and go directly to Settings on your device", "Forward it to all your contacts as a warning"],
+        correct: 2,
+        explanation: "NEVER click links in alarming emails. Legitimate companies won't threaten account deletion via email. Always navigate to the official app or website directly through your device settings."
+    },
+    {
+        q: "What is the FIRST thing you should do when you suspect your account has been hijacked?",
+        options: ["Post about it on social media", "Change your password immediately", "Wait 24 hours to see if it resolves", "Delete your account"],
+        correct: 1,
+        explanation: "Changing your password immediately prevents the attacker from continuing to use your account. Speed is critical — every minute the attacker has access, they can do more damage."
+    },
+    {
+        q: "Someone texts you asking for your verification code claiming they're from Apple Support. What do you do?",
+        options: ["Send the code — they're trying to help", "Ask them to prove they're from Apple first", "Never share it — block and report the number", "Send them a fake code instead"],
+        correct: 2,
+        explanation: "Legitimate companies will NEVER ask for your verification codes via text, email, or phone call. These codes are for YOUR use only. Always block and report such attempts."
+    },
+    {
+        q: "What makes a password 'strong'?",
+        options: ["Using your birthday with a ! at the end", "A single common word in all capitals", "12+ characters mixing upper/lowercase, numbers, and symbols", "The word 'password' spelled backwards"],
+        correct: 2,
+        explanation: "Strong passwords are long (12+ characters), use a mix of character types, and don't contain personal information or common words. Use a password manager to create and store unique passwords."
+    },
+    {
+        q: "Why is Two-Factor Authentication (2FA) so important?",
+        options: ["It makes your password longer", "It requires a second verification even if your password is stolen", "It encrypts your emails", "It speeds up your internet connection"],
+        correct: 1,
+        explanation: "2FA adds an extra layer beyond your password. Even if an attacker steals your password, they can't access your account without the second factor (usually a code from your phone). Enable 2FA on every account that supports it!"
+    }
+];
+
+let currentQuizQ = 0;
+let quizAnswered = 0;
+let quizCorrect = 0;
+
+function loadQuiz() {
+    const container = document.getElementById('quizContainer');
+    if (currentQuizQ >= quizQuestions.length) {
+        showQuizResults();
+        return;
+    }
+    const q = quizQuestions[currentQuizQ];
+    container.innerHTML = `
+        <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span style="font-size: 13px; color: var(--ios-gray);">Question ${currentQuizQ + 1} of ${quizQuestions.length}</span>
+            <span style="font-size: 13px; color: var(--ios-blue);">${quizCorrect}/${quizAnswered} correct</span>
+        </div>
+        <div style="height: 4px; background: #e9e9eb; border-radius: 2px; margin-bottom: 20px;">
+            <div style="height: 100%; width: ${((currentQuizQ) / quizQuestions.length) * 100}%; background: var(--ios-blue); border-radius: 2px; transition: 0.5s;"></div>
+        </div>
+        <div class="quiz-question">${q.q}</div>
+        ${q.options.map((opt, i) => `
+            <div class="quiz-option" id="qopt-${i}" onclick="answerQuiz(${i})">
+                <div class="quiz-letter">${String.fromCharCode(65 + i)}</div>
+                <span>${opt}</span>
+            </div>
+        `).join('')}
+        <div class="quiz-explanation" id="quiz-explanation">${q.explanation}</div>
+    `;
+}
+
+function answerQuiz(idx) {
+    const q = quizQuestions[currentQuizQ];
+    const options = document.querySelectorAll('.quiz-option');
+
+    // Prevent multiple answers
+    if (options[0].classList.contains('correct') || options[0].classList.contains('wrong')) return;
+
+    quizAnswered++;
+    options.forEach((opt, i) => {
+        opt.style.pointerEvents = 'none';
+        if (i === q.correct) opt.classList.add('correct');
+        if (i === idx && idx !== q.correct) opt.classList.add('wrong');
+    });
+
+    if (idx === q.correct) {
+        quizCorrect++;
+        addScore(20, 'Correct quiz answer!');
+    } else {
+        deductScore(10, 'Wrong quiz answer');
+    }
+
+    document.getElementById('quiz-explanation').classList.add('show');
+
+    // Auto advance after delay
+    setTimeout(() => {
+        currentQuizQ++;
+        if (currentQuizQ >= quizQuestions.length) {
+            completeStep('complete-quiz');
+            showQuizResults();
+        } else {
+            loadQuiz();
+        }
+    }, 3000);
+}
+
+function showQuizResults() {
+    const pct = Math.round((quizCorrect / quizQuestions.length) * 100);
+    const container = document.getElementById('quizContainer');
+    container.innerHTML = `
+        <div class="completion-screen">
+            <div class="completion-badge">${pct >= 80 ? '🏆' : pct >= 60 ? '🥈' : '📚'}</div>
+            <div class="completion-title">Quiz Complete!</div>
+            <div class="completion-subtitle">${pct >= 80 ? 'Excellent knowledge!' : pct >= 60 ? 'Good, but review the topics you missed.' : 'Keep learning! Review the material and try again.'}</div>
+            <div class="score-circle">
+                <div class="score-number">${pct}%</div>
+                <div class="score-label">${quizCorrect}/${quizQuestions.length}</div>
+            </div>
+        </div>
+    `;
+}
+
+// ========================================
+// COMPLETION SCREEN
+// ========================================
+function showCompletion() {
+    clearInterval(training.timerInterval);
+    const timeSpent = 300 - training.timerSeconds;
+    const minutes = Math.floor(timeSpent / 60);
+    const seconds = timeSpent % 60;
+    const pct = Math.round((training.score / training.maxScore) * 100);
+    const completed = Object.keys(training.completed).length;
+
+    let grade, gradeColor, message;
+    if (pct >= 90) { grade = 'A+'; gradeColor = 'var(--ios-green)'; message = 'Outstanding! You\'re a cybersecurity expert!'; }
+    else if (pct >= 80) { grade = 'A'; gradeColor = 'var(--ios-green)'; message = 'Excellent work! You know your security protocols.'; }
+    else if (pct >= 70) { grade = 'B'; gradeColor = 'var(--ios-blue)'; message = 'Good job! A few areas to improve.'; }
+    else if (pct >= 60) { grade = 'C'; gradeColor = 'var(--ios-orange)'; message = 'Decent, but you need more practice.'; }
+    else { grade = 'D'; gradeColor = 'var(--ios-red)'; message = 'You need to study account security more carefully.'; }
+
+    goHome();
+    setTimeout(() => {
+        const app = document.getElementById('app-quiz');
+        const content = document.getElementById('quizContent');
+        content.innerHTML = `
+            <div class="completion-screen">
+                <div class="completion-badge">🎓</div>
+                <div class="completion-title">Training Complete!</div>
+                <div class="completion-subtitle">${message}</div>
+                <div class="score-circle" style="border-color: ${gradeColor};">
+                    <div class="score-number" style="color: ${gradeColor};">${grade}</div>
+                    <div class="score-label">${training.score} pts</div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-item">
+                        <div class="stat-value">${completed}/${training.totalSteps}</div>
+                        <div class="stat-label">Steps Done</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${training.mistakes}</div>
+                        <div class="stat-label">Mistakes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${minutes}:${String(seconds).padStart(2,'0')}</div>
+                        <div class="stat-label">Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${training.hintsUsed}</div>
+                        <div class="stat-label">Hints</div>
+                    </div>
+                </div>
+                <div class="tips-section">
+                    <h4>📚 Key Takeaways — Account Hijack Response:</h4>
+                    <ol>
+                        <li><b>Change your password IMMEDIATELY</b> using a strong, unique password. Speed is critical.</li>
+                        <li><b>Revoke unauthorized device sessions</b> to kick the attacker out of your account.</li>
+                        <li><b>Enable Two-Factor Authentication (2FA)</b> — this is the #1 defense against account takeover.</li>
+                        <li><b>Never click links in suspicious emails.</b> Look for fake domains, urgency tactics, and generic greetings.</li>
+                        <li><b>Never share verification codes</b> with anyone — no legitimate company will ever ask for them.</li>
+                        <li><b>Block and report</b> phishing emails and scam SMS messages.</li>
+                        <li><b>Review your activity log</b> to understand what the attacker accessed.</li>
+                        <li><b>Contact official support</b> through verified channels if you need help.</li>
+                    </ol>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="ios-button primary" onclick="restartTraining()" style="margin-bottom: 10px;">🔄 Try Again for Better Score</button>
+                </div>
+            </div>
+        `;
+        openApp('app-quiz');
+    }, 300);
+}
+
+// ========================================
+// CORE iOS FUNCTIONS
+// ========================================
+function updateClock() {
+    const now = new Date();
+    let h = now.getHours();
+    let m = now.getMinutes();
+    m = m < 10 ? '0' + m : m;
+    const timeStr = `${h}:${m}`;
+    document.getElementById('clock').innerText = timeStr;
+    document.getElementById('lockTime').innerText = timeStr;
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    document.getElementById('lockDate').innerText = now.toLocaleDateString('en-US', options);
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+function unlock() {
+    document.getElementById('lock-screen').style.transform = 'translateY(-100%)';
+    state.locked = false;
+    completeStep('unlock');
+    startTimer();
+
+    // Dynamic Island alert
+    document.getElementById('island').classList.add('alert-active');
+
+    setTimeout(() => {
+        showNotification('🚨 Security Alert', 'Your Apple ID was accessed from Moscow, Russia. Review immediately!', 'var(--ios-red)');
+    }, 1000);
+
+    setTimeout(() => {
+        showNotification('✉️ Mail', 'You have 3 new security-related emails', 'var(--ios-blue)');
+    }, 3500);
+}
+
+function openApp(id) {
+    if (state.locked) return;
+    document.getElementById(id).classList.add('active');
+    const darkApps = ['app-calc', 'app-camera'];
+    document.getElementById('statusBar').style.color = darkApps.includes(id) ? 'white' : 'black';
+    document.getElementById('homeBar').style.background = darkApps.includes(id) ? 'white' : 'black';
+
+    if (id === 'app-camera') startCamera();
+    if (id === 'app-mail') completeStep('review-email');
+    if (id === 'app-quiz') loadQuiz();
+}
+
+function goHome() {
+    document.querySelectorAll('.app-view').forEach(app => app.classList.remove('active'));
+    document.getElementById('control-center').classList.remove('open');
+    document.getElementById('statusBar').style.color = 'white';
+    document.getElementById('homeBar').style.background = 'white';
+    toggleKeyboard(false);
+    stopCamera();
+}
+
+function toggleCC() {
+    if (state.locked) return;
+    document.getElementById('control-center').classList.toggle('open');
+}
+
+function openSubSettings(id) { document.getElementById(id).classList.add('active'); }
+function closeSubSettings(id) { document.getElementById(id).classList.remove('active'); }
+
+function applySettings() {
+    document.getElementById('set-wifi').classList.toggle('on', state.wifi);
+    document.getElementById('cc-wifi').classList.toggle('active', state.wifi);
+    document.getElementById('sb-wifi').style.opacity = state.wifi ? "1" : "0.3";
+    document.getElementById('set-wifi-name').innerText = state.wifi ? "SM_LIPA_FREE" : "Off";
+    document.getElementById('set-bt').classList.toggle('on', state.bluetooth);
+    document.getElementById('cc-bt').classList.toggle('active', state.bluetooth);
+    document.getElementById('brightnessOverlay').style.setProperty('--brightness', state.brightness);
+    document.getElementById('cc-brightness-slider').value = state.brightness * 100;
+    document.querySelector('.screen').style.background = state.wallpaper;
+}
+
+function toggleSetting(type) { state[type] = !state[type]; applySettings(); }
+function updateBrightness(val) { state.brightness = val / 100; applySettings(); }
+function setWallpaper(val) {
+    state.wallpaper = val; applySettings();
+    customAlert('Wallpaper', 'Wallpaper updated.', [{ text: 'OK' }]);
+}
+
+// ========================================
+// NOTIFICATIONS
+// ========================================
+function showNotification(title, desc, bgColor) {
+    document.getElementById('notif-title').innerText = title;
+    document.getElementById('notif-desc').innerText = desc;
+    const banner = document.getElementById('notif-banner');
+    const icon = document.getElementById('notif-icon-box');
+    if (bgColor) icon.style.background = bgColor;
+    if (bgColor === 'var(--ios-red)') banner.classList.add('urgent');
+    else banner.classList.remove('urgent');
+    banner.classList.add('show');
+    setTimeout(() => banner.classList.remove('show'), 4000);
+}
+
+function hideNotification() {
+    document.getElementById('notif-banner').classList.remove('show');
+}
+
+// ========================================
+// MODAL
+// ========================================
+function customAlert(title, desc, buttons = [{ text: 'OK' }]) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalDesc').innerText = desc;
+    const btnContainer = document.getElementById('modalButtons');
+    btnContainer.innerHTML = '';
+    buttons.forEach(btn => {
+        const b = document.createElement('button');
+        b.className = `modal-btn ${btn.danger ? 'danger' : ''} ${btn.bold ? 'bold' : ''}`;
+        b.innerText = btn.text;
+        b.onclick = () => {
+            document.getElementById('modalOverlay').classList.remove('show');
+            if (btn.action) btn.action();
+        };
+        btnContainer.appendChild(b);
+    });
+    document.getElementById('modalOverlay').classList.add('show');
+}
+
+// ========================================
+// KEYBOARD & NOTES
+// ========================================
+let activeInput = null;
+function toggleKeyboard(show, app) {
+    const kb = document.getElementById('custom-keyboard');
+    if (show) { kb.classList.add('show'); if (app === 'notes') activeInput = document.getElementById('notes-input'); }
+    else { kb.classList.remove('show'); activeInput = null; }
+}
+function typeKey(key) {
+    if (!activeInput) return;
+    if (key === 'BACK') activeInput.value = activeInput.value.slice(0, -1);
+    else if (key === '123') customAlert('Keyboard', 'Numbers row not implemented in this version.', [{ text: 'OK' }]);
+    else activeInput.value += key;
+}
+
+// ========================================
+// CALCULATOR
+// ========================================
+let calcStr = '0';
+function calcInput(val) {
+    const display = document.getElementById('calc-display');
+    if (val === 'C') calcStr = '0';
+    else if (val === '=') { try { calcStr = eval(calcStr).toString(); } catch (e) { calcStr = 'Error'; } }
+    else { if (calcStr === '0' && val !== '.') calcStr = val; else calcStr += val; }
+    display.innerText = calcStr.substring(0, 9);
+}
+
+// ========================================
+// CAMERA
+// ========================================
+let streamRef = null;
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        document.getElementById('camera-feed').srcObject = stream;
+        streamRef = stream;
+    } catch (err) { customAlert('Camera', 'Camera unavailable in this environment.', [{ text: 'OK' }]); }
+}
+function stopCamera() { if (streamRef) { streamRef.getTracks().forEach(t => t.stop()); streamRef = null; } }
+function shutterEffect() {
+    const feed = document.getElementById('camera-feed');
+    feed.style.opacity = '0';
+    setTimeout(() => feed.style.opacity = '1', 100);
+    showNotification('Photos', 'Photo saved to gallery.', 'var(--ios-gray)');
+}
+
+// ========================================
+// INIT
+// ========================================
+applySettings();
+updateHudProgress();
+</script>
+</body>
+</html>
