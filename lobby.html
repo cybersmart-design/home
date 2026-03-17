@@ -117,8 +117,30 @@ body {
     border-radius: 12px; 
     transition: 0.3s;
 }
+.info-card:hover {
+    border-color: rgba(9, 238, 245, 0.3);
+    background: rgba(9, 238, 245, 0.03);
+    transform: translateY(-2px);
+}
 .info-card h4 { color: var(--neon-cyan); margin-bottom: 8px; font-family: 'Outfit'; }
 .info-card p { font-size: 0.9rem; color: var(--text-secondary); }
+
+/* Read progress indicator */
+.info-card.read {
+    border-left: 3px solid var(--neon-green);
+}
+.info-card .read-indicator {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--neon-green);
+    opacity: 0;
+    transition: opacity 0.4s;
+    margin-left: 8px;
+}
+.info-card.read .read-indicator {
+    opacity: 1;
+}
 
 .tips-grid {
     display: grid;
@@ -161,26 +183,190 @@ body {
     color: #000; 
     box-shadow: 0 0 20px rgba(9, 238, 245, 0.3); 
 }
+.btn-primary:hover {
+    box-shadow: 0 0 35px rgba(9, 238, 245, 0.5);
+    transform: translateY(-2px);
+}
 .btn-block { display: block; width: 100%; }
 
-/* HACKER OVERLAY & MODAL STYLES */
-#quizModal {
+/* ===== TERMINAL GATEKEEPER MODAL ===== */
+#terminalModal {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: rgba(0,0,0,0.9);
+    background: rgba(0,0,0,0.92);
     align-items: center;
     justify-content: center;
-}
-.quiz-option {
-    background: rgba(255,255,255,0.05);
-    color: white;
-    border: 1px solid var(--glass-border);
-    margin-top: 10px;
-    width: 100%;
+    padding: 20px;
 }
 
+.terminal-window {
+    width: 100%;
+    max-width: 680px;
+    background: #0a0e14;
+    border: 1px solid rgba(9, 238, 245, 0.25);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 
+        0 0 60px rgba(9, 238, 245, 0.1),
+        0 0 120px rgba(9, 238, 245, 0.05),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.terminal-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    user-select: none;
+}
+.terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.terminal-dot.red { background: #ff5f57; }
+.terminal-dot.yellow { background: #febc2e; }
+.terminal-dot.green { background: #28c840; }
+.terminal-titlebar span {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-left: 10px;
+    letter-spacing: 1px;
+}
+
+.terminal-body {
+    padding: 20px;
+    min-height: 320px;
+    max-height: 55vh;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon-cyan) transparent;
+}
+.terminal-body::-webkit-scrollbar { width: 4px; }
+.terminal-body::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
+.terminal-body::-webkit-scrollbar-track { background: transparent; }
+
+.terminal-line {
+    margin-bottom: 4px;
+    word-break: break-word;
+}
+.terminal-line.system { color: var(--neon-cyan); }
+.terminal-line.success { color: var(--neon-green); }
+.terminal-line.error { color: var(--neon-magenta); }
+.terminal-line.warning { color: #febc2e; }
+.terminal-line.dim { color: var(--text-secondary); opacity: 0.6; }
+.terminal-line.question { 
+    color: var(--neon-cyan); 
+    font-weight: 700;
+    padding: 8px 0;
+    font-size: 0.9rem;
+}
+.terminal-line .prompt-symbol {
+    color: var(--neon-green);
+    margin-right: 8px;
+}
+
+/* Typing cursor animation for output */
+.terminal-line.typing::after {
+    content: '█';
+    animation: blink-cursor 0.6s step-end infinite;
+    color: var(--neon-cyan);
+}
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.terminal-input-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.3);
+    gap: 10px;
+}
+.terminal-input-row .prompt-prefix {
+    font-family: var(--font-mono);
+    color: var(--neon-green);
+    font-size: 0.85rem;
+    white-space: nowrap;
+    user-select: none;
+}
+.terminal-input-row input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    caret-color: var(--neon-cyan);
+}
+.terminal-input-row input::placeholder {
+    color: rgba(163, 184, 204, 0.3);
+}
+
+/* Terminal close button */
+.terminal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    z-index: 10;
+}
+.terminal-close:hover {
+    border-color: var(--neon-magenta);
+    color: var(--neon-magenta);
+    background: rgba(250, 44, 255, 0.1);
+}
+
+/* Reading progress bar */
+.reading-progress-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    margin-top: 15px;
+    overflow: hidden;
+    position: relative;
+}
+.reading-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(3, 252, 132, 0.4);
+}
+.reading-status {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    opacity: 0.7;
+}
+
+/* HACKER OVERLAY */
 #accessOverlay {
     display: none;
     position: fixed;
@@ -216,7 +402,11 @@ footer {
 }
 
 @media (max-width: 900px){ .container { flex-direction: column; } }
-@media (max-width: 500px){ .box { padding:20px; font-size:14px; } }
+@media (max-width: 500px){ 
+    .box { padding:20px; font-size:14px; } 
+    .terminal-body { min-height: 250px; max-height: 45vh; font-size: 0.78rem; }
+    .terminal-input-row input { font-size: 0.78rem; }
+}
 
 /* ===== CHATBOT WIDGET ===== */
 .chatbot-wrapper {
@@ -298,7 +488,7 @@ footer {
 }
 .chatbot-toggle.open::before { animation: none; opacity: 0; }
 
-/* Mobile responsive */
+/* Mobile responsive chatbot */
 @media (max-width: 500px) {
     .chatbot-iframe-container {
         width: calc(100vw - 32px);
@@ -320,36 +510,41 @@ footer {
         <span class="section-tag">CyberSmart Education</span>
         <h1 class="hero-title">Empower Your Digital Life</h1>
         <p style="color: var(--text-secondary); margin-bottom: 35px; font-size: clamp(1rem, 4vw, 1.15rem); max-width: 750px; margin-inline: auto;">
-            CyberSmart teaches you the skills to understand, prevent, and respond to digital risks sa pamamagitan ng theory at interactive simulations.
+            CyberSmart equips you with the knowledge to understand, prevent, and respond to digital threats through guided theory and interactive simulations.
         </p>
     </div>
 </section>
 
 <div class="content-container container" id="explore">
 
-    <div class="glass box">
+    <div class="glass box" id="learnPanel">
         <span class="section-tag">The Mission</span>
         <h2 style="margin-bottom: 20px; font-family: 'Outfit';">Why Knowledge Matters</h2>
 
-        <div class="info-card">
-            <h4>Protect Your Data</h4>
-            <p>Learn how breaches occur and how sensitive data can be exposed.</p>
+        <div class="info-card" data-topic="data">
+            <h4>Protect Your Data <span class="read-indicator">✓ READ</span></h4>
+            <p>Learn how breaches occur and how sensitive data can be exposed through weak configurations and unpatched systems.</p>
         </div>
 
-        <div class="info-card">
-            <h4>Recognize Scams</h4>
-            <p>Identify phishing and social engineering before they impact you.</p>
+        <div class="info-card" data-topic="scams">
+            <h4>Recognize Scams <span class="read-indicator">✓ READ</span></h4>
+            <p>Identify phishing attacks, social engineering tactics, and deceptive communications before they compromise your accounts.</p>
         </div>
 
-        <div class="info-card">
-            <h4>Prevent Malware</h4>
-            <p>Discover malware types and steps to secure your devices.</p>
+        <div class="info-card" data-topic="malware">
+            <h4>Prevent Malware <span class="read-indicator">✓ READ</span></h4>
+            <p>Discover the different types of malware — ransomware, spyware, trojans — and learn practical steps to secure your devices.</p>
         </div>
 
-        <div class="info-card">
-            <h4>Maintain Privacy</h4>
-            <p>Learn how to safeguard your digital footprint in an connected world.</p>
+        <div class="info-card" data-topic="privacy">
+            <h4>Maintain Privacy <span class="read-indicator">✓ READ</span></h4>
+            <p>Understand how to safeguard your digital footprint and protect personal information in an increasingly connected world.</p>
         </div>
+
+        <div class="reading-progress-bar">
+            <div class="reading-progress-fill" id="readingFill"></div>
+        </div>
+        <div class="reading-status" id="readingStatus">0 / 4 modules reviewed</div>
     </div>
 
     <div class="glass box">
@@ -360,7 +555,7 @@ footer {
             <div class="step-num">01</div>
             <div>
                 <h4 style="color: var(--neon-green);">Step 1: Learn</h4>
-                <p style="color: var(--text-secondary);">Understand different cyber risks through curated theory modules.</p>
+                <p style="color: var(--text-secondary);">Understand different cyber risks through curated theory modules on the left panel.</p>
             </div>
         </div>
 
@@ -368,7 +563,7 @@ footer {
             <div class="step-num">02</div>
             <div>
                 <h4 style="color: var(--neon-green);">Step 2: Solve</h4>
-                <p style="color: var(--text-secondary);">Discover actionable strategies like Strong Passwords and 2FA.</p>
+                <p style="color: var(--text-secondary);">Discover actionable strategies like strong passwords, two-factor authentication, and encryption.</p>
             </div>
         </div>
 
@@ -376,7 +571,7 @@ footer {
             <div class="step-num">03</div>
             <div>
                 <h4 style="color: var(--neon-green);">Step 3: Apply</h4>
-                <p style="color: var(--text-secondary);">Test your skills in interactive simulations (Coming Soon).</p>
+                <p style="color: var(--text-secondary);">Test your knowledge through our terminal gatekeeper challenge below.</p>
             </div>
         </div>
 
@@ -386,28 +581,40 @@ footer {
         <div class="tips-grid">
             <div class="info-card" style="margin-bottom: 0;">
                 <h4 style="font-size: 1rem;">Keep Updated</h4>
-                <p style="font-size: 0.8rem;">Patch vulnerabilities by keeping software current.</p>
+                <p style="font-size: 0.8rem;">Patch vulnerabilities by keeping all software and operating systems current.</p>
             </div>
             <div class="info-card" style="margin-bottom: 0;">
                 <h4 style="font-size: 1rem;">Stay Alert</h4>
-                <p style="font-size: 0.8rem;">Verify links and attachments before clicking.</p>
+                <p style="font-size: 0.8rem;">Always verify links and attachments before clicking or downloading.</p>
             </div>
         </div>
 
-        <a href="types-of-risks.html" class="btn btn-primary btn-block" style="margin-top: 30px;" id="gateBtn">Explore Risks & Solutions</a>
+        <a href="types-of-risks.html" class="btn btn-primary btn-block" style="margin-top: 30px;" id="gateBtn">⟩_ Launch Terminal Gateway</a>
     </div>
 
 </div>
 
-<div id="quizModal">
-    <div class="glass" style="max-width: 450px; width: 90%; text-align: center;">
-        <span class="section-tag" id="statusTag">Security Challenge</span>
-        <h3 id="quizQ" style="color: var(--neon-cyan); margin: 20px 0; font-family: 'Outfit';">--</h3>
-        <div id="quizOptions"></div>
-        <p id="quizFeedback" style="margin-top: 15px; font-family: var(--font-mono); font-size: 0.8rem; height: 20px;"></p>
+<!-- ===== TERMINAL GATEKEEPER MODAL ===== -->
+<div id="terminalModal">
+    <button class="terminal-close" id="terminalClose" aria-label="Close terminal">✕</button>
+    <div class="terminal-window">
+        <div class="terminal-titlebar">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+            <span>cybersmart://gatekeeper — v2.1</span>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+            <!-- Terminal output lines will be injected here -->
+        </div>
+        <div class="terminal-input-row">
+            <span class="prompt-prefix">guest@cybersmart:~$</span>
+            <input type="text" id="terminalInput" placeholder="Type a command..." autocomplete="off" spellcheck="false" />
+        </div>
     </div>
 </div>
 
+<!-- ===== HACKER ACCESS OVERLAY ===== -->
 <div id="accessOverlay">
     <div class="scan-line"></div>
     <div id="termLogs" style="text-align: left; width: 320px; font-size: 13px; margin-bottom: 20px; line-height: 1.4;"></div>
@@ -425,12 +632,10 @@ footer {
         </iframe>
     </div>
     <button class="chatbot-toggle" id="chatbotToggle" aria-label="Toggle chatbot">
-        <!-- Chat icon -->
         <svg class="icon-chat" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
             <path d="M7 9h10v2H7zm0-3h10v2H7zm0 6h7v2H7z"/>
         </svg>
-        <!-- Close icon -->
         <svg class="icon-close" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
         </svg>
@@ -443,102 +648,419 @@ footer {
 </footer>
 
 <script>
-    // 1. THREE.JS BG
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('heroCanvas'), alpha: true, antialias: true });
+// ============================================================
+//  1. THREE.JS PARTICLE BACKGROUND
+// ============================================================
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('heroCanvas'), alpha: true, antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const geo = new THREE.BufferGeometry();
+const pos = [];
+for (let i = 0; i < 2000; i++) {
+    pos.push(
+        THREE.MathUtils.randFloatSpread(25),
+        THREE.MathUtils.randFloatSpread(25),
+        THREE.MathUtils.randFloatSpread(25)
+    );
+}
+geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.03 });
+const points = new THREE.Points(geo, mat);
+scene.add(points);
+camera.position.z = 10;
+
+function animateScene() {
+    requestAnimationFrame(animateScene);
+    points.rotation.y += 0.0005;
+    renderer.render(scene, camera);
+}
+animateScene();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    const geo = new THREE.BufferGeometry();
-    const pos = [];
-    for(let i=0; i<2000; i++) pos.push(THREE.MathUtils.randFloatSpread(25), THREE.MathUtils.randFloatSpread(25), THREE.MathUtils.randFloatSpread(25));
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.03 });
-    const points = new THREE.Points(geo, mat);
-    scene.add(points);
-    camera.position.z = 10;
-    function animate() { requestAnimationFrame(animate); points.rotation.y += 0.0005; renderer.render(scene, camera); }
-    animate();
+});
 
-    // 2. QUIZ & HACKER LOGIC
-    const questions = [
-        { q: "> ANONG 'P' ANG FAKE MESSAGES?", a: ["PHISHING", "PATCHING", "PING"], c: 0 },
-        { q: "> PINAKA-SECURE NA PASSWORD?", a: ["12345678", "ADMIN123", "CYB3R!P0RTAL"], c: 2 },
-        { q: "> ANONG MALWARE ANG NANG-HO-HOSTAGE?", a: ["ADWARE", "RANSOMWARE", "SPYWARE"], c: 1 }
-    ];
+// ============================================================
+//  2. READING / SCROLL TRACKING
+// ============================================================
+const readModules = new Set();
+const infoCards = document.querySelectorAll('#learnPanel .info-card[data-topic]');
+const readingFill = document.getElementById('readingFill');
+const readingStatus = document.getElementById('readingStatus');
+const TOTAL_MODULES = infoCards.length;
+const READ_THRESHOLD = TOTAL_MODULES; // Must read ALL modules
 
-    const gateBtn = document.getElementById('gateBtn');
-    const modal = document.getElementById('quizModal');
-    const qText = document.getElementById('quizQ');
-    const qOpts = document.getElementById('quizOptions');
-    const feedback = document.getElementById('quizFeedback');
+function updateReadingProgress() {
+    const pct = (readModules.size / TOTAL_MODULES) * 100;
+    readingFill.style.width = pct + '%';
+    readingStatus.textContent = `${readModules.size} / ${TOTAL_MODULES} modules reviewed`;
+}
 
-    gateBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const q = questions[Math.floor(Math.random()*questions.length)];
-        qText.innerText = q.q;
-        qOpts.innerHTML = '';
-        feedback.innerText = '';
-        q.a.forEach((opt, i) => {
-            const b = document.createElement('button');
-            b.className = 'btn quiz-option';
-            b.innerText = opt;
-            b.onclick = () => {
-                if(i === q.c) startHackingSequence();
-                else {
-                    feedback.innerText = "!! ACCESS_DENIED: INCORRECT_KEY !!";
-                    feedback.style.color = "var(--neon-magenta)";
-                    gsap.to(modal.querySelector('.glass'), { x: 10, repeat: 5, yoyo: true, duration: 0.05 });
+function hasCompletedReading() {
+    return readModules.size >= READ_THRESHOLD;
+}
+
+// Intersection Observer — marks cards as "read" when visible
+const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const topic = entry.target.getAttribute('data-topic');
+            if (topic && !readModules.has(topic)) {
+                // Require the card to be visible for 1.5s
+                entry.target._readTimer = setTimeout(() => {
+                    readModules.add(topic);
+                    entry.target.classList.add('read');
+                    updateReadingProgress();
+                }, 1500);
+            }
+        } else {
+            clearTimeout(entry.target._readTimer);
+        }
+    });
+}, { threshold: 0.6 });
+
+infoCards.forEach(card => cardObserver.observe(card));
+
+// ============================================================
+//  3. TERMINAL GATEKEEPER
+// ============================================================
+const questions = [
+    {
+        q: "Identify the cyber attack that uses fake emails or messages to steal sensitive information.",
+        answer: "phishing",
+        hint: "Think about a term that sounds like 'fishing' — baiting victims with deceptive messages.",
+        acceptAlt: ["phising", "phishin", "phish"]
+    },
+    {
+        q: "What type of malware encrypts your files and demands payment for their release?",
+        answer: "ransomware",
+        hint: "The name combines a demand for money with malicious software.",
+        acceptAlt: ["ransom ware", "ransom", "ransomware"]
+    },
+    {
+        q: "What security measure requires two different forms of verification to access an account?",
+        answer: "2fa",
+        hint: "It's a two-step verification process. The abbreviation has a number and two letters.",
+        acceptAlt: ["two factor authentication", "two-factor authentication", "twofactor", "mfa", "2 fa", "two factor"]
+    }
+];
+
+// DOM references
+const gateBtn = document.getElementById('gateBtn');
+const terminalModal = document.getElementById('terminalModal');
+const terminalBody = document.getElementById('terminalBody');
+const terminalInput = document.getElementById('terminalInput');
+const terminalClose = document.getElementById('terminalClose');
+
+let currentQuestion = null;
+let terminalOpen = false;
+let isTyping = false;
+let hintUsed = false;
+
+// --- Utility: Typing animation for terminal output ---
+function typeTerminalLine(text, className = '', delay = 0) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            const line = document.createElement('div');
+            line.className = `terminal-line ${className}`;
+            terminalBody.appendChild(line);
+            scrollTerminal();
+
+            if (text.length === 0) {
+                resolve();
+                return;
+            }
+
+            isTyping = true;
+            let i = 0;
+            line.classList.add('typing');
+
+            const typeInterval = setInterval(() => {
+                line.textContent += text[i];
+                i++;
+                scrollTerminal();
+                if (i >= text.length) {
+                    clearInterval(typeInterval);
+                    line.classList.remove('typing');
+                    isTyping = false;
+                    resolve();
                 }
-            };
-            qOpts.appendChild(b);
-        });
-        modal.style.display = 'flex';
-        gsap.from(modal.querySelector('.glass'), { scale: 0.8, opacity: 0, duration: 0.4 });
+            }, 18);
+        }, delay);
+    });
+}
+
+// Instant line (no animation)
+function addTerminalLine(text, className = '') {
+    const line = document.createElement('div');
+    line.className = `terminal-line ${className}`;
+    line.textContent = text;
+    terminalBody.appendChild(line);
+    scrollTerminal();
+    return line;
+}
+
+function addTerminalHTML(html, className = '') {
+    const line = document.createElement('div');
+    line.className = `terminal-line ${className}`;
+    line.innerHTML = html;
+    terminalBody.appendChild(line);
+    scrollTerminal();
+    return line;
+}
+
+function scrollTerminal() {
+    terminalBody.scrollTop = terminalBody.scrollHeight;
+}
+
+function clearTerminal() {
+    terminalBody.innerHTML = '';
+}
+
+// --- Open Terminal ---
+async function openTerminal() {
+    terminalOpen = true;
+    hintUsed = false;
+    clearTerminal();
+
+    // Pick a random question
+    currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+
+    terminalModal.style.display = 'flex';
+    gsap.from(terminalModal.querySelector('.terminal-window'), {
+        scale: 0.9, opacity: 0, duration: 0.4, ease: 'power3.out'
     });
 
-    async function startHackingSequence() {
-        modal.style.display = 'none';
-        const overlay = document.getElementById('accessOverlay');
-        const term = document.getElementById('termLogs');
-        const granted = document.getElementById('grantedTxt');
-        
-        overlay.style.display = 'flex';
-        const logs = [
-            "> INITIALIZING BYPASS...",
-            "> INJECTING SQL_PAYLOAD...",
-            "> BYPASSING FIREWALL...",
-            "> ACCESS_TOKEN_GENERATED...",
-            "> AUTHORIZING GUEST_ACCESS...",
-            "> REDIRECTING TO SECURE_DB..."
-        ];
+    terminalInput.focus();
 
-        for (let log of logs) {
-            const line = document.createElement('div');
-            line.innerText = log;
-            term.appendChild(line);
-            await new Promise(r => setTimeout(r, 200));
+    // Boot sequence
+    await typeTerminalLine('CYBERSMART GATEWAY v2.1 — Secure Terminal Interface', 'system');
+    await typeTerminalLine('Establishing encrypted connection...', 'dim', 100);
+    await typeTerminalLine('Connection secured. Authentication required.', 'success', 200);
+    await typeTerminalLine('', '', 100);
+    await typeTerminalLine('>> SECURITY CHALLENGE:', 'system', 100);
+    await typeTerminalLine(`   ${currentQuestion.q}`, 'question', 50);
+    await typeTerminalLine('', '', 50);
+    await typeTerminalLine('Submit your answer:  @answer_<your_answer>', 'dim', 50);
+    await typeTerminalLine('Type @help for available commands.', 'dim', 50);
+}
+
+// --- Close Terminal ---
+function closeTerminal() {
+    terminalOpen = false;
+    gsap.to(terminalModal.querySelector('.terminal-window'), {
+        scale: 0.9, opacity: 0, duration: 0.25, ease: 'power2.in',
+        onComplete: () => {
+            terminalModal.style.display = 'none';
         }
+    });
+}
 
-        overlay.classList.add('glitch-flash');
-        gsap.to(granted, { opacity: 1, scale: 1.1, duration: 0.2 });
-        
-        setTimeout(() => {
-            window.location.href = "types-of-risks.html";
-        }, 1800);
+// --- Validate Answer ---
+function validateAnswer(input) {
+    const normalized = input.toLowerCase().trim().replace(/[^a-z0-9 ]/g, '');
+    const correct = currentQuestion.answer.toLowerCase();
+    const alts = currentQuestion.acceptAlt.map(a => a.toLowerCase().replace(/[^a-z0-9 ]/g, ''));
+
+    if (normalized === correct || alts.includes(normalized)) return true;
+
+    // Fuzzy: check if the correct answer is contained in the input
+    if (normalized.includes(correct)) return true;
+    for (const alt of alts) {
+        if (normalized.includes(alt)) return true;
     }
 
-    gsap.from(".hero-title", { duration: 1.2, y: 40, opacity: 0, ease: "power3.out" });
+    return false;
+}
 
-    // 3. CHATBOT TOGGLE
-    const chatbotToggle = document.getElementById('chatbotToggle');
-    const chatbotContainer = document.getElementById('chatbotContainer');
-    let chatOpen = false;
+// --- Command Handler ---
+async function handleCommand(raw) {
+    if (isTyping) return;
 
-    chatbotToggle.addEventListener('click', () => {
-        chatOpen = !chatOpen;
-        chatbotContainer.style.display = chatOpen ? 'block' : 'none';
-        chatbotToggle.classList.toggle('open', chatOpen);
+    const trimmed = raw.trim();
+    if (!trimmed) return;
+
+    // Echo user input
+    addTerminalHTML(`<span class="prompt-symbol">$</span> ${trimmed}`, '');
+
+    const lower = trimmed.toLowerCase();
+
+    // @clear
+    if (lower === '@clear') {
+        clearTerminal();
+        await typeTerminalLine('Terminal cleared.', 'dim');
+        await typeTerminalLine(`>> ${currentQuestion.q}`, 'question', 100);
+        return;
+    }
+
+    // @help
+    if (lower === '@help') {
+        await typeTerminalLine('──────── AVAILABLE COMMANDS ────────', 'system');
+        await typeTerminalLine('@answer_<value>  — Submit your answer', 'dim', 30);
+        await typeTerminalLine('@hint            — Request a clue', 'dim', 30);
+        await typeTerminalLine('@clear           — Clear terminal output', 'dim', 30);
+        await typeTerminalLine('@help            — Show this help menu', 'dim', 30);
+        await typeTerminalLine('────────────────────────────────────', 'system', 30);
+        return;
+    }
+
+    // @hint
+    if (lower === '@hint') {
+        if (hintUsed) {
+            await typeTerminalLine('[SYSTEM] Hint already provided. Review the clue above.', 'warning');
+        } else {
+            hintUsed = true;
+            await typeTerminalLine(`[HINT] ${currentQuestion.hint}`, 'warning');
+        }
+        return;
+    }
+
+    // @answer_<value>
+    if (lower.startsWith('@answer_') || lower.startsWith('@answer ')) {
+        const userAnswer = trimmed.replace(/^@answer[_ ]/i, '').trim();
+
+        if (!userAnswer) {
+            await typeTerminalLine('[ERROR] No answer provided. Format: @answer_<your_answer>', 'error');
+            return;
+        }
+
+        // Check reading requirement
+        if (!hasCompletedReading()) {
+            await denyAccess('ACCESS DENIED: Insufficient clearance. Please review all learning modules before attempting authentication.');
+            await typeTerminalLine(`[SYSTEM] Progress: ${readModules.size}/${TOTAL_MODULES} modules reviewed. Scroll through the content above.`, 'warning');
+            return;
+        }
+
+        // Validate
+        if (validateAnswer(userAnswer)) {
+            await grantAccess();
+        } else {
+            await denyAccess('ACCESS DENIED: Invalid response. Verify your answer and try again.');
+        }
+        return;
+    }
+
+    // Unknown command
+    await typeTerminalLine(`[ERROR] Unrecognized command: "${trimmed}"`, 'error');
+    await typeTerminalLine('Type @help for a list of available commands.', 'dim');
+}
+
+// --- Grant Access (triggers hacker sequence) ---
+async function grantAccess() {
+    await typeTerminalLine('[✓] Authentication successful.', 'success');
+    await typeTerminalLine('[✓] Generating access token...', 'success', 150);
+    await typeTerminalLine('[✓] Access granted. Redirecting to secure module...', 'success', 150);
+
+    terminalInput.disabled = true;
+
+    setTimeout(() => {
+        closeTerminal();
+        startHackingSequence();
+    }, 800);
+}
+
+// --- Deny Access (shake + error message) ---
+async function denyAccess(message) {
+    await typeTerminalLine(`[✗] ${message}`, 'error');
+
+    // Shake animation on terminal window
+    gsap.to(terminalModal.querySelector('.terminal-window'), {
+        x: 8, repeat: 5, yoyo: true, duration: 0.05,
+        ease: 'power2.inOut',
+        onComplete: () => {
+            gsap.set(terminalModal.querySelector('.terminal-window'), { x: 0 });
+        }
     });
+}
+
+// --- Hacker Access Granted Sequence (preserved from original) ---
+async function startHackingSequence() {
+    const overlay = document.getElementById('accessOverlay');
+    const term = document.getElementById('termLogs');
+    const granted = document.getElementById('grantedTxt');
+
+    term.innerHTML = '';
+    granted.style.opacity = 0;
+    overlay.classList.remove('glitch-flash');
+
+    overlay.style.display = 'flex';
+
+    const logs = [
+        "> INITIALIZING SECURE BYPASS PROTOCOL...",
+        "> ENCRYPTING SESSION PAYLOAD...",
+        "> TRAVERSING FIREWALL LAYERS...",
+        "> ACCESS TOKEN VALIDATED...",
+        "> AUTHORIZING GUEST SESSION...",
+        "> REDIRECTING TO KNOWLEDGE DATABASE..."
+    ];
+
+    for (const log of logs) {
+        const line = document.createElement('div');
+        line.innerText = log;
+        term.appendChild(line);
+        await new Promise(r => setTimeout(r, 200));
+    }
+
+    overlay.classList.add('glitch-flash');
+    gsap.to(granted, { opacity: 1, scale: 1.1, duration: 0.2 });
+
+    setTimeout(() => {
+        window.location.href = "types-of-risks.html";
+    }, 1800);
+}
+
+// ============================================================
+//  4. EVENT LISTENERS
+// ============================================================
+
+// Gate button opens terminal
+gateBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openTerminal();
+});
+
+// Terminal input handler
+terminalInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const val = terminalInput.value;
+        terminalInput.value = '';
+        handleCommand(val);
+    }
+});
+
+// Close terminal
+terminalClose.addEventListener('click', closeTerminal);
+
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && terminalOpen) closeTerminal();
+});
+
+// Close modal when clicking backdrop
+terminalModal.addEventListener('click', (e) => {
+    if (e.target === terminalModal) closeTerminal();
+});
+
+// Hero title animation
+gsap.from(".hero-title", { duration: 1.2, y: 40, opacity: 0, ease: "power3.out" });
+
+// ============================================================
+//  5. CHATBOT TOGGLE (preserved)
+// ============================================================
+const chatbotToggle = document.getElementById('chatbotToggle');
+const chatbotContainer = document.getElementById('chatbotContainer');
+let chatOpen = false;
+
+chatbotToggle.addEventListener('click', () => {
+    chatOpen = !chatOpen;
+    chatbotContainer.style.display = chatOpen ? 'block' : 'none';
+    chatbotToggle.classList.toggle('open', chatOpen);
+});
 </script>
 
 </body>
