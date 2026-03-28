@@ -34,6 +34,368 @@ body {
     line-height: 1.6;
 }
 
+/* ====== MOBILE / DESKTOP MODE WARNING OVERLAY ====== */
+.desktop-warning-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: var(--dark-bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Show on small screens */
+@media (max-width: 1024px) {
+    .desktop-warning-overlay {
+        display: flex !important;
+    }
+    .desktop-warning-overlay.dismissed {
+        display: none !important;
+    }
+}
+
+.dw-header-icon {
+    font-size: 56px;
+    margin: 24px 0 12px;
+    animation: dw-float 3s ease-in-out infinite;
+}
+@keyframes dw-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.dw-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dw-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 400px;
+    margin-bottom: 20px;
+    padding: 0 8px;
+}
+
+.dw-subtitle strong {
+    color: var(--neon-cyan);
+}
+
+/* Main instruction card */
+.dw-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 20px;
+    width: 100%;
+    max-width: 440px;
+    margin-bottom: 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.dw-card h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+}
+
+/* Browser tabs */
+.dw-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.dw-tab {
+    flex: 1;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.02);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.dw-tab:active {
+    transform: scale(0.97);
+}
+
+.dw-tab.active {
+    background: rgba(9, 238, 245, 0.08);
+    border-color: rgba(9, 238, 245, 0.3);
+    color: var(--neon-cyan);
+}
+
+.dw-tab .dw-tab-icon {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+/* Steps */
+.dw-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.dw-step-num {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    color: var(--dark-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 1px;
+}
+
+.dw-step-text {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.dw-step-text strong {
+    color: var(--text-primary);
+}
+
+/* Visual mockup of phone browser */
+.dw-phone-visual {
+    width: 100%;
+    margin: 14px 0 4px;
+    display: flex;
+    justify-content: center;
+}
+
+.dw-phone-mockup {
+    width: 140px;
+    height: 230px;
+    background: #0d1420;
+    border-radius: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 8px 8px;
+    overflow: hidden;
+}
+
+.dw-phone-notch {
+    width: 48px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    margin: 0 auto 8px;
+}
+
+.dw-phone-url-bar {
+    height: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 4px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    font-size: 5px;
+    color: rgba(255, 255, 255, 0.15);
+    font-family: var(--font-mono);
+}
+
+.dw-phone-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.dw-phone-lines {
+    width: 80%;
+}
+
+.dw-phone-line {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    margin-bottom: 5px;
+}
+
+.dw-phone-line:nth-child(2) { width: 65%; }
+.dw-phone-line:nth-child(3) { width: 80%; }
+
+.dw-phone-highlight {
+    width: 85%;
+    padding: 6px 8px;
+    background: rgba(9, 238, 245, 0.08);
+    border: 1px solid rgba(9, 238, 245, 0.2);
+    border-radius: 5px;
+    font-size: 6px;
+    color: var(--neon-cyan);
+    text-align: center;
+    font-family: var(--font-mono);
+    margin-top: auto;
+    margin-bottom: 14px;
+}
+
+/* Menu dots for Chrome mockup */
+.dw-phone-menu-dots {
+    position: absolute;
+    top: 30px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dw-phone-menu-dots .dot {
+    width: 3px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+}
+
+/* Safari aA button mockup */
+.dw-phone-aa {
+    position: absolute;
+    top: 31px;
+    left: 12px;
+    font-size: 6px;
+    color: var(--neon-cyan);
+    font-weight: 700;
+    font-family: -apple-system, sans-serif;
+}
+
+/* Samsung bottom bar */
+.dw-phone-samsung-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 4px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dw-phone-samsung-bar span {
+    font-size: 6px;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.dw-phone-samsung-bar span.active {
+    color: var(--neon-cyan);
+    font-weight: 700;
+}
+
+/* Arrow indicator pulsing on mockup */
+.dw-arrow-indicator {
+    position: absolute;
+    font-size: 12px;
+    animation: dw-arrow-pulse 1.2s ease-in-out infinite;
+}
+@keyframes dw-arrow-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* Info / Reason note */
+.dw-reason-box {
+    background: rgba(9, 238, 245, 0.04);
+    border: 1px solid rgba(9, 238, 245, 0.1);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 440px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.dw-reason-box strong {
+    color: var(--neon-cyan);
+}
+
+/* Bottom continue anyway button */
+.dw-skip-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 10px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-bottom: 24px;
+    opacity: 0.5;
+}
+
+.dw-skip-btn:hover, .dw-skip-btn:active {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    opacity: 0.8;
+}
+
+/* Specific feature cards that only show for the OS */
+.dw-feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.dw-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    padding: 6px 0;
+}
+
+.dw-feature-item .dw-check {
+    color: var(--neon-green);
+    font-weight: 700;
+    font-size: 12px;
+}
+
 /* Hero & Background */
 .hero {
     position: relative; 
@@ -189,6 +551,31 @@ body {
 }
 .btn-block { display: block; width: 100%; }
 
+.reading-progress-bar {
+    width: 100%;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    margin-top: 15px;
+    overflow: hidden;
+    position: relative;
+}
+.reading-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(3, 252, 132, 0.4);
+}
+.reading-status {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    opacity: 0.7;
+}
+
 /* ===== TERMINAL GATEKEEPER MODAL ===== */
 #terminalModal {
     display: none;
@@ -274,7 +661,6 @@ body {
     margin-right: 8px;
 }
 
-/* Typing cursor animation for output */
 .terminal-line.typing::after {
     content: '█';
     animation: blink-cursor 0.6s step-end infinite;
@@ -314,7 +700,6 @@ body {
     color: rgba(163, 184, 204, 0.3);
 }
 
-/* Terminal close button */
 .terminal-close {
     position: absolute;
     top: 16px;
@@ -338,32 +723,6 @@ body {
     border-color: var(--neon-magenta);
     color: var(--neon-magenta);
     background: rgba(250, 44, 255, 0.1);
-}
-
-/* Reading progress bar */
-.reading-progress-bar {
-    width: 100%;
-    height: 3px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 2px;
-    margin-top: 15px;
-    overflow: hidden;
-    position: relative;
-}
-.reading-progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
-    border-radius: 2px;
-    width: 0%;
-    transition: width 0.5s ease;
-    box-shadow: 0 0 8px rgba(3, 252, 132, 0.4);
-}
-.reading-status {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    color: var(--text-secondary);
-    margin-top: 6px;
-    opacity: 0.7;
 }
 
 /* HACKER OVERLAY */
@@ -472,7 +831,6 @@ footer {
 .chatbot-toggle:not(.open) svg.icon-chat { display: block; }
 .chatbot-toggle:not(.open) svg.icon-close { display: none; }
 
-/* Pulse ring animation */
 .chatbot-toggle::before {
     content: '';
     position: absolute;
@@ -488,7 +846,6 @@ footer {
 }
 .chatbot-toggle.open::before { animation: none; opacity: 0; }
 
-/* Mobile responsive chatbot */
 @media (max-width: 500px) {
     .chatbot-iframe-container {
         width: calc(100vw - 32px);
@@ -503,6 +860,163 @@ footer {
 </style>
 </head>
 <body>
+
+<!-- ============================================================ -->
+<!--  DESKTOP MODE WARNING OVERLAY (Mobile Only)                   -->
+<!-- ============================================================ -->
+<div class="desktop-warning-overlay" id="desktopWarning">
+
+    <div class="dw-header-icon">🖥️</div>
+    <div class="dw-title">Desktop Mode Recommended</div>
+    <div class="dw-subtitle">
+        CyberSmart's interactive simulations, terminal challenges, and educational layouts are optimized for <strong>desktop-sized screens</strong>. Switch your browser to <strong>Desktop Mode</strong> for the best experience.
+    </div>
+
+    <!-- Instruction Card -->
+    <div class="dw-card">
+        <h3>📱 How to Enable Desktop Mode</h3>
+
+        <!-- Browser Tabs -->
+        <div class="dw-tabs">
+            <div class="dw-tab active" onclick="switchDWGuide('chrome')" id="dwTabChrome">
+                <span class="dw-tab-icon">🌐</span>Chrome
+            </div>
+            <div class="dw-tab" onclick="switchDWGuide('safari')" id="dwTabSafari">
+                <span class="dw-tab-icon">🧭</span>Safari
+            </div>
+            <div class="dw-tab" onclick="switchDWGuide('samsung')" id="dwTabSamsung">
+                <span class="dw-tab-icon">🔵</span>Samsung
+            </div>
+        </div>
+
+        <!-- Chrome Guide -->
+        <div id="dwGuideChrome">
+            <div class="dw-step">
+                <div class="dw-step-num">1</div>
+                <div class="dw-step-text">Tap the <strong>three-dot menu ( ⋮ )</strong> in the top-right corner of Chrome</div>
+            </div>
+            <div class="dw-step">
+                <div class="dw-step-num">2</div>
+                <div class="dw-step-text">Scroll down and find <strong>"Desktop site"</strong></div>
+            </div>
+            <div class="dw-step">
+                <div class="dw-step-num">3</div>
+                <div class="dw-step-text">Toggle the <strong>checkbox ON</strong> next to "Desktop site"</div>
+            </div>
+            <div class="dw-step">
+                <div class="dw-step-num">4</div>
+                <div class="dw-step-text">Page will <strong>reload automatically</strong> in desktop layout</div>
+            </div>
+            <div class="dw-phone-visual">
+                <div class="dw-phone-mockup">
+                    <div class="dw-phone-notch"></div>
+                    <div class="dw-phone-url-bar">🔒 cybersmart.edu</div>
+                    <div class="dw-phone-menu-dots">
+                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    </div>
+                    <div class="dw-arrow-indicator" style="top:26px;right:18px;font-size:10px;">👆</div>
+                    <div class="dw-phone-content">
+                        <div class="dw-phone-lines">
+                            <div class="dw-phone-line"></div>
+                            <div class="dw-phone-line"></div>
+                            <div class="dw-phone-line"></div>
+                        </div>
+                    </div>
+                    <div class="dw-phone-highlight">☑ Desktop site</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safari Guide -->
+        <div id="dwGuideSafari" style="display:none">
+            <div class="dw-step">
+                <div class="dw-step-num">1</div>
+                <div class="dw-step-text">Tap the <strong>"aA"</strong> button in the address bar (top-left)</div>
+            </div>
+            <div class="dw-step">
+                <div class="dw-step-num">2</div>
+                <div class="dw-step-text">Tap <strong>"Request Desktop Website"</strong> from the dropdown</div>
+            </div>
+            <div class="dw-step">
+                <div class="dw-step-num">3</div>
+                <div class="dw-step-text">Page will <strong>reload</strong> with the full desktop experience</div>
+            </div>
+            <div class="dw-phone-visual">
+                <div class="dw-phone-mockup">
+                    <div class="dw-phone-notch"></div>
+                    <div class="dw-phone-url-bar">🔒 cybersmart.edu</div>
+                    <div class="dw-phone-aa">aA</div>
+                    <div class="dw-arrow-indicator" style="top:26px;left:14px;font-size:10px;">👆</div>
+                    <div class="dw-phone-content">
+                        <div class="dw-phone-lines" style="width:90%">
+                            <div class="dw-phone-line" style="width:100%;height:2px;margin-bottom:4px;"></div>
+                            <div style="width:85%;padding:5px 6px;background:rgba(9,238,245,.06);border:1px solid rgba(9,238,245,.15);border-radius:4px;font-size:5.5px;color:var(--neon-cyan);text-align:center;font-family:var(--font-mono);margin-bottom:4px;">📱→🖥 Request Desktop Website</div>
+                            <div class="dw-phone-line" style="width:100%;height:2px;"></div>
+                        </div>
+                    </div>
+                    <div class="dw-phone-highlight">Desktop view loaded</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Samsung Guide -->
+        <div id="dwGuideSamsung" style="display:none">
+            <div class="dw-step">
+                <div class="dw-step-num">1</div>
+                <div class="dw-step-text">Tap the <strong>hamburger menu ( ≡ )</strong> at the bottom-right</div>
+            </div>
+            <div class="dw-step">
+                <div class="dw-step-num">2</div>
+                <div class="dw-step-text">Tap <strong>"Desktop site"</strong> to toggle it on</div>
+            </div>
+            <div class="dw-step">
+                <div class="dw-step-num">3</div>
+                <div class="dw-step-text">Page will <strong>reload</strong> in desktop view</div>
+            </div>
+            <div class="dw-phone-visual">
+                <div class="dw-phone-mockup">
+                    <div class="dw-phone-notch"></div>
+                    <div class="dw-phone-url-bar">🔒 cybersmart.edu</div>
+                    <div class="dw-phone-content">
+                        <div class="dw-phone-lines">
+                            <div class="dw-phone-line"></div>
+                            <div class="dw-phone-line"></div>
+                            <div class="dw-phone-line"></div>
+                        </div>
+                    </div>
+                    <div class="dw-phone-samsung-bar">
+                        <span>←</span><span>→</span><span>🏠</span><span>⊞</span><span class="active">≡</span>
+                    </div>
+                    <div class="dw-arrow-indicator" style="bottom:18px;right:14px;font-size:10px;">👆</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why desktop mode? -->
+    <div class="dw-reason-box">
+        <strong>💡 Why Desktop Mode?</strong><br><br>
+        CyberSmart features interactive elements including:
+        <div class="dw-feature-list">
+            <div class="dw-feature-item"><span class="dw-check">✓</span> Terminal-based security challenges</div>
+            <div class="dw-feature-item"><span class="dw-check">✓</span> Full-size phone malware simulations</div>
+            <div class="dw-feature-item"><span class="dw-check">✓</span> Multi-panel educational layouts</div>
+            <div class="dw-feature-item"><span class="dw-check">✓</span> Interactive step-by-step response guides</div>
+        </div>
+        <br>
+        These require a wider viewport than mobile screens provide.
+    </div>
+
+    <!-- Skip / Continue anyway -->
+    <button class="dw-skip-btn" onclick="dismissDesktopWarning()">
+        Continue in mobile view anyway →
+    </button>
+</div>
+
+
+<!-- ============================================================ -->
+<!--  MAIN SITE CONTENT                                            -->
+<!-- ============================================================ -->
 
 <section class="hero">
     <canvas id="heroCanvas"></canvas>
@@ -604,9 +1118,7 @@ footer {
             <div class="terminal-dot green"></div>
             <span>cybersmart://gatekeeper — v2.1</span>
         </div>
-        <div class="terminal-body" id="terminalBody">
-            <!-- Terminal output lines will be injected here -->
-        </div>
+        <div class="terminal-body" id="terminalBody"></div>
         <div class="terminal-input-row">
             <span class="prompt-prefix">guest@cybersmart:~$</span>
             <input type="text" id="terminalInput" placeholder="Type a command..." autocomplete="off" spellcheck="false" />
@@ -648,6 +1160,52 @@ footer {
 </footer>
 
 <script>
+// ============================================================
+//  0. DESKTOP WARNING OVERLAY LOGIC
+// ============================================================
+function switchDWGuide(browser) {
+    // Hide all guides
+    document.getElementById('dwGuideChrome').style.display = 'none';
+    document.getElementById('dwGuideSafari').style.display = 'none';
+    document.getElementById('dwGuideSamsung').style.display = 'none';
+
+    // Deactivate all tabs
+    document.getElementById('dwTabChrome').classList.remove('active');
+    document.getElementById('dwTabSafari').classList.remove('active');
+    document.getElementById('dwTabSamsung').classList.remove('active');
+
+    // Show selected
+    const guideMap = {
+        chrome: 'dwGuideChrome',
+        safari: 'dwGuideSafari',
+        samsung: 'dwGuideSamsung'
+    };
+    const tabMap = {
+        chrome: 'dwTabChrome',
+        safari: 'dwTabSafari',
+        samsung: 'dwTabSamsung'
+    };
+
+    document.getElementById(guideMap[browser]).style.display = 'block';
+    document.getElementById(tabMap[browser]).classList.add('active');
+}
+
+function dismissDesktopWarning() {
+    document.getElementById('desktopWarning').classList.add('dismissed');
+}
+
+// Auto-detect browser for initial tab
+(function autoDetectBrowser() {
+    const ua = navigator.userAgent.toLowerCase();
+    if (/safari/i.test(ua) && !/chrome/i.test(ua) && !/crios/i.test(ua)) {
+        switchDWGuide('safari');
+    } else if (/samsungbrowser/i.test(ua)) {
+        switchDWGuide('samsung');
+    }
+    // Default: Chrome (already active)
+})();
+
+
 // ============================================================
 //  1. THREE.JS PARTICLE BACKGROUND
 // ============================================================
@@ -693,7 +1251,7 @@ const infoCards = document.querySelectorAll('#learnPanel .info-card[data-topic]'
 const readingFill = document.getElementById('readingFill');
 const readingStatus = document.getElementById('readingStatus');
 const TOTAL_MODULES = infoCards.length;
-const READ_THRESHOLD = TOTAL_MODULES; // Must read ALL modules
+const READ_THRESHOLD = TOTAL_MODULES;
 
 function updateReadingProgress() {
     const pct = (readModules.size / TOTAL_MODULES) * 100;
@@ -705,13 +1263,11 @@ function hasCompletedReading() {
     return readModules.size >= READ_THRESHOLD;
 }
 
-// Intersection Observer — marks cards as "read" when visible
 const cardObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             const topic = entry.target.getAttribute('data-topic');
             if (topic && !readModules.has(topic)) {
-                // Require the card to be visible for 1.5s
                 entry.target._readTimer = setTimeout(() => {
                     readModules.add(topic);
                     entry.target.classList.add('read');
@@ -750,7 +1306,6 @@ const questions = [
     }
 ];
 
-// DOM references
 const gateBtn = document.getElementById('gateBtn');
 const terminalModal = document.getElementById('terminalModal');
 const terminalBody = document.getElementById('terminalBody');
@@ -762,7 +1317,6 @@ let terminalOpen = false;
 let isTyping = false;
 let hintUsed = false;
 
-// --- Utility: Typing animation for terminal output ---
 function typeTerminalLine(text, className = '', delay = 0) {
     return new Promise(resolve => {
         setTimeout(() => {
@@ -795,7 +1349,6 @@ function typeTerminalLine(text, className = '', delay = 0) {
     });
 }
 
-// Instant line (no animation)
 function addTerminalLine(text, className = '') {
     const line = document.createElement('div');
     line.className = `terminal-line ${className}`;
@@ -822,23 +1375,17 @@ function clearTerminal() {
     terminalBody.innerHTML = '';
 }
 
-// --- Open Terminal ---
 async function openTerminal() {
     terminalOpen = true;
     hintUsed = false;
     clearTerminal();
-
-    // Pick a random question
     currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-
     terminalModal.style.display = 'flex';
     gsap.from(terminalModal.querySelector('.terminal-window'), {
         scale: 0.9, opacity: 0, duration: 0.4, ease: 'power3.out'
     });
-
     terminalInput.focus();
 
-    // Boot sequence
     await typeTerminalLine('CYBERSMART GATEWAY v2.1 — Secure Terminal Interface', 'system');
     await typeTerminalLine('Establishing encrypted connection...', 'dim', 100);
     await typeTerminalLine('Connection secured. Authentication required.', 'success', 200);
@@ -850,7 +1397,6 @@ async function openTerminal() {
     await typeTerminalLine('Type @help for available commands.', 'dim', 50);
 }
 
-// --- Close Terminal ---
 function closeTerminal() {
     terminalOpen = false;
     gsap.to(terminalModal.querySelector('.terminal-window'), {
@@ -861,36 +1407,26 @@ function closeTerminal() {
     });
 }
 
-// --- Validate Answer ---
 function validateAnswer(input) {
     const normalized = input.toLowerCase().trim().replace(/[^a-z0-9 ]/g, '');
     const correct = currentQuestion.answer.toLowerCase();
     const alts = currentQuestion.acceptAlt.map(a => a.toLowerCase().replace(/[^a-z0-9 ]/g, ''));
 
     if (normalized === correct || alts.includes(normalized)) return true;
-
-    // Fuzzy: check if the correct answer is contained in the input
     if (normalized.includes(correct)) return true;
     for (const alt of alts) {
         if (normalized.includes(alt)) return true;
     }
-
     return false;
 }
 
-// --- Command Handler ---
 async function handleCommand(raw) {
     if (isTyping) return;
-
     const trimmed = raw.trim();
     if (!trimmed) return;
-
-    // Echo user input
     addTerminalHTML(`<span class="prompt-symbol">$</span> ${trimmed}`, '');
-
     const lower = trimmed.toLowerCase();
 
-    // @clear
     if (lower === '@clear') {
         clearTerminal();
         await typeTerminalLine('Terminal cleared.', 'dim');
@@ -898,7 +1434,6 @@ async function handleCommand(raw) {
         return;
     }
 
-    // @help
     if (lower === '@help') {
         await typeTerminalLine('──────── AVAILABLE COMMANDS ────────', 'system');
         await typeTerminalLine('@answer_<value>  — Submit your answer', 'dim', 30);
@@ -909,7 +1444,6 @@ async function handleCommand(raw) {
         return;
     }
 
-    // @hint
     if (lower === '@hint') {
         if (hintUsed) {
             await typeTerminalLine('[SYSTEM] Hint already provided. Review the clue above.', 'warning');
@@ -920,7 +1454,6 @@ async function handleCommand(raw) {
         return;
     }
 
-    // @answer_<value>
     if (lower.startsWith('@answer_') || lower.startsWith('@answer ')) {
         const userAnswer = trimmed.replace(/^@answer[_ ]/i, '').trim();
 
@@ -929,14 +1462,12 @@ async function handleCommand(raw) {
             return;
         }
 
-        // Check reading requirement
         if (!hasCompletedReading()) {
             await denyAccess('ACCESS DENIED: Insufficient clearance. Please review all learning modules before attempting authentication.');
             await typeTerminalLine(`[SYSTEM] Progress: ${readModules.size}/${TOTAL_MODULES} modules reviewed. Scroll through the content above.`, 'warning');
             return;
         }
 
-        // Validate
         if (validateAnswer(userAnswer)) {
             await grantAccess();
         } else {
@@ -945,30 +1476,23 @@ async function handleCommand(raw) {
         return;
     }
 
-    // Unknown command
     await typeTerminalLine(`[ERROR] Unrecognized command: "${trimmed}"`, 'error');
     await typeTerminalLine('Type @help for a list of available commands.', 'dim');
 }
 
-// --- Grant Access (triggers hacker sequence) ---
 async function grantAccess() {
     await typeTerminalLine('[✓] Authentication successful.', 'success');
     await typeTerminalLine('[✓] Generating access token...', 'success', 150);
     await typeTerminalLine('[✓] Access granted. Redirecting to secure module...', 'success', 150);
-
     terminalInput.disabled = true;
-
     setTimeout(() => {
         closeTerminal();
         startHackingSequence();
     }, 800);
 }
 
-// --- Deny Access (shake + error message) ---
 async function denyAccess(message) {
     await typeTerminalLine(`[✗] ${message}`, 'error');
-
-    // Shake animation on terminal window
     gsap.to(terminalModal.querySelector('.terminal-window'), {
         x: 8, repeat: 5, yoyo: true, duration: 0.05,
         ease: 'power2.inOut',
@@ -978,7 +1502,6 @@ async function denyAccess(message) {
     });
 }
 
-// --- Hacker Access Granted Sequence (preserved from original) ---
 async function startHackingSequence() {
     const overlay = document.getElementById('accessOverlay');
     const term = document.getElementById('termLogs');
@@ -987,7 +1510,6 @@ async function startHackingSequence() {
     term.innerHTML = '';
     granted.style.opacity = 0;
     overlay.classList.remove('glitch-flash');
-
     overlay.style.display = 'flex';
 
     const logs = [
@@ -1017,14 +1539,11 @@ async function startHackingSequence() {
 // ============================================================
 //  4. EVENT LISTENERS
 // ============================================================
-
-// Gate button opens terminal
 gateBtn.addEventListener('click', (e) => {
     e.preventDefault();
     openTerminal();
 });
 
-// Terminal input handler
 terminalInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         const val = terminalInput.value;
@@ -1033,24 +1552,20 @@ terminalInput.addEventListener('keydown', (e) => {
     }
 });
 
-// Close terminal
 terminalClose.addEventListener('click', closeTerminal);
 
-// Close on Escape
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && terminalOpen) closeTerminal();
 });
 
-// Close modal when clicking backdrop
 terminalModal.addEventListener('click', (e) => {
     if (e.target === terminalModal) closeTerminal();
 });
 
-// Hero title animation
 gsap.from(".hero-title", { duration: 1.2, y: 40, opacity: 0, ease: "power3.out" });
 
 // ============================================================
-//  5. CHATBOT TOGGLE (preserved)
+//  5. CHATBOT TOGGLE
 // ============================================================
 const chatbotToggle = document.getElementById('chatbotToggle');
 const chatbotContainer = document.getElementById('chatbotContainer');
