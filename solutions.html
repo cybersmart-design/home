@@ -3,356 +3,1995 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CyberSmart | SIM_CORE_ENHANCED</title>
+    <title>CyberSmart | Simulation Command Center</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
     <style>
         :root {
-            --bg: #010409;
-            --accent: #03fc84;
-            --cyan: #09eef5;
+            --bg: #0b0e14;
+            --bg-deeper: #070a0f;
+            --accent: #00e5ff;
+            --accent-dim: rgba(0, 229, 255, 0.15);
+            --accent-glow: rgba(0, 229, 255, 0.4);
+            --green: #00ff88;
             --red: #ff3e3e;
-            --panel: rgba(2, 8, 18, 0.95);
-            --border: rgba(9, 238, 245, 0.2);
-            --header-height: 110px;
+            --orange: #ff9500;
+            --silver: #b0b3b8;
+            --silver-dim: #6b7280;
+            --panel-bg: rgba(11, 14, 20, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(0, 229, 255, 0.12);
+            --glass-bg: rgba(11, 14, 20, 0.65);
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            background: var(--bg); 
-            color: #fff; 
-            font-family: 'JetBrains Mono', monospace; 
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: var(--font-body);
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        #bgCanvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
-
-        /* --- NAVIGATION --- */
-        .protocol-sidebar {
-            background: var(--panel);
-            border-bottom: 1px solid var(--border);
-            padding: 15px;
-            display: flex;
-            flex-direction: row;
-            overflow-x: auto;
-            gap: 10px;
+        #bgCanvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: var(--header-height);
-            z-index: 1000;
-            scrollbar-width: none;
-            backdrop-filter: blur(15px);
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
-        .protocol-sidebar::-webkit-scrollbar { display: none; }
 
-        .protocol-tab {
-            flex: 0 0 140px;
-            padding: 10px;
-            border: 1px solid var(--border);
+        /* ===== MOBILE WARNING OVERLAY ===== */
+        .mobile-warning {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: var(--bg);
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-warning { display: flex !important; }
+            .mobile-warning.dismissed { display: none !important; }
+            .command-center { display: none !important; }
+        }
+
+        .mw-icon {
+            font-size: 52px;
+            margin: 28px 0 14px;
+            animation: mwFloat 3s ease-in-out infinite;
+        }
+        @keyframes mwFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .mw-title {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--accent), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mw-subtitle {
+            font-size: 13px;
+            color: var(--silver);
+            text-align: center;
+            line-height: 1.65;
+            max-width: 400px;
+            margin-bottom: 22px;
+        }
+        .mw-subtitle strong { color: var(--accent); }
+
+        .mw-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 440px;
+            margin-bottom: 14px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .mw-card h3 {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mw-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .mw-tab {
+            flex: 1;
+            padding: 10px 6px;
+            border-radius: 10px;
+            border: 1px solid var(--panel-border);
+            background: rgba(255, 255, 255, 0.02);
+            text-align: center;
             cursor: pointer;
-            background: rgba(0,0,0,0.5);
-            transition: 0.3s;
+            transition: all 0.25s;
+            font-size: 11px;
+            color: var(--silver-dim);
+        }
+        .mw-tab.active {
+            background: var(--accent-dim);
+            border-color: rgba(0, 229, 255, 0.3);
+            color: var(--accent);
+        }
+        .mw-tab-icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .mw-step {
             display: flex;
-            flex-direction: column;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.015);
+            border-radius: 10px;
+        }
+
+        .mw-step-num {
+            width: 26px;
+            height: 26px;
+            min-width: 26px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--bg);
+            display: flex;
+            align-items: center;
             justify-content: center;
-        }
-        .protocol-tab.active {
-            background: rgba(9, 238, 245, 0.1);
-            border-color: var(--cyan);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 700;
         }
 
-        /* --- MAIN VIEWPORT --- */
-        .simulator-grid {
-            padding-top: var(--header-height);
-            min-height: 100vh;
+        .mw-step-text {
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: var(--silver);
+        }
+        .mw-step-text strong { color: #fff; }
+
+        .mw-phone-visual {
+            display: flex;
+            justify-content: center;
+            margin: 14px 0 4px;
+        }
+
+        .mw-phone-mockup {
+            width: 130px;
+            height: 210px;
+            background: #0d1420;
+            border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            position: relative;
             display: flex;
             flex-direction: column;
+            padding: 10px 8px 8px;
+            overflow: hidden;
         }
 
-        .core-viewport {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            margin: 10px;
-            padding: 25px 15px;
-            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 30px 30px;
-            flex-grow: 1;
+        .mw-phone-notch {
+            width: 44px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 2px;
+            margin: 0 auto 6px;
         }
 
-        .status-header {
+        .mw-phone-url {
+            height: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 3px;
+            margin-bottom: 5px;
             display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 8px;
-            color: var(--cyan);
+            align-items: center;
+            padding: 0 5px;
+            font-size: 4.5px;
+            color: rgba(255, 255, 255, 0.12);
+            font-family: var(--font-mono);
         }
 
-        .content-display h2 { 
-            font-family: 'Outfit', sans-serif; 
-            font-size: clamp(1.8rem, 8vw, 3.5rem); 
-            margin-bottom: 15px; 
+        .mw-phone-lines { width: 78%; }
+        .mw-phone-line {
+            height: 2.5px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 1px;
+            margin-bottom: 4px;
+        }
+        .mw-phone-line:nth-child(2) { width: 60%; }
+        .mw-phone-line:nth-child(3) { width: 75%; }
+
+        .mw-phone-highlight {
+            width: 82%;
+            padding: 5px 6px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 4px;
+            font-size: 5.5px;
+            color: var(--accent);
+            text-align: center;
+            font-family: var(--font-mono);
+            margin-top: auto;
+            margin-bottom: 12px;
+            align-self: center;
+        }
+
+        .mw-phone-dots {
+            position: absolute;
+            top: 28px;
+            right: 9px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .mw-phone-dots .d {
+            width: 2.5px;
+            height: 2.5px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+        }
+
+        .mw-phone-aa {
+            position: absolute;
+            top: 29px;
+            left: 11px;
+            font-size: 5.5px;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .mw-phone-samsung-bar {
+            position: absolute;
+            bottom: 7px;
+            left: 7px;
+            right: 7px;
+            display: flex;
+            justify-content: space-around;
+            padding: 3px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 5px;
+            color: rgba(255, 255, 255, 0.15);
+        }
+        .mw-phone-samsung-bar .act { color: var(--accent); font-weight: 700; }
+
+        .mw-arrow {
+            position: absolute;
+            font-size: 10px;
+            animation: mwArrow 1.2s ease-in-out infinite;
+        }
+        @keyframes mwArrow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        .mw-reason {
+            background: rgba(0, 229, 255, 0.03);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 11.5px;
+            line-height: 1.6;
+            color: var(--silver);
+            text-align: center;
+            max-width: 440px;
+            width: 100%;
+            margin-bottom: 14px;
+        }
+        .mw-reason strong { color: var(--accent); }
+
+        .mw-features {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .mw-feat {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            color: var(--silver);
+        }
+        .mw-feat .ck { color: var(--green); font-weight: 700; }
+
+        .mw-skip {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--silver-dim);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 10px 22px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .mw-skip:hover { border-color: rgba(255, 255, 255, 0.15); opacity: 0.7; }
+
+        /* ===== BACK NAVIGATION ===== */
+        .back-nav {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            color: var(--silver);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .back-nav:hover {
+            border-color: var(--glass-border);
+            color: var(--accent);
+            background: rgba(0, 229, 255, 0.04);
+        }
+        .back-nav .arrow {
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+        .back-nav:hover .arrow { transform: translateX(-3px); }
+
+        /* ===== TOP STATUS BAR ===== */
+        .top-status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 52px;
+            background: rgba(7, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--panel-border);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            padding: 0 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--silver-dim);
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
-        /* --- NEW: METRIC SECTION --- */
-        .metric-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin: 20px 0;
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+            animation: statusPulse 2s ease-in-out infinite;
         }
-        .metric-card {
-            border: 1px solid var(--border);
-            padding: 10px;
-            text-align: center;
-            background: rgba(255,255,255,0.02);
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
-        .metric-val { font-size: 18px; font-weight: bold; display: block; }
-        .metric-label { font-size: 7px; opacity: 0.6; text-transform: uppercase; }
 
-        .solution-box {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 12px;
-            border-left: 3px solid var(--accent);
+        .status-dot.warn { background: var(--orange); box-shadow: 0 0 8px rgba(255, 149, 0, 0.5); }
+        .status-dot.danger { background: var(--red); box-shadow: 0 0 8px rgba(255, 62, 62, 0.5); }
+
+        .status-clock {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 1.5px;
+        }
+
+        /* ===== COMMAND CENTER LAYOUT ===== */
+        .command-center {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            padding: 72px 24px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 32px;
+            width: 100%;
+            max-width: 1440px;
+        }
+
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .section-tag::before, .section-tag::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(24px, 3.5vw, 42px);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--silver-dim);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ===== 3-COLUMN GRID ===== */
+        .three-col-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1440px;
+            align-items: start;
+        }
+
+        @media (min-width: 1100px) {
+            .three-col-grid {
+                grid-template-columns: 30fr 40fr 30fr;
+                gap: 24px;
+                align-items: center;
+            }
+        }
+
+        /* ===== GLASSMORPHISM PANEL ===== */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: border-color 0.4s;
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(0, 229, 255, 0.22);
+        }
+
+        /* ===== LEFT COLUMN: MISSION LIST ===== */
+        .mission-list-panel {
+            padding: 0;
+        }
+
+        .mission-panel-header {
+            padding: 20px 22px 14px;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        .panel-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .mission-cards-container {
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Mission Card */
+        .mission-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: transparent;
+            transition: background 0.3s;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .mission-card:hover {
+            background: rgba(255, 255, 255, 0.035);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .mission-card.active {
+            background: rgba(0, 229, 255, 0.04);
+            border-color: rgba(0, 229, 255, 0.2);
+        }
+
+        .mission-card.active::before {
+            background: var(--mission-color, var(--accent));
+        }
+
+        .mission-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 10px;
         }
 
-        /* --- TERMINALS --- */
-        .live-terminal {
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid var(--border);
-            height: 150px;
-            margin-top: 20px;
+        .mission-num {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--silver-dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .mission-status-badge {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            letter-spacing: 1px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .badge-ready {
+            background: rgba(0, 255, 136, 0.08);
+            color: var(--green);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+        }
+
+        .mission-icon-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .mission-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .mission-card-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .mission-card-vector {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--silver-dim);
+            margin-top: 2px;
+        }
+
+        .mission-card-desc {
+            font-size: 11.5px;
+            color: var(--silver-dim);
+            line-height: 1.55;
+        }
+
+        .mission-threat-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .threat-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            color: var(--silver-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 40px;
+        }
+
+        .threat-bar-bg {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .threat-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.6s ease;
+        }
+
+        .threat-val {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 28px;
+            text-align: right;
+        }
+
+        /* ===== CENTER COLUMN: PHONE ===== */
+        .phone-column {
             display: flex;
             flex-direction: column;
-        }
-        
-        .fact-box {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px dashed var(--cyan);
-            background: rgba(9, 238, 245, 0.05);
+            align-items: center;
+            justify-content: center;
         }
 
-        #feed-container { padding: 10px; overflow: hidden; font-size: 9px; }
+        .phone-outer-frame {
+            position: relative;
+            padding: 30px;
+        }
 
-        .btn-launch {
+        /* Orbital rings around phone */
+        .orbit-ring {
+            position: absolute;
+            border: 1px solid rgba(0, 229, 255, 0.06);
+            border-radius: 50%;
+            animation: orbitSpin linear infinite;
+        }
+
+        .orbit-ring-1 {
+            width: 340px;
+            height: 340px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 20s;
+        }
+
+        .orbit-ring-2 {
+            width: 420px;
+            height: 420px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 30s;
+            animation-direction: reverse;
+            border-style: dashed;
+            border-color: rgba(0, 229, 255, 0.03);
+        }
+
+        @keyframes orbitSpin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Orbit dots */
+        .orbit-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .orbit-ring-1 .orbit-dot {
+            top: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .orbit-ring-2 .orbit-dot {
+            bottom: -3px;
+            right: 20%;
+        }
+
+        /* Phone Frame */
+        .phone-device {
+            width: 280px;
+            height: 580px;
+            background: #000;
+            border-radius: 44px;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 2px #1a1d24,
+                0 0 0 4px #0d1018,
+                inset 0 0 0 1.5px #1a1d24,
+                0 25px 80px rgba(0, 0, 0, 0.6),
+                0 0 60px rgba(0, 229, 255, 0.06);
+            transition: box-shadow 0.5s;
+        }
+
+        .phone-device.glow-active {
+            box-shadow:
+                0 0 0 2px #1a1d24,
+                0 0 0 4px #0d1018,
+                inset 0 0 0 1.5px #1a1d24,
+                0 25px 80px rgba(0, 0, 0, 0.6),
+                0 0 80px rgba(0, 229, 255, 0.12),
+                0 0 160px rgba(0, 229, 255, 0.04);
+        }
+
+        /* Phone notch */
+        .phone-notch {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 28px;
+            background: #000;
+            border-radius: 16px;
+            z-index: 10;
+        }
+
+        .phone-camera {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: #0a0a0f;
+            border-radius: 50%;
+            border: 2px solid #15171e;
+            z-index: 11;
+        }
+
+        /* Phone screen */
+        .phone-screen {
+            position: absolute;
+            inset: 0;
+            border-radius: 44px;
+            overflow: hidden;
+            background: linear-gradient(170deg, #0a0f18 0%, #060a12 50%, #0d1220 100%);
+        }
+
+        /* Phone status bar */
+        .phone-status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            padding: 12px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .phone-status-icons {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+        }
+
+        .phone-batt {
+            width: 20px;
+            height: 9px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 2px;
+            padding: 1px;
+            position: relative;
+        }
+        .phone-batt::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 2px;
+            width: 1.5px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 0 1px 1px 0;
+        }
+        .phone-batt-fill {
+            height: 100%;
+            width: 65%;
+            background: var(--green);
+            border-radius: 1px;
+        }
+
+        /* Scanner Screen Content */
+        .scanner-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 40px;
+        }
+
+        /* Scanner Circle */
+        .scanner-ring-outer {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(0, 229, 255, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 24px;
+            animation: scannerBreath 3s ease-in-out infinite;
+        }
+
+        @keyframes scannerBreath {
+            0%, 100% {
+                border-color: rgba(0, 229, 255, 0.12);
+                box-shadow: 0 0 20px rgba(0, 229, 255, 0);
+            }
+            50% {
+                border-color: rgba(0, 229, 255, 0.3);
+                box-shadow: 0 0 40px rgba(0, 229, 255, 0.08);
+            }
+        }
+
+        .scanner-ring-inner {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 1px dashed rgba(0, 229, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scannerSpinReverse 12s linear infinite;
+        }
+
+        @keyframes scannerSpinReverse {
+            to { transform: rotate(-360deg); }
+        }
+
+        .scanner-core {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .scanner-core-icon {
+            font-size: 32px;
+            animation: scannerIconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scannerIconPulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+
+        /* Scanner sweep line */
+        .scanner-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent) 100%);
+            transform-origin: left center;
+            animation: sweepRotate 3s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes sweepRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scanner data readout */
+        .scanner-readout {
+            width: 100%;
+            text-align: center;
+        }
+
+        .scanner-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .scanner-mission-name {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            transition: color 0.4s;
+        }
+
+        .scanner-threat-level {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--silver-dim);
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        /* Scanner metrics row */
+        .scanner-metrics {
+            display: flex;
+            gap: 1px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .scanner-metric {
+            flex: 1;
+            padding: 10px 6px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .scanner-metric-val {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
             display: block;
-            padding: 20px;
+            margin-bottom: 2px;
+        }
+
+        .scanner-metric-label {
+            font-family: var(--font-mono);
+            font-size: 7px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--silver-dim);
+        }
+
+        /* Log feed in phone */
+        .scanner-log-feed {
+            width: 100%;
+            padding: 8px 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            max-height: 70px;
+            overflow: hidden;
+        }
+
+        .scanner-log-line {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            line-height: 1.6;
+            color: var(--silver-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .scanner-log-line.alert { color: var(--red); }
+        .scanner-log-line.ok { color: var(--green); }
+
+        /* Phone home indicator */
+        .phone-home-bar {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            z-index: 5;
+        }
+
+        /* Phone label underneath */
+        .phone-device-label {
+            text-align: center;
+            margin-top: 16px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--silver-dim);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .phone-device-label .dot-live {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 6px rgba(0, 255, 136, 0.5);
+            margin-right: 6px;
+            vertical-align: middle;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        /* ===== RIGHT COLUMN: MISSION BRIEFING ===== */
+        .briefing-panel {
+            padding: 0;
+        }
+
+        .briefing-header {
+            padding: 20px 22px 14px;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        .briefing-body {
+            padding: 22px;
+        }
+
+        /* Threat classification badge */
+        .threat-classification {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .threat-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        /* Briefing description */
+        .briefing-description {
+            font-size: 13px;
+            color: var(--silver);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        /* Intel Section */
+        .intel-section {
+            margin-bottom: 20px;
+        }
+
+        .intel-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--silver-dim);
+            margin-bottom: 10px;
+        }
+
+        .intel-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--panel-border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        .intel-item:hover {
+            background: rgba(255, 255, 255, 0.035);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .intel-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .intel-title {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .intel-desc {
+            font-size: 10.5px;
+            color: var(--silver-dim);
+            line-height: 1.5;
+        }
+
+        /* Fact callout */
+        .fact-callout {
+            padding: 14px;
+            background: rgba(0, 229, 255, 0.03);
+            border: 1px solid rgba(0, 229, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .fact-callout-label {
+            font-family: var(--font-mono);
+            font-size: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fact-callout-text {
+            font-size: 11.5px;
+            color: var(--silver);
+            line-height: 1.6;
+        }
+
+        /* START MISSION BUTTON */
+        .start-mission-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 18px 24px;
             background: transparent;
             border: 2px solid var(--accent);
+            border-radius: 14px;
             color: var(--accent);
-            text-align: center;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 30px;
-            text-transform: uppercase;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 700;
             letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Desktop Adjustments */
-        @media (min-width: 992px) {
-            :root { --header-height: 0px; }
-            .simulator-grid { display: grid; grid-template-columns: 300px 1fr; padding: 20px; gap: 20px; }
-            .protocol-sidebar { position: sticky; top: 20px; width: auto; height: fit-content; flex-direction: column; }
-            .main-content-split { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .start-mission-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(0, 229, 255, 0.02));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .start-mission-btn:hover::before {
+            opacity: 1;
+        }
+
+        .start-mission-btn:hover {
+            box-shadow:
+                0 0 30px rgba(0, 229, 255, 0.2),
+                0 0 80px rgba(0, 229, 255, 0.06),
+                inset 0 0 30px rgba(0, 229, 255, 0.04);
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+
+        .start-mission-btn .btn-glow-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+            animation: btnDotPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes btnDotPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--accent-glow); }
+            50% { opacity: 0.5; box-shadow: 0 0 6px var(--accent-glow); }
+        }
+
+        .start-mission-btn .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .start-mission-btn .btn-arrow {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s;
+        }
+
+        .start-mission-btn:hover .btn-arrow {
+            transform: translateX(4px);
+        }
+
+        /* ===== BOTTOM NETWORK LOG ===== */
+        .bottom-log-bar {
+            width: 100%;
+            max-width: 1440px;
+            margin-top: 28px;
+        }
+
+        .log-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .log-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        .log-header-label {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--accent);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .log-header-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--red);
+            animation: statusPulse 1s ease-in-out infinite;
+        }
+
+        .log-body {
+            padding: 10px 16px;
+            height: 80px;
+            overflow: hidden;
+            font-family: var(--font-mono);
+            font-size: 10px;
+        }
+
+        .log-line {
+            line-height: 1.7;
+            color: var(--silver-dim);
+        }
+
+        .log-line.alert { color: var(--red); }
+        .log-line.ok { color: var(--green); }
+
+        /* ===== FOOTER ===== */
+        .sim-footer {
+            text-align: center;
+            padding: 30px 20px;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            color: var(--silver-dim);
+            letter-spacing: 1px;
+            opacity: 0.4;
+        }
+
+        /* ===== TRANSITIONS ===== */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1100px) and (min-width: 1025px) {
+            .three-col-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .phone-column {
+                grid-column: 1 / -1;
+                order: -1;
+            }
         }
     </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
+<!-- ===== MOBILE WARNING OVERLAY ===== -->
+<div class="mobile-warning" id="mobileWarning">
+    <div class="mw-icon">🖥️</div>
+    <div class="mw-title">Desktop Mode Required</div>
+    <div class="mw-subtitle">
+        The Simulation Command Center features a <strong>three-column layout</strong> with an interactive phone display. Switch to <strong>Desktop Mode</strong> for the full experience.
+    </div>
 
-<div class="simulator-grid">
-    <aside class="protocol-sidebar">
-        <div class="protocol-tab active" onclick="loadCore(0)">
-            <small>01</small>
-            <h4 class="scramble">DATA_BREACH</h4>
-        </div>
-        <div class="protocol-tab" onclick="loadCore(1)">
-            <small>02</small>
-            <h4 class="scramble">PHISHING_LINK</h4>
-        </div>
-        <div class="protocol-tab" onclick="loadCore(2)">
-            <small>03</small>
-            <h4 class="scramble">MALWARE_X</h4>
-        </div>
-    </aside>
-
-    <main class="core-viewport">
-        <div class="status-header">
-            <span>CORE_STATUS: <span id="status-text" style="color: var(--accent);">OPERATIONAL</span></span>
-            <span id="clock">00:00:00</span>
+    <div class="mw-card">
+        <h3>📱 How to Enable Desktop Mode</h3>
+        <div class="mw-tabs">
+            <div class="mw-tab active" onclick="switchMWGuide('chrome')" id="mwTabChrome">
+                <span class="mw-tab-icon">🌐</span>Chrome
+            </div>
+            <div class="mw-tab" onclick="switchMWGuide('safari')" id="mwTabSafari">
+                <span class="mw-tab-icon">🧭</span>Safari
+            </div>
+            <div class="mw-tab" onclick="switchMWGuide('samsung')" id="mwTabSamsung">
+                <span class="mw-tab-icon">🔵</span>Samsung
+            </div>
         </div>
 
-        <div class="main-content-split">
-            <div id="core-content" class="content-display"></div>
-            
-            <div>
-                <div class="metric-grid" id="metrics">
+        <div id="mwGuideChrome">
+            <div class="mw-step"><div class="mw-step-num">1</div><div class="mw-step-text">Tap the <strong>three-dot menu ( ⋮ )</strong> in the top-right corner</div></div>
+            <div class="mw-step"><div class="mw-step-num">2</div><div class="mw-step-text">Find and enable <strong>"Desktop site"</strong></div></div>
+            <div class="mw-step"><div class="mw-step-num">3</div><div class="mw-step-text">Page will <strong>reload automatically</strong></div></div>
+            <div class="mw-phone-visual">
+                <div class="mw-phone-mockup">
+                    <div class="mw-phone-notch"></div>
+                    <div class="mw-phone-url">🔒 cybersmart.edu</div>
+                    <div class="mw-phone-dots"><div class="d"></div><div class="d"></div><div class="d"></div></div>
+                    <div class="mw-arrow" style="top:24px;right:16px;">👆</div>
+                    <div class="mw-phone-content" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                        <div class="mw-phone-lines"><div class="mw-phone-line"></div><div class="mw-phone-line"></div><div class="mw-phone-line"></div></div>
                     </div>
-
-                <div class="live-terminal">
-                    <div style="background:var(--border); padding:5px 10px; font-size:9px; color:var(--cyan);">NETWORK_TRAFFIC_LOGS</div>
-                    <div id="feed-container"></div>
-                </div>
-
-                <div class="fact-box">
-                    <small style="color: var(--cyan); display:block; margin-bottom:5px;">> INTELLIGENCE_BRIEF</small>
-                    <p id="fact-text" style="font-size: 11px; color: #a3b8cc; line-height: 1.4;"></p>
+                    <div class="mw-phone-highlight">☑ Desktop site</div>
                 </div>
             </div>
         </div>
 
-        <a href="#" id="launch-btn" class="btn-launch">Initialize Simulation</a>
-    </main>
+        <div id="mwGuideSafari" style="display:none">
+            <div class="mw-step"><div class="mw-step-num">1</div><div class="mw-step-text">Tap <strong>"aA"</strong> in the address bar (top-left)</div></div>
+            <div class="mw-step"><div class="mw-step-num">2</div><div class="mw-step-text">Tap <strong>"Request Desktop Website"</strong></div></div>
+            <div class="mw-step"><div class="mw-step-num">3</div><div class="mw-step-text">Page will <strong>reload</strong> in desktop view</div></div>
+            <div class="mw-phone-visual">
+                <div class="mw-phone-mockup">
+                    <div class="mw-phone-notch"></div>
+                    <div class="mw-phone-url">🔒 cybersmart.edu</div>
+                    <div class="mw-phone-aa">aA</div>
+                    <div class="mw-arrow" style="top:24px;left:12px;">👆</div>
+                    <div class="mw-phone-content" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                        <div style="width:85%;padding:5px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.12);border-radius:4px;font-size:5px;color:var(--accent);text-align:center;font-family:var(--font-mono);">📱→🖥 Request Desktop</div>
+                    </div>
+                    <div class="mw-phone-highlight">Desktop view loaded</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mwGuideSamsung" style="display:none">
+            <div class="mw-step"><div class="mw-step-num">1</div><div class="mw-step-text">Tap <strong>hamburger menu ( ≡ )</strong> at bottom-right</div></div>
+            <div class="mw-step"><div class="mw-step-num">2</div><div class="mw-step-text">Tap <strong>"Desktop site"</strong></div></div>
+            <div class="mw-step"><div class="mw-step-num">3</div><div class="mw-step-text">Page will <strong>reload</strong></div></div>
+            <div class="mw-phone-visual">
+                <div class="mw-phone-mockup">
+                    <div class="mw-phone-notch"></div>
+                    <div class="mw-phone-url">🔒 cybersmart.edu</div>
+                    <div class="mw-phone-content" style="flex:1"></div>
+                    <div class="mw-phone-samsung-bar"><span>←</span><span>→</span><span>🏠</span><span>⊞</span><span class="act">≡</span></div>
+                    <div class="mw-arrow" style="bottom:16px;right:12px;">👆</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mw-reason">
+        <strong>💡 Why Desktop Mode?</strong><br><br>
+        <div class="mw-features">
+            <div class="mw-feat"><span class="ck">✓</span> Three-column command center layout</div>
+            <div class="mw-feat"><span class="ck">✓</span> Interactive CSS phone with scanner animation</div>
+            <div class="mw-feat"><span class="ck">✓</span> Real-time threat data panels</div>
+            <div class="mw-feat"><span class="ck">✓</span> Full simulation launch experience</div>
+        </div>
+    </div>
+
+    <button class="mw-skip" onclick="dismissMobileWarning()">Continue in mobile view anyway →</button>
 </div>
 
-<script>
-    const protocolData = [
-        {
-            title: "Account Hijacked Defense Simulation",
-            desc: "The unauthorized movement or disclosure of sensitive information to an untrusted environment.",
-            metrics: { danger: "94%", complexity: "High", vector: "SQLi" },
-            fact: "The average cost of a data breach in 2024 reached $4.88 million. Speed of detection is the most critical factor in cost reduction.",
-            solutions: [
-                ["MFA_LEVEL_3", "Biometric and hardware token enforcement."],
-                ["ZERO_TRUST", "Never trust, always verify protocol."],
-                ["DLP_SHIELD", "Data Loss Prevention monitoring at the gateway."]
-            ],
-            feed: ["> Scanning DB...", "!! Leak detected", "> Blocking IP: 192.168.1.104"],
-            link: "accounthijacked.html",
-            color: "#09eef5"
-        },
-        {
-            title: "Phishing",
-            desc: "Social engineering where attackers masquerade as a trusted entity to steal credentials.",
-            metrics: { danger: "88%", complexity: "Med", vector: "SMTP" },
-            fact: "Over 90% of successful cyberattacks start with a phishing email. Attackers now use AI to create perfectly written lures.",
-            solutions: [
-                ["SPF_ENFORCE", "Sender Policy Framework record verification."],
-                ["URL_SANDBOX", "Scanning all incoming links in a safe zone."],
-                ["USER_EDU", "Ongoing simulation training for personnel."]
-            ],
-            feed: ["> Analyzing headers...", "> SPF check: FAIL", "!! SPOOF DETECTED"],
-            link: "phishing.html",
-            color: "#03fc84"
-        },
-        {
-            title: "Malware",
-            desc: "Malicious software designed to infiltrate, damage, or gain unauthorized access to a computer system.",
-            metrics: { danger: "97%", complexity: "Max", vector: "Binary" },
-            fact: "Ransomware-as-a-Service (RaaS) has made it possible for even low-skilled criminals to launch devastating attacks.",
-            solutions: [
-                ["EDR_SENTINEL", "Endpoint Detection and Response active monitoring."],
-                ["VLAN_ISOLATE", "Isolating infected nodes from the core."],
-                ["BACKUP_CORE", "Encrypted offline recovery points."]
-            ],
-            feed: ["> Checking Registry...", "!! Trojan-X found", "> Killing process ID: 9921"],
-            link: "malwareattack.html",
-            color: "#ff3e3e"
-        }
-    ];
 
-    function scrambleText(element, finalMessage) {
-        if (!element) return;
-        const chars = "!<>-_\\/[]{}—=+*^?#________";
-        let iteration = 0;
-        const interval = setInterval(() => {
-            element.innerText = finalMessage.split("").map((char, index) => {
-                if(index < iteration) return finalMessage[index];
-                return chars[Math.floor(Math.random() * chars.length)];
-            }).join("");
-            if(iteration >= finalMessage.length) clearInterval(interval);
-            iteration += 1 / 3;
-        }, 20);
-    }
+<!-- ===== CANVAS BACKGROUND ===== -->
+<canvas id="bgCanvas"></canvas>
 
-    function loadCore(index) {
-        const data = protocolData[index];
-        const display = document.getElementById('core-content');
-        const metrics = document.getElementById('metrics');
-        const factText = document.getElementById('fact-text');
-        const launchBtn = document.getElementById('launch-btn');
+<!-- ===== BACK NAVIGATION ===== -->
+<a href="index.html" class="back-nav">
+    <span class="arrow">←</span> Command Hub
+</a>
 
-        document.querySelectorAll('.protocol-tab').forEach((t, i) => t.classList.toggle('active', i === index));
+<!-- ===== TOP STATUS BAR ===== -->
+<div class="top-status-bar">
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>SIM_CORE: ONLINE</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot warn" id="threatStatusDot"></div>
+        <span>THREAT_LEVEL: <span id="threatLevelText">ELEVATED</span></span>
+    </div>
+    <div class="status-clock" id="statusClock">00:00:00</div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>MISSIONS: 3 AVAILABLE</span>
+    </div>
+</div>
 
-        display.innerHTML = `
-            <h2 id="main-title" style="color: ${data.color}">${data.title}</h2>
-            <p id="main-desc" style="color: #a3b8cc; font-size: 13px; margin-bottom: 20px; line-height:1.5;"></p>
-            <div class="solution-grid">
-                ${data.solutions.map((s, i) => `
-                    <div class="solution-box" style="border-left-color: ${data.color}">
-                        <strong id="sol-title-${i}" style="color: ${data.color}"></strong>
-                        <p id="sol-desc-${i}" style="font-size: 11px; margin-top:5px; color: #a3b8cc;"></p>
+
+<!-- ===== COMMAND CENTER ===== -->
+<div class="command-center">
+
+    <!-- Section Header -->
+    <div class="section-header">
+        <div class="section-tag">Simulation Command Center</div>
+        <div class="section-title">Select Your Mission</div>
+        <div class="section-subtitle">Choose a threat scenario to analyze. The phone scanner will lock onto the selected mission profile.</div>
+    </div>
+
+    <!-- Three-Column Grid -->
+    <div class="three-col-grid">
+
+        <!-- LEFT: Mission List -->
+        <div class="glass-panel mission-list-panel">
+            <div class="mission-panel-header">
+                <div class="panel-label">Active Protocols</div>
+                <div class="panel-title">Mission Select</div>
+            </div>
+            <div class="mission-cards-container" id="missionCards">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- CENTER: Phone -->
+        <div class="phone-column">
+            <div class="phone-outer-frame">
+                <div class="orbit-ring orbit-ring-1"><div class="orbit-dot"></div></div>
+                <div class="orbit-ring orbit-ring-2"><div class="orbit-dot"></div></div>
+
+                <div class="phone-device glow-active" id="phoneDevice">
+                    <div class="phone-notch"></div>
+                    <div class="phone-camera"></div>
+
+                    <div class="phone-screen">
+                        <div class="phone-status-bar">
+                            <span>9:41</span>
+                            <div class="phone-status-icons">
+                                <span style="font-size:9px;">📶</span>
+                                <div class="phone-batt"><div class="phone-batt-fill"></div></div>
+                            </div>
+                        </div>
+
+                        <div class="scanner-content" id="scannerContent">
+                            <div class="scanner-ring-outer">
+                                <div class="scanner-sweep"></div>
+                                <div class="scanner-ring-inner">
+                                    <div class="scanner-core">
+                                        <div class="scanner-core-icon" id="scannerIcon">🛡️</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="scanner-readout">
+                                <div class="scanner-label">Target Locked</div>
+                                <div class="scanner-mission-name" id="scannerName">Phishing</div>
+                                <div class="scanner-threat-level" id="scannerThreat">THREAT LEVEL: HIGH</div>
+
+                                <div class="scanner-metrics" id="scannerMetrics">
+                                    <div class="scanner-metric">
+                                        <span class="scanner-metric-val" id="smDanger">88%</span>
+                                        <span class="scanner-metric-label">Danger</span>
+                                    </div>
+                                    <div class="scanner-metric">
+                                        <span class="scanner-metric-val" id="smComplex">MED</span>
+                                        <span class="scanner-metric-label">Complex</span>
+                                    </div>
+                                    <div class="scanner-metric">
+                                        <span class="scanner-metric-val" id="smVector">SMTP</span>
+                                        <span class="scanner-metric-label">Vector</span>
+                                    </div>
+                                </div>
+
+                                <div class="scanner-log-feed" id="scannerLogFeed">
+                                    <div class="scanner-log-line">&gt; Awaiting scan target...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="phone-home-bar"></div>
                     </div>
-                `).join('')}
+                </div>
+            </div>
+            <div class="phone-device-label">
+                <span class="dot-live"></span> SIM_DEVICE — LIVE SCANNER
+            </div>
+        </div>
+
+        <!-- RIGHT: Mission Briefing -->
+        <div class="glass-panel briefing-panel">
+            <div class="briefing-header">
+                <div class="panel-label">Intelligence Report</div>
+                <div class="panel-title">Mission Briefing</div>
+            </div>
+            <div class="briefing-body" id="briefingBody">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Network Log -->
+    <div class="bottom-log-bar">
+        <div class="log-panel">
+            <div class="log-header">
+                <div class="log-header-label">
+                    <div class="log-header-dot"></div>
+                    Network Traffic Monitor
+                </div>
+                <div style="font-family:var(--font-mono);font-size:9px;color:var(--silver-dim);">LIVE</div>
+            </div>
+            <div class="log-body" id="logBody"></div>
+        </div>
+    </div>
+
+</div>
+
+<div class="sim-footer">
+    &copy; 2026 CyberSmart — Simulation Command Center v3.0
+</div>
+
+
+<script>
+// ===== MOBILE WARNING =====
+function switchMWGuide(browser) {
+    ['chrome','safari','samsung'].forEach(b => {
+        const guide = document.getElementById('mwGuide' + b.charAt(0).toUpperCase() + b.slice(1));
+        const tab = document.getElementById('mwTab' + b.charAt(0).toUpperCase() + b.slice(1));
+        if (guide) guide.style.display = 'none';
+        if (tab) tab.classList.remove('active');
+    });
+    const selGuide = document.getElementById('mwGuide' + browser.charAt(0).toUpperCase() + browser.slice(1));
+    const selTab = document.getElementById('mwTab' + browser.charAt(0).toUpperCase() + browser.slice(1));
+    if (selGuide) selGuide.style.display = 'block';
+    if (selTab) selTab.classList.add('active');
+}
+
+function dismissMobileWarning() {
+    document.getElementById('mobileWarning').classList.add('dismissed');
+}
+
+// Auto-detect browser
+(function() {
+    const ua = navigator.userAgent.toLowerCase();
+    if (/safari/i.test(ua) && !/chrome/i.test(ua) && !/crios/i.test(ua)) {
+        switchMWGuide('safari');
+    } else if (/samsungbrowser/i.test(ua)) {
+        switchMWGuide('samsung');
+    }
+})();
+
+
+// ===== MISSION DATA =====
+const missions = [
+    {
+        id: 'phishing',
+        num: '01',
+        title: 'Phishing Attack',
+        shortTitle: 'Phishing',
+        icon: '🎣',
+        iconBg: 'rgba(0, 229, 255, 0.1)',
+        color: '#00e5ff',
+        vector: 'SMTP / Social Engineering',
+        vectorShort: 'SMTP',
+        danger: 88,
+        complexity: 'MED',
+        threatLevel: 'HIGH',
+        description: 'Social engineering attack where adversaries craft deceptive emails and messages masquerading as trusted entities. The goal is credential harvesting and unauthorized system access.',
+        fact: 'Over 90% of successful cyberattacks begin with a phishing email. AI-generated lures are now virtually indistinguishable from legitimate communications.',
+        solutions: [
+            { icon: '🔍', title: 'SPF_ENFORCE', desc: 'Sender Policy Framework verification for inbound mail.', iconBg: 'rgba(0, 229, 255, 0.08)' },
+            { icon: '🧪', title: 'URL_SANDBOX', desc: 'Detonate suspicious links in isolated analysis environment.', iconBg: 'rgba(0, 229, 255, 0.08)' },
+            { icon: '🎓', title: 'USER_TRAINING', desc: 'Ongoing phishing simulation drills for all personnel.', iconBg: 'rgba(0, 229, 255, 0.08)' }
+        ],
+        feed: [
+            '> Analyzing email headers...',
+            '!! SPF check: FAIL — spoofed domain detected',
+            '> URL detonation: malicious redirect confirmed',
+            '> Quarantining message...',
+            '!! Credential harvesting page identified',
+            '> Blocking sender domain...'
+        ],
+        link: 'phishing.html'
+    },
+    {
+        id: 'malware',
+        num: '02',
+        title: 'Malware Infection',
+        shortTitle: 'Malware',
+        icon: '🦠',
+        iconBg: 'rgba(255, 62, 62, 0.1)',
+        color: '#ff3e3e',
+        vector: 'Binary / Drive-by Download',
+        vectorShort: 'BINARY',
+        danger: 97,
+        complexity: 'MAX',
+        threatLevel: 'CRITICAL',
+        description: 'Malicious software engineered to infiltrate, damage, or gain unauthorized access to systems. Includes ransomware, trojans, spyware, and polymorphic variants.',
+        fact: 'Ransomware-as-a-Service (RaaS) platforms have democratized cybercrime, allowing low-skilled attackers to launch devastating encrypted payload attacks.',
+        solutions: [
+            { icon: '🛡️', title: 'EDR_SENTINEL', desc: 'Endpoint Detection & Response with behavioral analysis.', iconBg: 'rgba(255, 62, 62, 0.08)' },
+            { icon: '🔒', title: 'VLAN_ISOLATE', desc: 'Network segmentation to contain lateral movement.', iconBg: 'rgba(255, 62, 62, 0.08)' },
+            { icon: '💾', title: 'BACKUP_CORE', desc: 'Air-gapped encrypted backup with hourly snapshots.', iconBg: 'rgba(255, 62, 62, 0.08)' }
+        ],
+        feed: [
+            '> Deep scanning registry...',
+            '!! Trojan-X signature match: PID 9921',
+            '> Killing malicious process...',
+            '> Checking persistence mechanisms...',
+            '!! Rootkit detected in boot sector',
+            '> Initiating containment protocol...'
+        ],
+        link: 'malwareattack.html'
+    },
+    {
+        id: 'account',
+        num: '03',
+        title: 'Account Takeover',
+        shortTitle: 'Hijack',
+        icon: '🔓',
+        iconBg: 'rgba(255, 149, 0, 0.1)',
+        color: '#ff9500',
+        vector: 'Credential Stuffing / SQLi',
+        vectorShort: 'SQLi',
+        danger: 94,
+        complexity: 'HIGH',
+        threatLevel: 'SEVERE',
+        description: 'Unauthorized access to user accounts through stolen credentials, brute force attacks, or session hijacking. Leads to data theft and identity fraud.',
+        fact: 'The average cost of a data breach in 2024 reached $4.88 million. Speed of detection is the most critical factor in reducing total impact.',
+        solutions: [
+            { icon: '🔐', title: 'MFA_LEVEL_3', desc: 'Biometric + hardware token multi-factor enforcement.', iconBg: 'rgba(255, 149, 0, 0.08)' },
+            { icon: '🕵️', title: 'ZERO_TRUST', desc: 'Never trust, always verify — continuous authentication.', iconBg: 'rgba(255, 149, 0, 0.08)' },
+            { icon: '🚧', title: 'DLP_SHIELD', desc: 'Data Loss Prevention monitoring at network gateway.', iconBg: 'rgba(255, 149, 0, 0.08)' }
+        ],
+        feed: [
+            '> Scanning authentication logs...',
+            '!! 847 failed login attempts from 185.234.xx.42',
+            '> Credential stuffing pattern detected',
+            '> Blocking IP range...',
+            '!! Session token hijack attempt identified',
+            '> Forcing password reset for compromised accounts...'
+        ],
+        link: 'accounthijacked.html'
+    }
+];
+
+let currentMission = 0;
+let feedInterval = null;
+let logInterval = null;
+
+// ===== RENDER MISSION CARDS =====
+function renderMissionCards() {
+    const container = document.getElementById('missionCards');
+    container.innerHTML = '';
+
+    missions.forEach((m, i) => {
+        const card = document.createElement('div');
+        card.className = `mission-card${i === currentMission ? ' active' : ''}`;
+        card.style.setProperty('--mission-color', m.color);
+        card.onclick = () => selectMission(i);
+
+        card.innerHTML = `
+            <div class="mission-card-top">
+                <span class="mission-num">MISSION ${m.num}</span>
+                <span class="mission-status-badge badge-ready">READY</span>
+            </div>
+            <div class="mission-icon-row">
+                <div class="mission-icon" style="background:${m.iconBg}">${m.icon}</div>
+                <div>
+                    <div class="mission-card-title">${m.title}</div>
+                    <div class="mission-card-vector">${m.vector}</div>
+                </div>
+            </div>
+            <div class="mission-threat-bar">
+                <span class="threat-label">Threat</span>
+                <div class="threat-bar-bg">
+                    <div class="threat-bar-fill" style="width:${m.danger}%;background:${m.color};box-shadow:0 0 8px ${m.color}40;"></div>
+                </div>
+                <span class="threat-val" style="color:${m.color}">${m.danger}%</span>
             </div>
         `;
 
-        metrics.innerHTML = `
-            <div class="metric-card"><span class="metric-val" style="color:${data.color}">${data.metrics.danger}</span><span class="metric-label">Danger</span></div>
-            <div class="metric-card"><span class="metric-val" style="color:${data.color}">${data.metrics.complexity}</span><span class="metric-label">Complex</span></div>
-            <div class="metric-card"><span class="metric-val" style="color:${data.color}">${data.metrics.vector}</span><span class="metric-label">Vector</span></div>
-        `;
+        container.appendChild(card);
+    });
+}
 
-        scrambleText(document.getElementById('main-title'), data.title);
-        scrambleText(document.getElementById('main-desc'), data.desc);
-        scrambleText(factText, data.fact);
-        data.solutions.forEach((s, i) => {
-            scrambleText(document.getElementById(`sol-title-${i}`), s[0]);
-            scrambleText(document.getElementById(`sol-desc-${i}`), s[1]);
-        });
+// ===== RENDER BRIEFING =====
+function renderBriefing(m) {
+    const body = document.getElementById('briefingBody');
 
-        launchBtn.href = data.link;
-        launchBtn.style.borderColor = data.color;
-        launchBtn.style.color = data.color;
-        startFeed(data.feed, data.color);
-    }
+    const dangerColor = m.danger >= 95 ? 'var(--red)' : m.danger >= 90 ? 'var(--orange)' : 'var(--accent)';
+    const dangerBg = m.danger >= 95 ? 'rgba(255,62,62,0.08)' : m.danger >= 90 ? 'rgba(255,149,0,0.08)' : 'var(--accent-dim)';
+    const dangerBorder = m.danger >= 95 ? 'rgba(255,62,62,0.15)' : m.danger >= 90 ? 'rgba(255,149,0,0.15)' : 'rgba(0,229,255,0.15)';
 
-    // [Time and Logic from previous response preserved]
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-    }, 1000);
+    body.innerHTML = `
+        <div class="threat-classification" style="background:${dangerBg};color:${dangerColor};border:1px solid ${dangerBorder};">
+            <div class="threat-dot" style="background:${dangerColor};box-shadow:0 0 8px ${dangerColor};"></div>
+            THREAT: ${m.threatLevel}
+        </div>
 
-    let feedInterval;
-    function startFeed(messages, color) {
-        const container = document.getElementById('feed-container');
-        container.innerHTML = "";
-        clearInterval(feedInterval);
-        feedInterval = setInterval(() => {
-            const msg = messages[Math.floor(Math.random() * messages.length)];
-            const line = document.createElement('div');
-            line.style.color = msg.includes('!!') ? '#ff3e3e' : color;
-            line.innerHTML = `> [${new Date().toLocaleTimeString()}] ${msg}`;
-            container.prepend(line);
-            if (container.childNodes.length > 5) container.removeChild(container.lastChild);
-        }, 2000);
-    }
+        <div class="briefing-description">${m.description}</div>
 
-    loadCore(0);
+        <div class="fact-callout">
+            <div class="fact-callout-label">📊 Intelligence Brief</div>
+            <div class="fact-callout-text">${m.fact}</div>
+        </div>
 
-    // Three.js Background
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), alpha: true });
+        <div class="intel-section">
+            <div class="intel-label">Countermeasures</div>
+            ${m.solutions.map(s => `
+                <div class="intel-item">
+                    <div class="intel-icon" style="background:${s.iconBg}">${s.icon}</div>
+                    <div>
+                        <div class="intel-title" style="color:${m.color}">${s.title}</div>
+                        <div class="intel-desc">${s.desc}</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+
+        <a href="${m.link}" target="_blank" class="start-mission-btn" style="border-color:${m.color};color:${m.color};">
+            <div class="btn-glow-dot" style="background:${m.color};box-shadow:0 0 12px ${m.color}60;"></div>
+            <span class="btn-text">Start Mission</span>
+            <span class="btn-arrow">→</span>
+        </a>
+    `;
+}
+
+// ===== UPDATE SCANNER =====
+function updateScanner(m) {
+    document.getElementById('scannerIcon').textContent = m.icon;
+    document.getElementById('scannerName').textContent = m.shortTitle;
+    document.getElementById('scannerName').style.color = m.color;
+    document.getElementById('scannerThreat').textContent = `THREAT LEVEL: ${m.threatLevel}`;
+
+    document.getElementById('smDanger').textContent = m.danger + '%';
+    document.getElementById('smDanger').style.color = m.color;
+    document.getElementById('smComplex').textContent = m.complexity;
+    document.getElementById('smComplex').style.color = m.color;
+    document.getElementById('smVector').textContent = m.vectorShort;
+    document.getElementById('smVector').style.color = m.color;
+
+    // Update scanner ring glow
+    const outerRing = document.querySelector('.scanner-ring-outer');
+    outerRing.style.borderColor = m.color + '20';
+    outerRing.style.setProperty('--scanner-color', m.color);
+
+    // Update sweep color
+    document.querySelector('.scanner-sweep').style.background =
+        `linear-gradient(90deg, transparent 0%, ${m.color} 100%)`;
+
+    // Scanner feed
+    startScannerFeed(m);
+
+    // Status bar threat indicator
+    const dot = document.getElementById('threatStatusDot');
+    const text = document.getElementById('threatLevelText');
+    text.textContent = m.threatLevel;
+    if (m.danger >= 95) { dot.className = 'status-dot danger'; }
+    else if (m.danger >= 90) { dot.className = 'status-dot warn'; }
+    else { dot.className = 'status-dot'; }
+}
+
+function startScannerFeed(m) {
+    const container = document.getElementById('scannerLogFeed');
+    container.innerHTML = '<div class="scanner-log-line">&gt; Initializing scan...</div>';
+
+    clearInterval(feedInterval);
+    feedInterval = setInterval(() => {
+        const msg = m.feed[Math.floor(Math.random() * m.feed.length)];
+        const line = document.createElement('div');
+        line.className = 'scanner-log-line' + (msg.includes('!!') ? ' alert' : '');
+        const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+        line.textContent = `[${ts}] ${msg}`;
+        container.prepend(line);
+        if (container.children.length > 4) container.removeChild(container.lastChild);
+    }, 2500);
+}
+
+// ===== BOTTOM LOG =====
+function startBottomLog() {
+    const container = document.getElementById('logBody');
+    const genericLogs = [
+        '> Firewall rule updated: BLOCK 185.234.xx.0/24',
+        '> DNS query intercepted: suspicious C2 callback',
+        '!! Anomalous outbound traffic: 2.4 MB/min to unknown host',
+        '> IDS signature match: ET MALWARE Common RAT Beacon',
+        '> SSL certificate pinning violation detected',
+        '!! Brute force attempt: 347 requests/min on auth endpoint',
+        '> Geofence alert: login from unrecognized region',
+        '> Packet inspection: encrypted payload with known malware entropy',
+        '!! Data exfiltration pattern detected on port 443',
+        '> Honeypot triggered: lateral movement attempt',
+    ];
+
+    clearInterval(logInterval);
+    logInterval = setInterval(() => {
+        const msg = genericLogs[Math.floor(Math.random() * genericLogs.length)];
+        const line = document.createElement('div');
+        line.className = 'log-line' + (msg.includes('!!') ? ' alert' : '');
+        const ts = new Date().toLocaleTimeString('en-US', { hour12: false });
+        line.textContent = `[${ts}] ${msg}`;
+        container.prepend(line);
+        if (container.children.length > 5) container.removeChild(container.lastChild);
+    }, 3000);
+}
+
+// ===== SELECT MISSION =====
+function selectMission(index) {
+    currentMission = index;
+    const m = missions[index];
+
+    // Update cards
+    document.querySelectorAll('.mission-card').forEach((c, i) => {
+        c.classList.toggle('active', i === index);
+        c.style.setProperty('--mission-color', missions[i].color);
+    });
+
+    // Update briefing
+    renderBriefing(m);
+
+    // Update scanner
+    updateScanner(m);
+
+    // Phone glow color
+    const phone = document.getElementById('phoneDevice');
+    phone.style.boxShadow = `
+        0 0 0 2px #1a1d24,
+        0 0 0 4px #0d1018,
+        inset 0 0 0 1.5px #1a1d24,
+        0 25px 80px rgba(0,0,0,0.6),
+        0 0 80px ${m.color}18,
+        0 0 160px ${m.color}06
+    `;
+}
+
+// ===== CLOCK =====
+function updateClock() {
+    const now = new Date();
+    document.getElementById('statusClock').textContent =
+        now.toLocaleTimeString('en-US', { hour12: false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ===== THREE.JS BACKGROUND =====
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const rendererEl = document.getElementById('bgCanvas');
+const renderer = new THREE.WebGLRenderer({ canvas: rendererEl, alpha: true, antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const geo = new THREE.BufferGeometry();
+const positions = [];
+for (let i = 0; i < 1200; i++) {
+    positions.push(
+        THREE.MathUtils.randFloatSpread(120),
+        THREE.MathUtils.randFloatSpread(120),
+        THREE.MathUtils.randFloatSpread(120)
+    );
+}
+geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+const particleMat = new THREE.PointsMaterial({
+    color: 0x00e5ff,
+    size: 0.08,
+    transparent: true,
+    opacity: 0.15
+});
+const particles = new THREE.Points(geo, particleMat);
+scene.add(particles);
+camera.position.z = 60;
+
+function animateBg() {
+    requestAnimationFrame(animateBg);
+    particles.rotation.y += 0.0004;
+    particles.rotation.x += 0.0001;
+    renderer.render(scene, camera);
+}
+animateBg();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    const geo = new THREE.BufferGeometry();
-    const pos = [];
-    for(let i=0; i<1000; i++) pos.push(THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100), THREE.MathUtils.randFloatSpread(100));
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.1, transparent: true, opacity: 0.2 });
-    const points = new THREE.Points(geo, mat);
-    scene.add(points);
-    camera.position.z = 50;
-    function animate() { requestAnimationFrame(animate); points.rotation.y += 0.0008; renderer.render(scene, camera); }
-    animate();
+});
+
+// ===== GSAP ANIMATIONS =====
+gsap.from('.section-header', { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' });
+gsap.from('.mission-list-panel', { opacity: 0, x: -40, duration: 0.8, delay: 0.2, ease: 'power3.out' });
+gsap.from('.phone-column', { opacity: 0, y: 40, duration: 0.8, delay: 0.3, ease: 'power3.out' });
+gsap.from('.briefing-panel', { opacity: 0, x: 40, duration: 0.8, delay: 0.4, ease: 'power3.out' });
+gsap.from('.bottom-log-bar', { opacity: 0, y: 20, duration: 0.6, delay: 0.6, ease: 'power3.out' });
+
+// ===== INIT =====
+renderMissionCards();
+selectMission(0);
+startBottomLog();
 </script>
+
 </body>
 </html>
