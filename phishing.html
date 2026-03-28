@@ -1,3 +1,6 @@
+
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,57 +8,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyber Smart - Phishing Simulator Training</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Roboto', 'Google Sans', Arial, sans-serif; overflow: hidden; height: 100vh; background: #f6f8fc; color: #202124; }
         .hidden { display: none !important; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+
+        /* Selection */
+        ::selection { background: #c2dbff; }
 
         /* ===== GMAIL HEADER ===== */
         .gmail-header {
             height: 64px; display: flex; align-items: center; padding: 0 8px;
             background: #fff; border-bottom: 1px solid #e0e0e0; position: relative; z-index: 50;
         }
-        .gmail-header .hamburger { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; color: #5f6368; }
+        .gmail-header .hamburger {
+            width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 50%; color: #5f6368; transition: background 0.2s;
+        }
         .gmail-header .hamburger:hover { background: #f1f3f4; }
-        .gmail-logo { display: flex; align-items: center; width: 200px; padding-left: 4px; }
-        .gmail-logo img { height: 40px; }
+        .gmail-logo { display: flex; align-items: center; width: 200px; padding-left: 4px; cursor: pointer; }
         .gmail-logo-text { font-size: 22px; color: #5f6368; font-weight: 400; margin-left: 2px; letter-spacing: -0.5px; }
         .gmail-logo-text span { font-weight: 500; }
 
         .gmail-search {
             flex: 1; max-width: 720px; height: 46px; display: flex; align-items: center;
-            background: #eaf1fb; border-radius: 28px; padding: 0 16px; margin: 0 20px;
-            transition: background 0.2s, box-shadow 0.2s;
+            background: #eaf1fb; border-radius: 28px; padding: 0 8px 0 16px; margin: 0 20px;
+            transition: background 0.2s, box-shadow 0.2s; position: relative;
         }
-        .gmail-search:focus-within { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .gmail-search:focus-within { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); border-radius: 8px 8px 0 0; }
         .gmail-search .material-icons { color: #5f6368; font-size: 22px; cursor: pointer; }
         .gmail-search input {
             flex: 1; border: none; outline: none; background: transparent; font-size: 16px;
             padding: 0 16px; color: #202124; font-family: 'Roboto', sans-serif;
         }
         .gmail-search input::placeholder { color: #5f6368; }
+        .search-clear { display: none; cursor: pointer; }
+        .gmail-search:focus-within .search-clear.has-text { display: flex; }
+
+        /* Search suggestions dropdown */
+        .search-dropdown {
+            position: absolute; top: 100%; left: 0; right: 0; background: #fff;
+            border-radius: 0 0 8px 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none; z-index: 100; max-height: 320px; overflow-y: auto;
+        }
+        .search-dropdown.open { display: block; }
+        .search-suggestion {
+            display: flex; align-items: center; gap: 12px; padding: 10px 20px;
+            cursor: pointer; font-size: 14px; color: #202124; transition: background 0.1s;
+        }
+        .search-suggestion:hover { background: #f1f3f4; }
+        .search-suggestion .material-icons { color: #5f6368; font-size: 20px; }
+        .search-no-results { padding: 16px 20px; color: #5f6368; font-size: 13px; text-align: center; }
 
         .gmail-header-right { display: flex; align-items: center; gap: 4px; margin-left: auto; }
-        .gmail-header-right .icon-btn {
+        .icon-btn {
             width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
             justify-content: center; cursor: pointer; color: #5f6368; position: relative;
+            border: none; background: none; transition: background 0.15s;
         }
-        .gmail-header-right .icon-btn:hover { background: #f1f3f4; }
+        .icon-btn:hover { background: #f1f3f4; }
+        .icon-btn .tooltip {
+            position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
+            background: #3c4043; color: #fff; padding: 4px 8px; border-radius: 4px;
+            font-size: 11px; white-space: nowrap; pointer-events: none; opacity: 0;
+            transition: opacity 0.15s; z-index: 100;
+        }
+        .icon-btn:hover .tooltip { opacity: 1; }
+
         .gmail-avatar {
             width: 32px; height: 32px; border-radius: 50%; background: #1a73e8; color: white;
             display: flex; align-items: center; justify-content: center; font-size: 14px;
-            font-weight: 500; cursor: pointer; margin-left: 8px;
+            font-weight: 500; cursor: pointer; margin-left: 8px; transition: box-shadow 0.2s;
         }
+        .gmail-avatar:hover { box-shadow: 0 0 0 8px rgba(26,115,232,0.08); }
 
-        /* Score badge in header */
         .score-badge {
             display: flex; align-items: center; gap: 8px; padding: 6px 16px;
             background: #e8f0fe; border-radius: 20px; margin-right: 12px; font-size: 13px;
+            transition: background 0.3s;
         }
+        .score-badge.flash { background: #c2dbff; }
         .score-badge .label { color: #5f6368; font-weight: 500; }
-        .score-badge .value { color: #1a73e8; font-weight: 700; font-size: 15px; }
+        .score-badge .value { color: #1a73e8; font-weight: 700; font-size: 15px; transition: transform 0.3s; }
+        .score-badge .value.bump { transform: scale(1.3); }
+
         .remaining-badge {
             display: flex; align-items: center; gap: 6px; padding: 6px 14px;
             background: #fef7e0; border-radius: 20px; margin-right: 8px; font-size: 13px;
@@ -68,8 +111,16 @@
         /* ===== SIDEBAR ===== */
         .gmail-sidebar {
             width: 256px; background: #fff; padding-top: 8px; overflow-y: auto;
-            border-right: none; flex-shrink: 0;
+            flex-shrink: 0; transition: width 0.2s;
         }
+        .gmail-sidebar.collapsed { width: 72px; }
+        .gmail-sidebar.collapsed .sidebar-text,
+        .gmail-sidebar.collapsed .badge,
+        .gmail-sidebar.collapsed .sidebar-progress,
+        .gmail-sidebar.collapsed .compose-text { display: none; }
+        .gmail-sidebar.collapsed .compose-btn { padding: 0; width: 48px; height: 48px; justify-content: center; margin: 4px auto 12px; }
+        .gmail-sidebar.collapsed .sidebar-item { padding: 0; justify-content: center; margin: 0 8px; border-radius: 50%; height: 40px; width: 40px; margin-left: auto; margin-right: auto; }
+
         .compose-btn {
             display: flex; align-items: center; gap: 12px; margin: 4px 12px 12px;
             padding: 0 24px; height: 56px; background: #c2e7ff; border: none; border-radius: 16px;
@@ -77,7 +128,8 @@
             font-family: 'Google Sans', sans-serif; letter-spacing: 0.25px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: box-shadow 0.2s, background 0.2s;
         }
-        .compose-btn:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.15); background: #a8d8f0; }
+        .compose-btn:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); background: #a8d8f0; }
+        .compose-btn:active { transform: scale(0.98); }
         .compose-btn .material-icons { font-size: 24px; }
 
         .sidebar-item {
@@ -88,25 +140,22 @@
         }
         .sidebar-item:hover { background: #e8eaed; }
         .sidebar-item.active { background: #d3e3fd; color: #001d35; font-weight: 700; }
-        .sidebar-item .material-icons { font-size: 20px; margin-right: 16px; }
+        .sidebar-item .material-icons { font-size: 20px; margin-right: 16px; flex-shrink: 0; }
         .sidebar-item.active .material-icons { color: #001d35; }
-        .sidebar-item .badge {
-            margin-left: auto; font-size: 12px; font-weight: 700; color: #001d35;
-        }
+        .sidebar-item .badge { margin-left: auto; font-size: 12px; font-weight: 700; color: #001d35; }
         .sidebar-divider { height: 1px; background: #e0e0e0; margin: 8px 24px; }
 
-        /* Sidebar progress */
         .sidebar-progress {
             margin: 16px 24px; padding: 16px; background: #f8f9fa; border-radius: 12px;
         }
         .sidebar-progress .label { font-size: 11px; color: #5f6368; font-weight: 500; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
         .progress-track { height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden; }
-        .progress-fill { height: 100%; background: #1a73e8; width: 0; transition: width 0.5s ease; border-radius: 2px; }
+        .progress-fill { height: 100%; background: #1a73e8; width: 0; transition: width 0.6s ease; border-radius: 2px; }
+        .progress-text { font-size: 11px; color: #5f6368; margin-top: 6px; }
 
         /* ===== MAIN AREA ===== */
         .gmail-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f6f8fc; }
 
-        /* Tabs */
         .gmail-tabs {
             display: flex; background: #fff; border-bottom: 1px solid #e0e0e0;
             padding: 0; position: sticky; top: 0; z-index: 10;
@@ -115,25 +164,41 @@
             display: flex; align-items: center; gap: 10px; padding: 0 20px; height: 48px;
             cursor: pointer; font-size: 13px; font-weight: 500; color: #5f6368;
             border-bottom: 3px solid transparent; transition: all 0.2s; min-width: 160px;
-            text-transform: capitalize; letter-spacing: 0.2px;
+            text-transform: capitalize; letter-spacing: 0.2px; position: relative;
         }
         .gmail-tab:hover { background: #f1f3f4; }
         .gmail-tab.active { color: #1a73e8; border-bottom-color: #1a73e8; }
         .gmail-tab .material-icons { font-size: 20px; }
         .gmail-tab.active .material-icons { color: #1a73e8; }
+        .gmail-tab .tab-badge {
+            background: #ea4335; color: #fff; font-size: 10px; font-weight: 700;
+            padding: 1px 6px; border-radius: 8px; margin-left: 4px; display: none;
+        }
+        .gmail-tab .tab-badge.show { display: inline; }
 
-        /* Toolbar */
         .gmail-toolbar {
             display: flex; align-items: center; padding: 4px 8px 4px 16px; background: #fff;
             border-bottom: 1px solid #f1f3f4; min-height: 48px; gap: 4px;
         }
-        .gmail-toolbar .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; cursor: pointer; color: #5f6368; border: none; background: none;
-        }
-        .gmail-toolbar .icon-btn:hover { background: #f1f3f4; }
+        .toolbar-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: #1a73e8; }
         .toolbar-divider { width: 1px; height: 20px; background: #e0e0e0; margin: 0 4px; }
-        .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 2px; font-size: 12px; color: #5f6368; }
+        .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5f6368; }
+        .toolbar-pager { display: flex; align-items: center; gap: 2px; }
+
+        /* Bulk actions bar */
+        .bulk-actions {
+            display: none; align-items: center; gap: 4px; padding: 4px 8px;
+            background: #fff; border-bottom: 1px solid #f1f3f4;
+        }
+        .bulk-actions.show { display: flex; }
+        .bulk-actions .bulk-count { font-size: 13px; color: #5f6368; margin: 0 12px; }
+        .bulk-action-btn {
+            display: flex; align-items: center; gap: 4px; padding: 6px 12px; border: none;
+            background: none; cursor: pointer; border-radius: 4px; font-size: 13px;
+            color: #5f6368; font-family: 'Roboto', sans-serif; transition: background 0.15s;
+        }
+        .bulk-action-btn:hover { background: #f1f3f4; }
+        .bulk-action-btn .material-icons { font-size: 18px; }
 
         /* Email List */
         .email-list { flex: 1; overflow-y: auto; background: #f6f8fc; padding: 0 4px; }
@@ -141,51 +206,77 @@
         .email-row {
             display: flex; align-items: center; height: 40px; padding: 0 8px;
             background: #fff; cursor: pointer; border-bottom: 1px solid #f1f3f4;
-            transition: box-shadow 0.15s; font-size: 14px; border-radius: 0;
-            margin: 0 8px;
+            transition: box-shadow 0.15s, background 0.1s; font-size: 14px; margin: 0 8px;
+            position: relative;
         }
         .email-row:first-child { border-radius: 12px 12px 0 0; margin-top: 4px; }
         .email-row:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
-        .email-row:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 1; position: relative; }
+        .email-row:only-child { border-radius: 12px; }
+        .email-row:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 1; }
+        .email-row.selected { background: #c2e7ff; }
         .email-row.unread { font-weight: 700; }
         .email-row.unread .email-sender { font-weight: 700; color: #202124; }
         .email-row.unread .email-subject { font-weight: 700; color: #202124; }
 
+        /* Row hover actions */
+        .email-row .row-actions {
+            position: absolute; right: 70px; display: none; gap: 0; background: #fff;
+            padding: 0 4px; z-index: 2;
+        }
+        .email-row:hover .row-actions { display: flex; }
+        .email-row.selected .row-actions { background: #c2e7ff; }
+        .row-action-icon {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; cursor: pointer; color: #5f6368; transition: background 0.15s;
+        }
+        .row-action-icon:hover { background: rgba(0,0,0,0.06); }
+        .row-action-icon .material-icons { font-size: 18px; }
+
         .email-row .checkbox-area {
             display: flex; align-items: center; gap: 4px; padding-right: 8px; flex-shrink: 0;
         }
-        .email-row input[type="checkbox"] {
-            width: 18px; height: 18px; cursor: pointer; accent-color: #1a73e8;
-        }
+        .email-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #1a73e8; }
         .email-row .star {
             cursor: pointer; color: #dadce0; font-size: 20px; transition: color 0.15s;
+            display: flex; align-items: center;
         }
         .email-row .star:hover { color: #f4b400; }
         .email-row .star.starred { color: #f4b400; }
         .email-row .important-marker {
             cursor: pointer; color: #dadce0; font-size: 20px; margin-right: 4px;
+            display: flex; align-items: center; transition: color 0.15s;
         }
+        .email-row .important-marker:hover { color: #f4b400; }
+        .email-row .important-marker.marked { color: #f4b400; }
 
         .email-sender {
             width: 200px; flex-shrink: 0; font-size: 14px; color: #5f6368;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 12px;
         }
-        .email-content {
-            flex: 1; display: flex; overflow: hidden; align-items: center;
+        .email-content { flex: 1; display: flex; overflow: hidden; align-items: center; }
+        .email-subject { color: #202124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+        .email-snippet { color: #5f6368; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-left: 4px; font-size: 14px; }
+        .email-labels { display: flex; gap: 4px; margin-right: 8px; flex-shrink: 0; }
+        .email-label-chip {
+            font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 4px;
+            white-space: nowrap;
         }
-        .email-subject {
-            color: #202124; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            font-size: 14px;
-        }
-        .email-snippet {
-            color: #5f6368; font-weight: 400; white-space: nowrap; overflow: hidden;
-            text-overflow: ellipsis; margin-left: 4px; font-size: 14px;
-        }
+        .label-promo { background: #e8f0fe; color: #1a73e8; }
+        .label-social { background: #fce8e6; color: #c5221f; }
         .email-time {
             flex-shrink: 0; font-size: 12px; color: #5f6368; padding-left: 12px; width: 70px;
             text-align: right;
         }
         .email-row.unread .email-time { color: #202124; font-weight: 700; }
+
+        /* Delivery animation */
+        .email-row.delivering {
+            animation: slideIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* ===== EMAIL VIEW ===== */
         .email-view {
@@ -197,25 +288,18 @@
         .email-view-toolbar {
             display: flex; align-items: center; padding: 8px 16px; border-bottom: 1px solid #f1f3f4;
             gap: 4px; position: sticky; top: 0; background: #fff; z-index: 5; border-radius: 12px 12px 0 0;
+            flex-wrap: wrap;
         }
-        .email-view-toolbar .icon-btn {
-            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; cursor: pointer; color: #5f6368; border: none; background: none;
-        }
-        .email-view-toolbar .icon-btn:hover { background: #f1f3f4; }
-
         .action-btn-group { display: flex; gap: 4px; margin-left: 12px; }
         .action-btn {
             padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 600;
             cursor: pointer; border: none; transition: all 0.2s; font-family: 'Google Sans', sans-serif;
+            display: flex; align-items: center; gap: 6px;
         }
-        .btn-report {
-            background: #fce8e6; color: #c5221f;
-        }
+        .action-btn:active { transform: scale(0.96); }
+        .btn-report { background: #fce8e6; color: #c5221f; }
         .btn-report:hover { background: #f5c6c2; box-shadow: 0 1px 3px rgba(197,34,31,0.2); }
-        .btn-safe {
-            background: #e6f4ea; color: #137333;
-        }
+        .btn-safe { background: #e6f4ea; color: #137333; }
         .btn-safe:hover { background: #ceead6; box-shadow: 0 1px 3px rgba(19,115,51,0.2); }
 
         .email-view-content { padding: 24px 64px 40px; }
@@ -234,10 +318,39 @@
         }
         .sender-info { flex: 1; }
         .sender-name { font-size: 14px; font-weight: 500; color: #202124; }
-        .sender-email { font-size: 12px; color: #5f6368; margin-top: 2px; font-family: 'Roboto', monospace; }
-        .sender-to { font-size: 12px; color: #5f6368; margin-top: 2px; }
+        .sender-email { font-size: 12px; color: #5f6368; margin-top: 2px; font-family: 'Roboto Mono', monospace; cursor: pointer; }
+        .sender-email:hover { color: #1a73e8; }
+        .sender-to { font-size: 12px; color: #5f6368; margin-top: 2px; cursor: pointer; }
+        .sender-to:hover { color: #1a73e8; }
         .email-view-body { font-size: 14px; line-height: 1.75; color: #3c4043; }
         .email-view-body p { margin-bottom: 16px; }
+        .email-view-body a { color: #1a73e8; }
+
+        /* Reply area */
+        .reply-area {
+            margin-top: 24px; padding: 16px; border: 1px solid #e0e0e0; border-radius: 12px;
+            cursor: pointer; color: #5f6368; font-size: 14px; transition: border-color 0.2s;
+        }
+        .reply-area:hover { border-color: #1a73e8; }
+        .reply-area.expanded {
+            cursor: default; border-color: #1a73e8;
+        }
+        .reply-textarea {
+            width: 100%; min-height: 120px; border: none; outline: none; resize: vertical;
+            font-size: 14px; font-family: 'Roboto', sans-serif; color: #202124; line-height: 1.6;
+            margin-top: 8px; display: none;
+        }
+        .reply-area.expanded .reply-textarea { display: block; }
+        .reply-actions {
+            display: none; margin-top: 12px; gap: 8px; align-items: center;
+        }
+        .reply-area.expanded .reply-actions { display: flex; }
+        .reply-send-btn {
+            padding: 8px 24px; border-radius: 20px; background: #1a73e8; color: #fff;
+            border: none; font-size: 14px; font-weight: 500; cursor: pointer;
+            font-family: 'Google Sans', sans-serif; transition: background 0.2s;
+        }
+        .reply-send-btn:hover { background: #1557b0; }
 
         /* Empty state */
         .empty-state {
@@ -258,99 +371,121 @@
         }
         .debrief-header .material-icons { color: #1a73e8; font-size: 20px; }
         .debrief-header h3 { font-size: 14px; font-weight: 500; color: #202124; font-family: 'Google Sans', sans-serif; }
-        .debrief-body { padding: 20px; flex: 1; }
+        .debrief-body { padding: 16px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 
         .debrief-card {
-            border-radius: 12px; padding: 20px; border: 1px solid #e0e0e0;
+            border-radius: 12px; padding: 16px; border: 1px solid #e0e0e0;
+            animation: fadeInUp 0.3s ease;
         }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .debrief-card.success { border-color: #34a853; background: #e6f4ea; }
         .debrief-card.fail { border-color: #ea4335; background: #fce8e6; }
 
         .debrief-status {
-            display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-size: 13px;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px;
             font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .debrief-status.success { color: #137333; }
         .debrief-status.fail { color: #c5221f; }
 
         .debrief-subject {
-            font-size: 13px; font-weight: 500; color: #202124; padding-bottom: 12px;
-            margin-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.08);
+            font-size: 12px; font-weight: 500; color: #202124; padding-bottom: 10px;
+            margin-bottom: 10px; border-bottom: 1px solid rgba(0,0,0,0.08);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .debrief-flags-label {
-            font-size: 11px; font-weight: 500; color: #5f6368; text-transform: uppercase;
-            letter-spacing: 0.8px; margin-bottom: 10px;
+            font-size: 10px; font-weight: 500; color: #5f6368; text-transform: uppercase;
+            letter-spacing: 0.8px; margin-bottom: 6px;
         }
         .debrief-flag {
-            display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #3c4043;
-            margin-bottom: 8px; line-height: 1.5;
+            display: flex; align-items: flex-start; gap: 6px; font-size: 11px; color: #3c4043;
+            margin-bottom: 6px; line-height: 1.5;
         }
-        .debrief-flag .material-icons { font-size: 14px; color: #f9ab00; margin-top: 2px; flex-shrink: 0; }
+        .debrief-flag .material-icons { font-size: 14px; color: #f9ab00; margin-top: 1px; flex-shrink: 0; }
 
         .debrief-score {
             display: flex; justify-content: space-between; align-items: center;
-            margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(0,0,0,0.08);
+            margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.08);
         }
-        .debrief-score .label { font-size: 11px; color: #5f6368; font-weight: 500; text-transform: uppercase; }
+        .debrief-score .label { font-size: 10px; color: #5f6368; font-weight: 500; text-transform: uppercase; }
         .debrief-score .chip {
-            font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 12px;
+            font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
         }
         .debrief-score .chip.pos { background: #ceead6; color: #137333; }
         .debrief-score .chip.neg { background: #f5c6c2; color: #c5221f; }
 
         .debrief-empty {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100%; text-align: center; padding: 40px; color: #dadce0;
+            height: 200px; text-align: center; padding: 40px; color: #dadce0;
         }
-        .debrief-empty .material-icons { font-size: 56px; margin-bottom: 16px; }
-        .debrief-empty p { font-size: 13px; color: #5f6368; line-height: 1.6; }
+        .debrief-empty .material-icons { font-size: 48px; margin-bottom: 12px; }
+        .debrief-empty p { font-size: 12px; color: #5f6368; line-height: 1.6; }
+
+        /* ===== TOAST / SNACKBAR ===== */
+        .toast-container {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            z-index: 10000; display: flex; flex-direction: column; gap: 8px; align-items: center;
+        }
+        .toast {
+            background: #323232; color: #fff; padding: 12px 24px; border-radius: 8px;
+            font-size: 14px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: toastIn 0.3s ease;
+            min-width: 300px;
+        }
+        .toast .toast-action {
+            color: #8ab4f8; font-weight: 500; cursor: pointer; background: none; border: none;
+            font-size: 14px; font-family: 'Google Sans', sans-serif; white-space: nowrap;
+        }
+        .toast .toast-action:hover { text-decoration: underline; }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(20px); } }
 
         /* ===== MODALS ===== */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.5);
             display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px); animation: fadeIn 0.2s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .modal-card {
             background: #fff; border-radius: 24px; max-width: 640px; width: 90%;
             box-shadow: 0 8px 40px rgba(0,0,0,0.2); overflow: hidden;
+            animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .modal-header {
-            padding: 32px 40px 24px; background: linear-gradient(135deg, #1a73e8, #4285f4);
-            color: #fff;
+            padding: 32px 40px 24px; background: linear-gradient(135deg, #1a73e8, #4285f4); color: #fff;
         }
-        .modal-header h1 { font-size: 28px; font-weight: 500; font-family: 'Google Sans', sans-serif; margin-bottom: 6px; }
+        .modal-header h1 { font-size: 26px; font-weight: 500; font-family: 'Google Sans', sans-serif; margin-bottom: 6px; }
         .modal-header p { font-size: 14px; opacity: 0.85; }
         .modal-body { padding: 32px 40px; }
-
         .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
         .modal-grid h3 { font-size: 15px; font-weight: 500; color: #202124; margin-bottom: 8px; font-family: 'Google Sans', sans-serif; }
         .modal-grid p { font-size: 13px; color: #5f6368; line-height: 1.6; }
-
         .protocol-box {
             background: #f8f9fa; border-radius: 12px; padding: 20px; border: 1px solid #e0e0e0;
         }
         .protocol-item {
-            display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500;
-            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; margin-bottom: 10px;
         }
         .protocol-item:last-child { margin-bottom: 0; }
         .protocol-item .material-icons { font-size: 18px; }
         .protocol-item.red { color: #c5221f; }
         .protocol-item.blue { color: #1a73e8; }
         .protocol-item.orange { color: #e37400; }
-
         .modal-start-btn {
             width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px;
             font-weight: 500; font-family: 'Google Sans', sans-serif; cursor: pointer;
             background: #1a73e8; color: #fff; transition: background 0.2s;
         }
         .modal-start-btn:hover { background: #1557b0; }
+        .modal-start-btn:active { transform: scale(0.99); }
 
-        /* Completion modal */
+        /* Completion */
         .completion-card {
-            background: #fff; border-radius: 24px; max-width: 480px; width: 90%;
+            background: #fff; border-radius: 24px; max-width: 520px; width: 90%;
             box-shadow: 0 8px 40px rgba(0,0,0,0.2); padding: 48px; text-align: center;
+            animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .completion-icon {
             width: 72px; height: 72px; border-radius: 50%; background: #e8f0fe;
@@ -358,43 +493,61 @@
         }
         .completion-icon .material-icons { font-size: 36px; color: #1a73e8; }
         .completion-title { font-size: 24px; font-family: 'Google Sans', sans-serif; color: #202124; margin-bottom: 8px; }
+        .completion-subtitle { font-size: 13px; color: #5f6368; }
         .completion-score-box {
             background: #f8f9fa; border-radius: 16px; padding: 28px; margin: 24px 0; border: 1px solid #e0e0e0;
         }
         .completion-score { font-size: 56px; font-weight: 700; color: #1a73e8; font-family: 'Google Sans', sans-serif; }
         .completion-score-label { font-size: 12px; color: #5f6368; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; margin-top: 4px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+        .stat-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; }
+        .stat-box .stat-num { font-size: 24px; font-weight: 700; font-family: 'Google Sans', sans-serif; }
+        .stat-box .stat-num.green { color: #137333; }
+        .stat-box .stat-num.red { color: #c5221f; }
+        .stat-box .stat-lbl { font-size: 11px; color: #5f6368; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
         .advice-box {
             text-align: left; padding: 20px; background: #f8f9fa; border-radius: 12px;
-            margin-bottom: 28px; border: 1px solid #e0e0e0;
+            margin-bottom: 24px; border: 1px solid #e0e0e0;
         }
         .advice-box p { font-size: 13px; color: #3c4043; line-height: 1.7; margin-bottom: 8px; }
         .advice-box ul { margin: 8px 0 0 20px; }
         .advice-box li { font-size: 13px; color: #3c4043; line-height: 1.7; margin-bottom: 4px; }
-        .advice-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+        .advice-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
         .advice-title.warn { color: #e37400; }
         .advice-title.good { color: #137333; }
 
+        .completion-actions { display: flex; gap: 12px; }
         .completion-restart {
-            width: 100%; padding: 14px; border: none; border-radius: 24px; font-size: 15px;
+            flex: 1; padding: 14px; border: none; border-radius: 24px; font-size: 15px;
             font-weight: 500; font-family: 'Google Sans', sans-serif; cursor: pointer;
             background: #1a73e8; color: #fff; transition: background 0.2s;
         }
         .completion-restart:hover { background: #1557b0; }
+        .completion-secondary {
+            flex: 1; padding: 14px; border: 1px solid #dadce0; border-radius: 24px; font-size: 15px;
+            font-weight: 500; font-family: 'Google Sans', sans-serif; cursor: pointer;
+            background: #fff; color: #1a73e8; transition: background 0.2s;
+        }
+        .completion-secondary:hover { background: #f1f3f4; }
 
-        /* Compose Modal */
+        /* Compose */
         .compose-modal {
             position: fixed; bottom: 0; right: 80px; width: 520px; z-index: 100;
             background: #fff; border-radius: 12px 12px 0 0; box-shadow: 0 -2px 16px rgba(0,0,0,0.15);
-            display: none; flex-direction: column;
+            display: none; flex-direction: column; max-height: 70vh;
         }
         .compose-modal.show { display: flex; }
+        .compose-modal.minimized { height: 44px; overflow: hidden; }
         .compose-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 10px 16px; background: #404040; border-radius: 12px 12px 0 0; color: #fff;
+            cursor: pointer;
         }
         .compose-header span { font-size: 14px; font-weight: 500; }
-        .compose-header .close-compose { cursor: pointer; color: #fff; background: none; border: none; }
+        .compose-header-actions { display: flex; gap: 4px; }
+        .compose-header-actions button { cursor: pointer; color: #fff; background: none; border: none; display: flex; align-items: center; }
+        .compose-header-actions button:hover { color: #8ab4f8; }
         .compose-fields { padding: 8px 16px; }
         .compose-field {
             display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f3f4; font-size: 14px;
@@ -403,47 +556,73 @@
         .compose-field input {
             flex: 1; border: none; outline: none; font-size: 14px; font-family: 'Roboto', sans-serif; color: #202124;
         }
-        .compose-body-area {
-            padding: 8px 16px; flex: 1; min-height: 200px;
-        }
+        .compose-body-area { padding: 8px 16px; flex: 1; overflow-y: auto; }
         .compose-body-area textarea {
-            width: 100%; height: 200px; border: none; outline: none; resize: none;
+            width: 100%; min-height: 200px; border: none; outline: none; resize: none;
             font-size: 14px; font-family: 'Roboto', sans-serif; color: #202124; line-height: 1.6;
         }
         .compose-footer {
             display: flex; align-items: center; padding: 8px 16px 12px; gap: 8px;
+            border-top: 1px solid #f1f3f4;
         }
         .compose-send {
             padding: 8px 24px; border-radius: 20px; background: #1a73e8; color: #fff;
-            border: none; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Google Sans', sans-serif;
+            border: none; font-size: 14px; font-weight: 500; cursor: pointer;
+            font-family: 'Google Sans', sans-serif; transition: background 0.2s;
         }
         .compose-send:hover { background: #1557b0; }
+        .compose-toolbar-icons { display: flex; gap: 2px; margin-left: 8px; }
+        .compose-toolbar-icons .icon-btn { width: 32px; height: 32px; }
+        .compose-toolbar-icons .icon-btn .material-icons { font-size: 18px; }
 
-        /* Link hover bar */
+        /* Context menu */
+        .context-menu {
+            position: fixed; background: #fff; border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2); z-index: 500; min-width: 200px;
+            padding: 8px 0; display: none;
+        }
+        .context-menu.show { display: block; }
+        .context-item {
+            display: flex; align-items: center; gap: 12px; padding: 8px 16px;
+            cursor: pointer; font-size: 13px; color: #3c4043; transition: background 0.1s;
+        }
+        .context-item:hover { background: #f1f3f4; }
+        .context-item .material-icons { font-size: 18px; color: #5f6368; }
+        .context-divider { height: 1px; background: #e0e0e0; margin: 4px 0; }
+
+        /* Link status bar */
         #status-bar {
             position: fixed; bottom: 0; left: 0; background: #f1f3f4; padding: 4px 12px;
             font-size: 12px; color: #3c4043; border: 1px solid #e0e0e0; z-index: 1000;
             display: none; font-family: 'Roboto Mono', monospace; border-radius: 0 4px 0 0;
-            max-width: 60%;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
         /* Avatar colors */
-        .av-red { background: #ea4335; }
-        .av-blue { background: #4285f4; }
-        .av-green { background: #34a853; }
-        .av-yellow { background: #fbbc04; color: #202124; }
-        .av-purple { background: #a142f4; }
-        .av-teal { background: #24c1e0; }
-        .av-orange { background: #fa7b17; }
-        .av-pink { background: #f538a0; }
-        .av-indigo { background: #5f6368; }
-        .av-cyan { background: #129eaf; }
+        .av-red { background: #ea4335; } .av-blue { background: #4285f4; }
+        .av-green { background: #34a853; } .av-yellow { background: #fbbc04; color: #202124; }
+        .av-purple { background: #a142f4; } .av-teal { background: #24c1e0; }
+        .av-orange { background: #fa7b17; } .av-pink { background: #f538a0; }
+        .av-indigo { background: #5f6368; } .av-cyan { background: #129eaf; }
+
+        /* Keyboard shortcuts overlay */
+        .shortcuts-overlay {
+            position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.6);
+            display: none; align-items: center; justify-content: center;
+        }
+        .shortcuts-overlay.show { display: flex; }
+        .shortcuts-card {
+            background: #fff; border-radius: 12px; padding: 32px; max-width: 480px; width: 90%;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        }
+        .shortcuts-card h3 { font-size: 18px; font-family: 'Google Sans', sans-serif; margin-bottom: 16px; color: #202124; }
+        .shortcut-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+        .shortcut-key { background: #f1f3f4; padding: 2px 8px; border-radius: 4px; font-family: 'Roboto Mono', monospace; font-size: 12px; color: #3c4043; border: 1px solid #dadce0; }
     </style>
 </head>
 <body>
 
-<!-- ===== INTRO MODAL ===== -->
+<!-- INTRO MODAL -->
 <div id="modal-intro" class="modal-overlay">
     <div class="modal-card">
         <div class="modal-header">
@@ -451,13 +630,13 @@
                 <span class="material-icons" style="font-size:32px;">shield</span>
                 <h1>Advanced Phishing Defense</h1>
             </div>
-            <p>Level: Professional Certification — 10 Unique Scenarios</p>
+            <p>Level: Professional — 10 Scenarios with Full Gmail Experience</p>
         </div>
         <div class="modal-body">
             <div class="modal-grid">
                 <div>
                     <h3><span class="material-icons" style="font-size:18px; vertical-align:middle; color:#1a73e8; margin-right:6px;">policy</span>The Analysis Rule</h3>
-                    <p>Emails are now longer and more complex. Phishers hide malicious intent inside legitimate-looking corporate jargon. You must read the <strong>entire</strong> message to find the inconsistency.</p>
+                    <p>Phishers hide malicious intent inside legitimate-looking emails. Read the <strong>entire</strong> message, hover links, and check sender domains carefully.</p>
                 </div>
                 <div class="protocol-box">
                     <div style="font-size:11px; font-weight:500; color:#5f6368; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; text-align:center;">Protocol Reminders</div>
@@ -471,24 +650,96 @@
     </div>
 </div>
 
-<!-- ===== COMPLETION MODAL ===== -->
+<!-- COMPLETION MODAL -->
 <div id="modal-completion" class="modal-overlay hidden">
     <div class="completion-card">
         <div class="completion-icon"><span class="material-icons">emoji_events</span></div>
-        <h2 class="completion-title">Final Evaluation</h2>
+        
+        <!-- Completion Badge -->
+        <div style="margin: 0 auto 16px; width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #fbbc04, #f9ab00); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(249,171,0,0.4);">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <span class="material-icons" style="font-size: 32px; color: #f9ab00;">verified</span>
+                <span style="font-size: 8px; font-weight: 700; color: #e37400; text-transform: uppercase; letter-spacing: 0.5px;">Certified</span>
+            </div>
+        </div>
+
+        <h2 class="completion-title">Training Complete</h2>
+        <p class="completion-subtitle" id="completion-subtitle"></p>
+        
+        <!-- Badge Title -->
+        <div id="badge-title" style="margin: 8px 0 16px; padding: 6px 20px; background: #fef7e0; border-radius: 20px; display: inline-block; font-size: 13px; font-weight: 700; color: #e37400; letter-spacing: 0.5px;"></div>
+
         <div class="completion-score-box">
             <div class="completion-score" id="final-score">0</div>
-            <div class="completion-score-label">Total Score</div>
+            <div class="completion-score-label">Final Score</div>
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <div class="stat-num green" id="stat-correct">0</div>
+                    <div class="stat-lbl">Correct</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num red" id="stat-wrong">0</div>
+                    <div class="stat-lbl">Mistakes</div>
+                </div>
+            </div>
         </div>
         <div class="advice-box" id="advice-box"></div>
-        <button onclick="location.reload()" class="completion-restart">Restart Training</button>
+        <div class="completion-actions" style="flex-direction: column; gap: 10px;">
+            <!-- Primary: Go to simulation.html -->
+            <button onclick="window.location.href='simulation.html'" class="completion-restart" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span class="material-icons" style="font-size: 20px;">arrow_forward</span>
+                Continue to Simulation Hub
+            </button>
+            <!-- Secondary actions -->
+            <div style="display: flex; gap: 10px;">
+                <button onclick="location.reload()" class="completion-secondary" style="flex:1; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span class="material-icons" style="font-size: 18px;">refresh</span>
+                    Restart Training
+                </button>
+                <button onclick="document.getElementById('modal-completion').classList.add('hidden')" class="completion-secondary" style="flex:1; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span class="material-icons" style="font-size: 18px;">inbox</span>
+                    Review Inbox
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- ===== GMAIL HEADER ===== -->
+<!-- KEYBOARD SHORTCUTS -->
+<div class="shortcuts-overlay" id="shortcuts-overlay" onclick="this.classList.remove('show')">
+    <div class="shortcuts-card" onclick="event.stopPropagation()">
+        <h3>Keyboard Shortcuts</h3>
+        <div class="shortcut-row"><span>Go to Inbox</span><span class="shortcut-key">G then I</span></div>
+        <div class="shortcut-row"><span>Compose</span><span class="shortcut-key">C</span></div>
+        <div class="shortcut-row"><span>Search</span><span class="shortcut-key">/</span></div>
+        <div class="shortcut-row"><span>Back to list</span><span class="shortcut-key">U</span></div>
+        <div class="shortcut-row"><span>Star email</span><span class="shortcut-key">S</span></div>
+        <div class="shortcut-row"><span>Report phishing</span><span class="shortcut-key">!</span></div>
+        <div class="shortcut-row"><span>Show shortcuts</span><span class="shortcut-key">?</span></div>
+        <div style="margin-top:16px; text-align:right;">
+            <button onclick="document.getElementById('shortcuts-overlay').classList.remove('show')" style="padding:8px 20px; border:1px solid #dadce0; border-radius:20px; background:#fff; cursor:pointer; font-family:'Google Sans',sans-serif; font-size:13px;">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="context-menu" id="context-menu">
+    <div class="context-item" data-action="archive"><span class="material-icons">archive</span>Archive</div>
+    <div class="context-item" data-action="star"><span class="material-icons">star</span>Star</div>
+    <div class="context-item" data-action="mark-read"><span class="material-icons">drafts</span>Mark as read</div>
+    <div class="context-item" data-action="mark-unread"><span class="material-icons">mark_email_unread</span>Mark as unread</div>
+    <div class="context-divider"></div>
+    <div class="context-item" data-action="report" style="color:#c5221f;"><span class="material-icons" style="color:#c5221f;">gpp_bad</span>Report phishing</div>
+    <div class="context-item" data-action="delete"><span class="material-icons">delete</span>Delete</div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- GMAIL HEADER -->
 <div class="gmail-header">
-    <div class="hamburger"><span class="material-icons">menu</span></div>
-    <div class="gmail-logo">
+    <div class="hamburger" onclick="toggleSidebar()" title="Main menu"><span class="material-icons">menu</span></div>
+    <div class="gmail-logo" onclick="switchFolder('inbox')">
         <svg viewBox="0 0 75 24" width="75" height="24" style="margin-left:8px;">
             <path fill="#EA4335" d="M3.2 8.0L0 5.5V19.5C0 20.3 0.7 21 1.5 21H3.2V8.0Z"/>
             <path fill="#4285F4" d="M18.8 8.0L22 5.5V19.5C22 20.3 21.3 21 20.5 21H18.8V8.0Z"/>
@@ -499,10 +750,12 @@
         <span class="gmail-logo-text"><span>Gmail</span></span>
     </div>
 
-    <div class="gmail-search">
-        <span class="material-icons">search</span>
-        <input type="text" placeholder="Search mail" id="search-input">
-        <span class="material-icons" style="cursor:pointer;">tune</span>
+    <div class="gmail-search" id="search-container">
+        <span class="material-icons" onclick="doSearch()">search</span>
+        <input type="text" placeholder="Search mail" id="search-input" oninput="onSearchInput()" onfocus="onSearchFocus()" autocomplete="off">
+        <span class="material-icons search-clear" id="search-clear" onclick="clearSearch()">close</span>
+        <span class="material-icons" style="cursor:pointer;" onclick="showToast('Search options coming soon')">tune</span>
+        <div class="search-dropdown" id="search-dropdown"></div>
     </div>
 
     <div class="gmail-header-right">
@@ -511,79 +764,73 @@
             <span class="label" style="color:#5f6368; font-weight:500;">Left:</span>
             <span class="value" id="sync-count">10</span>
         </div>
-        <div class="score-badge">
+        <div class="score-badge" id="score-badge">
             <span class="material-icons" style="font-size:16px; color:#1a73e8;">star</span>
             <span class="label">Score:</span>
             <span class="value" id="stat-score">1000</span>
         </div>
-        <div class="icon-btn" title="Support"><span class="material-icons">help_outline</span></div>
-        <div class="icon-btn" title="Settings"><span class="material-icons">settings</span></div>
-        <div class="icon-btn" title="Apps"><span class="material-icons">apps</span></div>
-        <div class="gmail-avatar">A</div>
+        <div class="icon-btn" title="Support" onclick="showToast('Help center available in full version')">
+            <span class="material-icons">help_outline</span>
+            <span class="tooltip">Support</span>
+        </div>
+        <div class="icon-btn" title="Settings" onclick="showToast('Settings panel coming soon')">
+            <span class="material-icons">settings</span>
+            <span class="tooltip">Settings</span>
+        </div>
+        <div class="icon-btn" title="Google apps" onclick="showToast('Google apps menu')">
+            <span class="material-icons">apps</span>
+            <span class="tooltip">Google apps</span>
+        </div>
+        <div class="gmail-avatar" onclick="showToast('Account: analyst@cybersmart.training')">A</div>
     </div>
 </div>
 
-<!-- ===== MAIN BODY ===== -->
+<!-- MAIN BODY -->
 <div class="gmail-body">
-
-    <!-- SIDEBAR -->
-    <div class="gmail-sidebar">
+    <div class="gmail-sidebar" id="sidebar">
         <button class="compose-btn" onclick="openCompose()">
             <span class="material-icons">edit</span>
-            Compose
+            <span class="compose-text">Compose</span>
         </button>
-
         <div class="sidebar-item active" onclick="switchFolder('inbox')" id="btn-inbox">
-            <span class="material-icons">inbox</span>
-            Inbox
+            <span class="material-icons">inbox</span><span class="sidebar-text">Inbox</span>
             <span class="badge" id="badge-inbox">0</span>
         </div>
-        <div class="sidebar-item" onclick="switchFolder('starred')">
-            <span class="material-icons">star_border</span>
-            Starred
+        <div class="sidebar-item" onclick="switchFolder('starred')" id="btn-starred">
+            <span class="material-icons">star_border</span><span class="sidebar-text">Starred</span>
+            <span class="badge" id="badge-starred" style="display:none;"></span>
         </div>
-        <div class="sidebar-item" onclick="switchFolder('snoozed')">
-            <span class="material-icons">watch_later</span>
-            Snoozed
+        <div class="sidebar-item" onclick="showToast('Snoozed folder empty')">
+            <span class="material-icons">watch_later</span><span class="sidebar-text">Snoozed</span>
         </div>
-        <div class="sidebar-item" onclick="switchFolder('sent')">
-            <span class="material-icons">send</span>
-            Sent
+        <div class="sidebar-item" onclick="switchFolder('sent')" id="btn-sent">
+            <span class="material-icons">send</span><span class="sidebar-text">Sent</span>
         </div>
-        <div class="sidebar-item" onclick="switchFolder('drafts')">
-            <span class="material-icons">note</span>
-            Drafts
+        <div class="sidebar-item" onclick="showToast('Drafts folder empty')">
+            <span class="material-icons">note</span><span class="sidebar-text">Drafts</span>
         </div>
-
         <div class="sidebar-divider"></div>
-
         <div class="sidebar-item" onclick="switchFolder('junk')" id="btn-junk">
-            <span class="material-icons" style="color:#ea4335;">report</span>
-            Spam / Threats
+            <span class="material-icons" style="color:#ea4335;">report</span><span class="sidebar-text">Spam / Threats</span>
             <span class="badge" id="badge-junk" style="color:#ea4335;">0</span>
         </div>
-        <div class="sidebar-item">
-            <span class="material-icons">delete</span>
-            Trash
+        <div class="sidebar-item" onclick="switchFolder('trash')" id="btn-trash">
+            <span class="material-icons">delete</span><span class="sidebar-text">Trash</span>
+            <span class="badge" id="badge-trash" style="display:none;">0</span>
         </div>
-
         <div class="sidebar-divider"></div>
-
         <div class="sidebar-progress">
             <div class="label">Training Progress</div>
-            <div class="progress-track">
-                <div class="progress-fill" id="progress-bar"></div>
-            </div>
+            <div class="progress-track"><div class="progress-fill" id="progress-bar"></div></div>
+            <div class="progress-text" id="progress-text">0 of 10 analyzed</div>
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="gmail-main">
-
-        <!-- CATEGORY TABS -->
-        <div class="gmail-tabs">
+        <div class="gmail-tabs" id="tabs-bar">
             <div class="gmail-tab active" id="tab-primary" onclick="switchTab('primary')">
                 <span class="material-icons">inbox</span> Primary
+                <span class="tab-badge" id="tab-badge-primary">0</span>
             </div>
             <div class="gmail-tab" id="tab-promotions" onclick="switchTab('promotions')">
                 <span class="material-icons">local_offer</span> Promotions
@@ -593,17 +840,31 @@
             </div>
         </div>
 
-        <!-- TOOLBAR -->
         <div class="gmail-toolbar" id="list-toolbar">
-            <input type="checkbox" style="width:18px;height:18px;cursor:pointer;" title="Select all">
-            <button class="icon-btn" title="Refresh"><span class="material-icons">refresh</span></button>
-            <button class="icon-btn" title="More"><span class="material-icons">more_vert</span></button>
+            <input type="checkbox" class="toolbar-checkbox" id="select-all-cb" onchange="toggleSelectAll(this.checked)" title="Select">
+            <div class="icon-btn" onclick="refreshInbox()" title="Refresh"><span class="material-icons">refresh</span><span class="tooltip">Refresh</span></div>
+            <div class="icon-btn" onclick="showToast('More options')" title="More"><span class="material-icons">more_vert</span><span class="tooltip">More</span></div>
             <div class="toolbar-right">
-                <span id="folder-title-text">Inbox</span>
+                <span id="folder-title-text">Primary</span>
+                <div class="toolbar-divider"></div>
+                <div class="toolbar-pager">
+                    <span id="pager-text">1–0 of 0</span>
+                    <div class="icon-btn" style="width:28px;height:28px;" onclick="showToast('Previous page')"><span class="material-icons" style="font-size:18px;">chevron_left</span></div>
+                    <div class="icon-btn" style="width:28px;height:28px;" onclick="showToast('Next page')"><span class="material-icons" style="font-size:18px;">chevron_right</span></div>
+                </div>
             </div>
         </div>
 
-        <!-- EMAIL LIST VIEW -->
+        <!-- Bulk actions bar -->
+        <div class="bulk-actions" id="bulk-actions">
+            <span class="bulk-count" id="bulk-count">0 selected</span>
+            <button class="bulk-action-btn" onclick="bulkAction('archive')"><span class="material-icons">archive</span>Archive</button>
+            <button class="bulk-action-btn" onclick="bulkAction('report')"><span class="material-icons" style="color:#c5221f;">gpp_bad</span>Report</button>
+            <button class="bulk-action-btn" onclick="bulkAction('delete')"><span class="material-icons">delete</span>Delete</button>
+            <button class="bulk-action-btn" onclick="bulkAction('read')"><span class="material-icons">drafts</span>Read</button>
+            <button class="bulk-action-btn" onclick="bulkAction('unread')"><span class="material-icons">mark_email_unread</span>Unread</button>
+        </div>
+
         <div class="email-list" id="email-list-container">
             <div class="empty-state" id="empty-state">
                 <span class="material-icons">all_inbox</span>
@@ -611,23 +872,26 @@
             </div>
         </div>
 
-        <!-- EMAIL DETAIL VIEW -->
         <div class="email-view" id="email-view">
             <div class="email-view-toolbar">
-                <button class="icon-btn" onclick="closeReader()" title="Back to inbox"><span class="material-icons">arrow_back</span></button>
-                <button class="icon-btn" title="Archive"><span class="material-icons">archive</span></button>
-                <button class="icon-btn" title="Delete"><span class="material-icons">delete</span></button>
-                <button class="icon-btn" title="Mark unread"><span class="material-icons">mark_email_unread</span></button>
+                <button class="icon-btn" onclick="closeReader()" title="Back"><span class="material-icons">arrow_back</span><span class="tooltip">Back to inbox</span></button>
+                <button class="icon-btn" onclick="archiveCurrent()" title="Archive"><span class="material-icons">archive</span><span class="tooltip">Archive</span></button>
+                <button class="icon-btn" onclick="deleteCurrent()" title="Delete"><span class="material-icons">delete</span><span class="tooltip">Delete</span></button>
+                <button class="icon-btn" onclick="toggleReadCurrent()" title="Mark unread"><span class="material-icons">mark_email_unread</span><span class="tooltip">Mark unread</span></button>
                 <div class="toolbar-divider"></div>
                 <div class="action-btn-group" id="action-buttons">
                     <button onclick="recordDecision('report')" class="action-btn btn-report">
-                        <span class="material-icons" style="font-size:16px; vertical-align:middle; margin-right:4px;">gpp_bad</span>
+                        <span class="material-icons" style="font-size:16px;">gpp_bad</span>
                         Report Phishing
                     </button>
                     <button onclick="recordDecision('safe')" class="action-btn btn-safe">
-                        <span class="material-icons" style="font-size:16px; vertical-align:middle; margin-right:4px;">verified_user</span>
+                        <span class="material-icons" style="font-size:16px;">verified_user</span>
                         Mark as Safe
                     </button>
+                </div>
+                <div style="margin-left:auto; display:flex; gap:2px;">
+                    <button class="icon-btn" onclick="navEmail(-1)" title="Newer"><span class="material-icons">chevron_left</span></button>
+                    <button class="icon-btn" onclick="navEmail(1)" title="Older"><span class="material-icons">chevron_right</span></button>
                 </div>
             </div>
             <div class="email-view-content">
@@ -636,18 +900,29 @@
                     <div class="sender-avatar" id="view-avatar">M</div>
                     <div class="sender-info">
                         <div class="sender-name" id="view-sender"></div>
-                        <div class="sender-email" id="view-addr"></div>
-                        <div class="sender-to">to me ▾</div>
+                        <div class="sender-email" id="view-addr" onclick="showToast('Sender: ' + this.textContent)"></div>
+                        <div class="sender-to" id="view-to">to me ▾</div>
                     </div>
-                    <div style="font-size:12px; color:#5f6368;" id="view-time"></div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="font-size:12px; color:#5f6368;" id="view-time"></div>
+                        <div class="icon-btn" style="width:32px;height:32px;" onclick="toggleStarCurrent()"><span class="material-icons" style="font-size:18px;" id="view-star">star_border</span></div>
+                        <div class="icon-btn" style="width:32px;height:32px;" onclick="showToast('Reply options')"><span class="material-icons" style="font-size:18px;">more_vert</span></div>
+                    </div>
                 </div>
                 <div class="email-view-body" id="view-body"></div>
+                <div class="reply-area" id="reply-area" onclick="expandReply()">
+                    <span id="reply-placeholder">Click here to <strong>Reply</strong></span>
+                    <textarea class="reply-textarea" id="reply-textarea" placeholder="Type your reply..." onclick="event.stopPropagation()"></textarea>
+                    <div class="reply-actions">
+                        <button class="reply-send-btn" onclick="event.stopPropagation(); sendReply()">Send</button>
+                        <div class="icon-btn" style="width:32px;height:32px;" onclick="event.stopPropagation(); discardReply()"><span class="material-icons" style="font-size:18px;">delete</span></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- DEBRIEF PANEL -->
-    <div class="debrief-panel">
+    <div class="debrief-panel" id="debrief-panel">
         <div class="debrief-header">
             <span class="material-icons">analytics</span>
             <h3>Incident Analysis</h3>
@@ -655,294 +930,613 @@
         <div class="debrief-body" id="debrief-container">
             <div class="debrief-empty">
                 <span class="material-icons">radar</span>
-                <p>Analyzing decisions for security awareness patterns. Make a decision on an email to begin.</p>
+                <p>Make a decision on an email to see the analysis here.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- COMPOSE MODAL -->
+<!-- COMPOSE -->
 <div class="compose-modal" id="compose-modal">
-    <div class="compose-header">
-        <span>New Message</span>
-        <button class="close-compose" onclick="closeCompose()"><span class="material-icons" style="font-size:20px;">close</span></button>
+    <div class="compose-header" onclick="toggleComposeMinimize()">
+        <span id="compose-title">New Message</span>
+        <div class="compose-header-actions">
+            <button onclick="event.stopPropagation(); toggleComposeMinimize()" title="Minimize"><span class="material-icons" style="font-size:18px;">minimize</span></button>
+            <button onclick="event.stopPropagation(); maximizeCompose()" title="Full screen"><span class="material-icons" style="font-size:18px;">open_in_full</span></button>
+            <button onclick="event.stopPropagation(); closeCompose()" title="Close"><span class="material-icons" style="font-size:18px;">close</span></button>
+        </div>
     </div>
     <div class="compose-fields">
-        <div class="compose-field"><label>To</label><input type="text" placeholder="Recipients"></div>
-        <div class="compose-field"><label>Subject</label><input type="text" placeholder="Subject"></div>
+        <div class="compose-field"><label>To</label><input type="text" id="compose-to" placeholder="Recipients"></div>
+        <div class="compose-field"><label>Cc</label><input type="text" id="compose-cc" placeholder=""></div>
+        <div class="compose-field"><label>Subject</label><input type="text" id="compose-subject" placeholder=""></div>
     </div>
     <div class="compose-body-area">
-        <textarea placeholder="Compose email..."></textarea>
+        <textarea id="compose-body" placeholder="Compose email..."></textarea>
     </div>
     <div class="compose-footer">
-        <button class="compose-send" onclick="closeCompose()">Send</button>
-        <button class="icon-btn" style="margin-left:auto;" onclick="closeCompose()"><span class="material-icons">delete</span></button>
+        <button class="compose-send" onclick="sendCompose()">Send</button>
+        <div class="compose-toolbar-icons">
+            <div class="icon-btn"><span class="material-icons">text_format</span></div>
+            <div class="icon-btn"><span class="material-icons">attach_file</span></div>
+            <div class="icon-btn"><span class="material-icons">link</span></div>
+            <div class="icon-btn"><span class="material-icons">mood</span></div>
+            <div class="icon-btn"><span class="material-icons">insert_photo</span></div>
+        </div>
+        <div style="margin-left:auto;">
+            <div class="icon-btn" onclick="closeCompose()"><span class="material-icons">delete</span></div>
+        </div>
     </div>
 </div>
 
 <div id="status-bar"></div>
 
 <script>
-    const AVATAR_COLORS = ['av-red','av-blue','av-green','av-yellow','av-purple','av-teal','av-orange','av-pink','av-indigo','av-cyan'];
-    const TIMES = ['10:42 AM','9:15 AM','8:33 AM','7:01 AM','Yesterday','Mar 12','Mar 11','Mar 10','Mar 9','Mar 8'];
+const AVATAR_COLORS = ['av-red','av-blue','av-green','av-yellow','av-purple','av-teal','av-orange','av-pink','av-indigo','av-cyan'];
+const TIMES = ['10:42 AM','9:15 AM','8:33 AM','7:01 AM','Yesterday','Mar 12','Mar 11','Mar 10','Mar 9','Mar 8'];
 
-    const SCENARIOS = [
-        {
-            id: 1, type: 'phish', sender: 'Microsoft 365 Security', addr: 'no-reply@microsoft-security-verify.net',
-            subject: 'CRITICAL: Unauthorized Access Attempt Detected in Your Region',
-            snippet: 'This is an automated security notification regarding your Microsoft 365 Work Account...',
-            body: `<p>Hello User,</p><p>This is an automated security notification regarding your Microsoft 365 Work Account. Our Global Threat Intelligence Center has detected a suspicious login attempt originating from an unrecognized device in <strong>St. Petersburg, Russia</strong> at 04:12 AM GMT.</p><p>Because you have not marked this location as a trusted zone, we have temporarily restricted access to your cloud documents and Outlook mailbox to prevent potential data exfiltration. This is a mandatory protective measure under the Corporate Cyber-Security Act of 2026.</p><p>To restore full access to your workspace and verify your identity, you must complete a two-factor authentication challenge via our secure external portal immediately. Failure to verify within the next 2 hours will result in a permanent account lockout and IT service ticket escalation.</p><p><a href="#" onmouseover="tip(true,'http://182.22.1.0/auth/ms-verify/session_id=8821')" onmouseout="tip(false)" style="display:inline-block;background:#1a73e8;color:white;padding:10px 24px;text-decoration:none;font-weight:500;border-radius:24px;font-family:Google Sans,sans-serif;">Secure Your Account Now</a></p><p>Thank you for helping us keep your workspace secure.<br><strong>Microsoft 365 Defense Team</strong></p>`,
-            flags: ['Sender uses .net instead of .com','Link points to a raw IP address (182.xx)','Extreme urgency and threat of "Permanent Lockout"']
-        },
-        {
-            id: 2, type: 'safe', sender: 'Corporate HR', addr: 'hr-portal@internal-corp.com',
-            subject: 'Mandatory: 2026 Annual Employee Benefits Enrollment Period',
-            snippet: 'It is once again time for our Annual Benefits Enrollment...',
-            body: `<p>Dear Team,</p><p>It is once again time for our Annual Benefits Enrollment. Between now and the end of the month, you have the opportunity to review and update your health insurance, dental coverage, and 401(k) contributions for the upcoming fiscal year.</p><p>We have introduced several new tiers this year, including an enhanced mental health support package and remote-work equipment stipends. It is vital that you review these changes as your current selections will not automatically roll over in the same format.</p><p>Please do not click any links in external emails regarding benefits. To complete your enrollment, log in directly to the <strong>Company Intranet Dashboard</strong> using your standard SSO credentials and navigate to the "HR & Benefits" tab. No external login is required.</p><p>Regards,<br><strong>The HR Excellence Team</strong></p>`,
-            flags: ['Verified internal domain','Explicitly tells user NOT to click links','Directs to known internal portal']
-        },
-        {
-            id: 3, type: 'phish', sender: 'IT Service Desk', addr: 'support@it-corp-help.online',
-            subject: 'ACTION REQUIRED: Mailbox Migration and Storage Quota Increase',
-            snippet: 'Our server infrastructure is currently undergoing a mandatory migration...',
-            body: `<p>Attention Employee,</p><p>Our server infrastructure is currently undergoing a mandatory migration to a new high-performance cloud cluster. This upgrade is designed to improve mail delivery speeds and increase individual mailbox storage limits from 50GB to 100GB.</p><p>During this transition, some users may experience temporary synchronization delays. To ensure your existing archive and sent items are migrated correctly without data loss, you are required to manually sync your workspace permissions using our temporary migration tool.</p><p>If you do not sync your account before the server cutoff at 5:00 PM today, your incoming emails may be bounced back to the sender as "Undeliverable" until the manual reconciliation process is completed by an IT technician.</p><p><a href="#" onmouseover="tip(true,'http://bit.ly/corp-mail-sync-v2')" onmouseout="tip(false)" style="color:#1a73e8;font-weight:500;text-decoration:underline;">Click Here to Sync Your Mailbox Now</a></p><p>Best regards,<br><strong>Internal IT Systems Management</strong></p>`,
-            flags: ['IT using a .online domain','Bitly shortener masks the destination','Pressure to act before a specific "cutoff" time']
-        },
-        {
-            id: 4, type: 'phish', sender: 'Executive Office', addr: 'ceo.office.global@gmail.com',
-            subject: 'Confidential Request: Assistance with Client Incentives',
-            snippet: 'I hope you\'re having a productive morning. I need your immediate assistance...',
-            body: `<p>Hi,</p><p>I hope you're having a productive morning. I'm currently tied up in a back-to-back board meeting and my corporate card is being declined for an international transaction. I need your immediate assistance with a confidential client project.</p><p>I need to send out 10 gift cards ($100 each) to our top-tier partners as a "thank you" for the Q1 results. Can you please go out and purchase these Apple or Steam gift cards and send me the clear photos of the codes on the back? I will ensure you are reimbursed personally by the end of the day with an additional bonus for the trouble.</p><p>Please keep this discrete as it is a surprise for the partners. Let me know as soon as you have them. I am relying on you.</p><p>Sent from my iPhone<br><strong>Executive Leadership Team</strong></p>`,
-            flags: ['CEO using a Gmail address','Highly unusual request for gift cards','Request for secrecy/discretion']
-        },
-        {
-            id: 5, type: 'safe', sender: 'Facilities Management', addr: 'building-ops@internal-corp.com',
-            subject: 'Urgent Building Update: Scheduled Power Outage (Wing C)',
-            snippet: 'Please be advised that the local utility company will be performing...',
-            body: `<p>Good afternoon,</p><p>Please be advised that the local utility company will be performing emergency maintenance on the transformer serving Wing C of our main campus. As a result, there will be a total power shutdown in this wing on Saturday, March 14th, from 08:00 to 18:00.</p><p>If your workspace is located in Wing C, please ensure that all sensitive electronic equipment is powered down and unplugged before you leave on Friday evening to prevent damage from potential power surges when service is restored.</p><p>Access to the building will be restricted to essential personnel only during this time. Please coordinate with your manager if you require weekend access. Thank you for your cooperation.</p><p>Best,<br><strong>Facilities & Operations</strong></p>`,
-            flags: ['Internal domain','Logically consistent with building ops','No links or credential requests']
-        },
-        {
-            id: 6, type: 'phish', sender: 'DocuSign System', addr: 'docusign@notice-docusgn.com',
-            subject: 'Signature Requested: 2026 Employee Compensation & Bonus Structure',
-            snippet: 'You have received a new document for electronic signature...',
-            body: `<p>You have received a new document for electronic signature.</p><p><strong>Document Name:</strong> 2026_Q1_Bonus_Schedule_Final.pdf<br><strong>Sender:</strong> Finance Department (via DocuSign)</p><p>Please review and sign this document to acknowledge your participation in the 2026 bonus incentive program. Your signature is required before the payroll processing cycle closes on Friday to ensure timely disbursement of funds.</p><p>This link is unique to your email address and should not be shared with others for security reasons.</p><p><a href="#" onmouseover="tip(true,'https://docusgn-verify-portal.net/d/a8k2js')" onmouseout="tip(false)" style="display:inline-block;background:#4285f4;color:white;padding:10px 24px;text-decoration:none;font-weight:500;border-radius:24px;">Review Document</a></p><p>Trouble with the link? Copy and paste the URL into your browser to continue.</p>`,
-            flags: ['Typo in domain (Docusgn)','Using .net for a commercial service','Money/Bonus lure to trigger emotional response']
-        },
-        {
-            id: 7, type: 'phish', sender: 'Legal Support', addr: 'legal@finance-claims.net',
-            subject: 'NOTICE OF LITIGATION: Outstanding Invoice #INV-99281',
-            snippet: 'This email serves as a formal notification that your account is now 90 days past due...',
-            body: `<p><strong>FINAL LEGAL NOTICE</strong></p><p>This email serves as a formal notification that your account is now 90 days past due. Despite multiple attempts to contact your accounting department, invoice #INV-99281 remains unpaid. Total balance due: $14,200.50.</p><p>Failure to settle this balance or provide proof of payment by tomorrow at 12:00 PM will result in the immediate escalation of this file to our external collections agency and the filing of a formal legal claim against your organization.</p><p>Please find the original contract and the unpaid invoice attached as a secure HTML document for your review. You must open this file to verify the billing details.</p><p><strong>Attachment:</strong> Invoice_Details_032026.html (45KB)</p><p><strong>Global Finance & Legal Associates</strong></p>`,
-            flags: ['Dangerous .html attachment','Aggressive legal threats','External .net domain for internal finance']
-        },
-        {
-            id: 8, type: 'safe', sender: 'Global Benefits', addr: 'benefits@internal-corp.com',
-            subject: 'Wellness Initiative: Free Gym Membership & Health Coaching',
-            snippet: 'As part of our 2026 Wellness Initiative, we are excited to announce...',
-            body: `<p>Hello Everyone,</p><p>As part of our 2026 Wellness Initiative, we are excited to announce a new partnership with local fitness centers across all regions. Effective immediately, all full-time employees are eligible for a fully subsidized premium gym membership.</p><p>In addition to gym access, you can also sign up for 1-on-1 health coaching sessions and nutritional planning at no additional cost. We believe that a healthy team is a happy and productive team!</p><p>To view the list of participating gyms and sign up, please visit the <strong>Employee Wellness</strong> section on our company SharePoint site. You do not need to provide any credit card information to the gym directly; simply present your employee ID badge.</p><p>Stay healthy!<br><strong>The Benefits Team</strong></p>`,
-            flags: ['Verified internal domain','Directs to SharePoint (internal)','No suspicious links']
-        },
-        {
-            id: 9, type: 'phish', sender: 'LinkedIn Security', addr: 'security@linkedin-notifications.net',
-            subject: 'Security Alert: Your Profile Was Accessed from a New Device',
-            snippet: 'Your LinkedIn account was recently used to sign in from a Chrome browser...',
-            body: `<p>Hi there,</p><p>Your LinkedIn account was recently used to sign in from a Chrome browser on a Linux device in <strong>Lagos, Nigeria</strong>. If this was you, you can safely ignore this email.</p><p>If you do not recognize this activity, your account password may have been compromised. We recommend that you reset your password and review your active sessions immediately to protect your professional network and private messages.</p><p><a href="#" onmouseover="tip(true,'https://linkedin-secure.com/reset/a93j')" onmouseout="tip(false)" style="color:#1a73e8;font-weight:500;">Review My Account Now</a></p><p>LinkedIn takes your privacy seriously. Thank you for staying vigilant.</p><p>The LinkedIn Security Team</p>`,
-            flags: ['Using .net for LinkedIn notifications','External reset link','Social media alert sent to work email']
-        },
-        {
-            id: 10, type: 'phish', sender: 'IT Admin', addr: 'admin@corp-it-desk.xyz',
-            subject: 'MANDATORY: Workplace Device Policy Update (Action Required)',
-            snippet: 'As part of our ongoing commitment to data security and compliance...',
-            body: `<p>Dear Employee,</p><p>As part of our ongoing commitment to data security and compliance with international privacy standards, we have updated the Workplace Device Security Policy. All employees are required to review and digitally acknowledge these changes by the end of the day.</p><p>This update includes new requirements for password complexity, screen timeout settings, and the use of approved VPN software when working remotely. Failure to acknowledge this policy will result in a temporary suspension of your VPN access starting at midnight.</p><p>Please use the link below to access the policy document and submit your electronic acknowledgment.</p><p><a href="#" onmouseover="tip(true,'https://it-policy-portal.xyz/verify')" onmouseout="tip(false)" style="color:#1a73e8;text-decoration:underline;">Review and Acknowledge Policy v4.2</a></p><p>Thank you,<br><strong>IT Compliance & Security Office</strong></p>`,
-            flags: ['Using .xyz domain (highly untrusted)','Threat of VPN suspension','Urgency regarding policy compliance']
-        }
-    ];
+const SCENARIOS = [
+    { id:1, type:'phish', sender:'Microsoft 365 Security', addr:'no-reply@microsoft-security-verify.net', subject:'CRITICAL: Unauthorized Access Attempt Detected', snippet:'Automated security notification regarding your Microsoft 365 Work Account...', body:`<p>Hello User,</p><p>This is an automated security notification regarding your Microsoft 365 Work Account. Our Global Threat Intelligence Center has detected a suspicious login attempt originating from <strong>St. Petersburg, Russia</strong> at 04:12 AM GMT.</p><p>To restore full access, you must complete a two-factor authentication challenge immediately. Failure to verify within 2 hours will result in permanent account lockout.</p><p><a href="#" onmouseover="tip(true,'http://182.22.1.0/auth/ms-verify/session_id=8821')" onmouseout="tip(false)" style="display:inline-block;background:#1a73e8;color:white;padding:10px 24px;text-decoration:none;font-weight:500;border-radius:24px;">Secure Your Account Now</a></p><p>Microsoft 365 Defense Team</p>`, flags:['Sender uses .net instead of .com','Link points to raw IP address','Extreme urgency + "Permanent Lockout"'] },
+    { id:2, type:'safe', sender:'Corporate HR', addr:'hr-portal@internal-corp.com', subject:'Mandatory: 2026 Annual Benefits Enrollment Period', snippet:'Time for Annual Benefits Enrollment...', body:`<p>Dear Team,</p><p>It is once again time for our Annual Benefits Enrollment. We have introduced several new tiers including enhanced mental health support and remote-work stipends.</p><p>Please do not click any links in external emails regarding benefits. To complete enrollment, log in directly to the <strong>Company Intranet Dashboard</strong> using SSO credentials.</p><p>Regards,<br><strong>The HR Excellence Team</strong></p>`, flags:['Verified internal domain','Explicitly tells NOT to click links','Directs to known internal portal'] },
+    { id:3, type:'phish', sender:'IT Service Desk', addr:'support@it-corp-help.online', subject:'ACTION REQUIRED: Mailbox Migration & Storage Increase', snippet:'Server infrastructure undergoing mandatory migration...', body:`<p>Attention Employee,</p><p>Our servers are undergoing mandatory migration. To ensure your archive is migrated correctly, you must manually sync your workspace permissions.</p><p>If you don't sync before 5:00 PM today, incoming emails may bounce as "Undeliverable".</p><p><a href="#" onmouseover="tip(true,'http://bit.ly/corp-mail-sync-v2')" onmouseout="tip(false)" style="color:#1a73e8;font-weight:500;text-decoration:underline;">Click Here to Sync Mailbox</a></p><p>Internal IT Systems Management</p>`, flags:['IT using .online domain','Bitly shortener masks destination','Pressure to act before "cutoff"'] },
+    { id:4, type:'phish', sender:'Executive Office', addr:'ceo.office.global@gmail.com', subject:'Confidential Request: Client Incentives', snippet:'I need your immediate assistance with a confidential project...', body:`<p>Hi,</p><p>I'm in a board meeting and my corporate card is declined. I need you to purchase 10 gift cards ($100 each) for top-tier partners and send me clear photos of the codes.</p><p>Please keep this discrete. I'll reimburse you personally with a bonus.</p><p>Sent from my iPhone<br><strong>Executive Leadership</strong></p>`, flags:['CEO using Gmail address','Unusual request for gift cards','Request for secrecy'] },
+    { id:5, type:'safe', sender:'Facilities Management', addr:'building-ops@internal-corp.com', subject:'Scheduled Power Outage (Wing C) - Saturday', snippet:'Local utility company performing emergency maintenance...', body:`<p>Good afternoon,</p><p>There will be a total power shutdown in Wing C on Saturday, March 14th, 08:00–18:00. Please power down and unplug sensitive equipment before Friday evening.</p><p>Best,<br><strong>Facilities & Operations</strong></p>`, flags:['Internal domain','Consistent with building ops','No links or credential requests'] },
+    { id:6, type:'phish', sender:'DocuSign System', addr:'docusign@notice-docusgn.com', subject:'Signature Requested: 2026 Compensation & Bonus Structure', snippet:'New document for electronic signature...', body:`<p>You have received a document for electronic signature.</p><p><strong>Document:</strong> 2026_Q1_Bonus_Schedule_Final.pdf<br><strong>Sender:</strong> Finance Department</p><p>Your signature is required before payroll processing closes Friday.</p><p><a href="#" onmouseover="tip(true,'https://docusgn-verify-portal.net/d/a8k2js')" onmouseout="tip(false)" style="display:inline-block;background:#4285f4;color:white;padding:10px 24px;text-decoration:none;font-weight:500;border-radius:24px;">Review Document</a></p>`, flags:['Typo in domain (Docusgn)','Using .net for commercial service','Money/Bonus emotional lure'] },
+    { id:7, type:'phish', sender:'Legal Support', addr:'legal@finance-claims.net', subject:'NOTICE OF LITIGATION: Invoice #INV-99281', snippet:'Account 90 days past due, formal notification...', body:`<p><strong>FINAL LEGAL NOTICE</strong></p><p>Your account is 90 days past due. Invoice #INV-99281 balance: $14,200.50. Failure to settle by tomorrow 12:00 PM results in legal claim filing.</p><p><strong>Attachment:</strong> Invoice_Details_032026.html (45KB)</p><p>Global Finance & Legal Associates</p>`, flags:['Dangerous .html attachment','Aggressive legal threats','External .net domain'] },
+    { id:8, type:'safe', sender:'Global Benefits', addr:'benefits@internal-corp.com', subject:'Wellness Initiative: Free Gym Membership & Health Coaching', snippet:'2026 Wellness Initiative partnership with local fitness centers...', body:`<p>Hello Everyone,</p><p>All full-time employees are eligible for a fully subsidized premium gym membership. Visit the <strong>Employee Wellness</strong> section on SharePoint. No credit card needed — present your employee ID badge.</p><p>Stay healthy!<br><strong>The Benefits Team</strong></p>`, flags:['Verified internal domain','Directs to SharePoint','No suspicious links'] },
+    { id:9, type:'phish', sender:'LinkedIn Security', addr:'security@linkedin-notifications.net', subject:'Security Alert: Profile Accessed from New Device', snippet:'Account used to sign in from Chrome browser on Linux...', body:`<p>Hi there,</p><p>Your LinkedIn account was used to sign in from Chrome on Linux in <strong>Lagos, Nigeria</strong>. If this wasn't you, reset your password immediately.</p><p><a href="#" onmouseover="tip(true,'https://linkedin-secure.com/reset/a93j')" onmouseout="tip(false)" style="color:#1a73e8;font-weight:500;">Review My Account Now</a></p><p>The LinkedIn Security Team</p>`, flags:['Using .net for LinkedIn','External reset link','Social media alert to work email'] },
+    { id:10, type:'phish', sender:'IT Admin', addr:'admin@corp-it-desk.xyz', subject:'MANDATORY: Workplace Device Policy Update', snippet:'Updated Workplace Device Security Policy requires acknowledgment...', body:`<p>Dear Employee,</p><p>The Workplace Device Security Policy has been updated. All employees must digitally acknowledge changes by end of day or VPN access is suspended at midnight.</p><p><a href="#" onmouseover="tip(true,'https://it-policy-portal.xyz/verify')" onmouseout="tip(false)" style="color:#1a73e8;text-decoration:underline;">Review and Acknowledge Policy v4.2</a></p><p>IT Compliance & Security Office</p>`, flags:['Using .xyz domain','Threat of VPN suspension','Urgency regarding compliance'] }
+];
 
-    let inbox = [], junk = [], historyIds = [], processedCount = 0;
-    let stats = { score: 1000, passed: 0 };
-    let currentMail = null, currentFolder = 'inbox', availableScenarios = [];
+// STATE
+let inbox = [], junk = [], trash = [], sent = [], selectedIds = new Set();
+let processedCount = 0, stats = { score: 1000, correct: 0, wrong: 0 };
+let currentMail = null, currentFolder = 'inbox', currentTab = 'primary';
+let availableScenarios = [], debriefHistory = [], contextTarget = null;
 
-    function closeIntro() {
-        document.getElementById('modal-intro').classList.add('hidden');
-        availableScenarios = [...SCENARIOS].sort(() => Math.random() - 0.5);
-        deliverInitialBatch();
-        startSyncTimer();
+// ===== INIT =====
+function closeIntro() {
+    document.getElementById('modal-intro').classList.add('hidden');
+    availableScenarios = [...SCENARIOS].sort(() => Math.random() - 0.5);
+    deliverBatch(3);
+    startDelivery();
+}
+
+function deliverBatch(n) { for (let i = 0; i < n; i++) deliverOne(); }
+
+function startDelivery() {
+    const iv = setInterval(() => {
+        if (availableScenarios.length > 0 && currentFolder === 'inbox') deliverOne();
+        if (availableScenarios.length === 0) clearInterval(iv);
+    }, 12000);
+}
+
+function deliverOne() {
+    if (availableScenarios.length === 0) return;
+    const s = availableScenarios.shift();
+    const mail = {
+        ...s, uid: 'mail-' + Date.now() + '-' + Math.random().toString(36).substr(2,5),
+        avatarColor: AVATAR_COLORS[(s.id - 1) % AVATAR_COLORS.length],
+        time: TIMES[Math.floor(Math.random() * TIMES.length)],
+        unread: true, starred: false, important: false, selected: false, processed: false, delivering: true
+    };
+    inbox.unshift(mail);
+    renderList();
+    showToast('New email from ' + mail.sender, 3000);
+    setTimeout(() => { mail.delivering = false; renderList(); }, 400);
+}
+
+// ===== RENDER =====
+function getActiveList() {
+    if (currentFolder === 'inbox') return inbox;
+    if (currentFolder === 'junk') return junk;
+    if (currentFolder === 'trash') return trash;
+    if (currentFolder === 'sent') return sent;
+    if (currentFolder === 'starred') return [...inbox, ...junk].filter(m => m.starred);
+    return [];
+}
+
+function renderList() {
+    const list = document.getElementById('email-list-container');
+    const active = getActiveList();
+    const unreadInbox = inbox.filter(m => m.unread).length;
+
+    document.getElementById('badge-inbox').textContent = unreadInbox || '';
+    document.getElementById('badge-junk').textContent = junk.length || '';
+    document.getElementById('sync-count').textContent = 10 - processedCount;
+    document.getElementById('stat-score').textContent = stats.score;
+    document.getElementById('progress-bar').style.width = (processedCount * 10) + '%';
+    document.getElementById('progress-text').textContent = processedCount + ' of 10 analyzed';
+    document.getElementById('pager-text').textContent = active.length > 0 ? `1–${active.length} of ${active.length}` : '0';
+
+    const tabBadge = document.getElementById('tab-badge-primary');
+    if (unreadInbox > 0) { tabBadge.textContent = unreadInbox; tabBadge.classList.add('show'); }
+    else tabBadge.classList.remove('show');
+
+    if (active.length === 0) {
+        const msgs = { inbox: 'Your inbox is clean.', junk: 'No reported threats.', trash: 'Trash is empty.', sent: 'No sent messages.', starred: 'No starred messages.' };
+        list.innerHTML = `<div class="empty-state"><span class="material-icons">all_inbox</span><p>${msgs[currentFolder] || 'Empty.'}</p></div>`;
+        return;
     }
 
-    function deliverInitialBatch() { for(let i=0; i<3; i++) deliverOne(); }
+    list.innerHTML = active.map((m, idx) => {
+        const isFirst = idx === 0, isLast = idx === active.length - 1, isOnly = active.length === 1;
+        let borderRadius = '';
+        if (isOnly) borderRadius = 'border-radius:12px;';
+        else if (isFirst) borderRadius = 'border-radius:12px 12px 0 0;margin-top:4px;';
+        else if (isLast) borderRadius = 'border-radius:0 0 12px 12px;border-bottom:none;';
 
-    function startSyncTimer() {
-        const interval = setInterval(() => {
-            if (processedCount + inbox.length < 10) deliverOne();
-            else clearInterval(interval);
-        }, 15000);
+        return `<div onclick="openEmail('${m.uid}')" id="row-${m.uid}"
+            class="email-row ${m.unread ? 'unread' : ''} ${m.selected ? 'selected' : ''} ${m.delivering ? 'delivering' : ''}"
+            style="${borderRadius}"
+            oncontextmenu="showContextMenu(event, '${m.uid}')">
+            <div class="checkbox-area" onclick="event.stopPropagation()">
+                <input type="checkbox" ${m.selected ? 'checked' : ''} onchange="toggleSelect('${m.uid}', this.checked)">
+                <span class="star ${m.starred ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar('${m.uid}')">
+                    <span class="material-icons" style="font-size:20px;">${m.starred ? 'star' : 'star_border'}</span>
+                </span>
+                <span class="important-marker ${m.important ? 'marked' : ''}" onclick="event.stopPropagation(); toggleImportant('${m.uid}')">
+                    <span class="material-icons" style="font-size:18px;">${m.important ? 'label_important' : 'label_important_outline'}</span>
+                </span>
+            </div>
+            <div class="email-sender">${m.sender}</div>
+            <div class="email-content">
+                <span class="email-subject">${m.subject}</span>
+                <span class="email-snippet"> — ${m.snippet || ''}</span>
+            </div>
+            <div class="row-actions" onclick="event.stopPropagation()">
+                <div class="row-action-icon" onclick="archiveEmail('${m.uid}')" title="Archive"><span class="material-icons">archive</span></div>
+                <div class="row-action-icon" onclick="deleteEmail('${m.uid}')" title="Delete"><span class="material-icons">delete</span></div>
+                <div class="row-action-icon" onclick="toggleRead('${m.uid}')" title="Mark read/unread"><span class="material-icons">${m.unread ? 'drafts' : 'mark_email_unread'}</span></div>
+            </div>
+            <div class="email-time">${m.time}</div>
+        </div>`;
+    }).join('');
+
+    updateBulkBar();
+}
+
+// ===== SELECTION =====
+function toggleSelect(uid, checked) {
+    const all = [...inbox, ...junk, ...trash, ...sent];
+    const m = all.find(x => x.uid === uid);
+    if (m) { m.selected = checked; if (checked) selectedIds.add(uid); else selectedIds.delete(uid); }
+    renderList();
+}
+
+function toggleSelectAll(checked) {
+    const active = getActiveList();
+    active.forEach(m => { m.selected = checked; if (checked) selectedIds.add(m.uid); else selectedIds.delete(m.uid); });
+    renderList();
+}
+
+function updateBulkBar() {
+    const active = getActiveList();
+    const count = active.filter(m => m.selected).length;
+    const bar = document.getElementById('bulk-actions');
+    if (count > 0) { bar.classList.add('show'); document.getElementById('bulk-count').textContent = count + ' selected'; }
+    else bar.classList.remove('show');
+}
+
+function bulkAction(action) {
+    const active = getActiveList();
+    const sel = active.filter(m => m.selected);
+    sel.forEach(m => {
+        if (action === 'archive') archiveEmail(m.uid);
+        else if (action === 'delete') deleteEmail(m.uid);
+        else if (action === 'report') { junk.push(m); inbox = inbox.filter(x => x.uid !== m.uid); }
+        else if (action === 'read') m.unread = false;
+        else if (action === 'unread') m.unread = true;
+        m.selected = false; selectedIds.delete(m.uid);
+    });
+    document.getElementById('select-all-cb').checked = false;
+    renderList();
+    showToast(sel.length + ' conversation(s) updated');
+}
+
+// ===== EMAIL ACTIONS =====
+function toggleStar(uid) {
+    const all = [...inbox, ...junk, ...trash]; const m = all.find(x => x.uid === uid);
+    if (m) m.starred = !m.starred;
+    renderList(); if (currentMail?.uid === uid) document.getElementById('view-star').textContent = m.starred ? 'star' : 'star_border';
+}
+
+function toggleImportant(uid) {
+    const all = [...inbox, ...junk, ...trash]; const m = all.find(x => x.uid === uid);
+    if (m) m.important = !m.important; renderList();
+}
+
+function toggleRead(uid) {
+    const all = [...inbox, ...junk, ...trash]; const m = all.find(x => x.uid === uid);
+    if (m) m.unread = !m.unread; renderList();
+}
+
+function archiveEmail(uid) {
+    inbox = inbox.filter(m => m.uid !== uid); junk = junk.filter(m => m.uid !== uid);
+    renderList(); showToast('Conversation archived', 3000);
+}
+
+function deleteEmail(uid) {
+    let m = inbox.find(x => x.uid === uid) || junk.find(x => x.uid === uid);
+    if (m) { trash.push(m); inbox = inbox.filter(x => x.uid !== uid); junk = junk.filter(x => x.uid !== uid); }
+    renderList(); showToast('Conversation moved to Trash', 3000);
+}
+
+function archiveCurrent() { if (currentMail) { archiveEmail(currentMail.uid); closeReader(); } }
+function deleteCurrent() { if (currentMail) { deleteEmail(currentMail.uid); closeReader(); } }
+function toggleReadCurrent() { if (currentMail) { currentMail.unread = !currentMail.unread; renderList(); } }
+function toggleStarCurrent() { if (currentMail) toggleStar(currentMail.uid); }
+
+// ===== NAVIGATION =====
+function openEmail(uid) {
+    const all = [...inbox, ...junk, ...trash, ...sent];
+    currentMail = all.find(m => m.uid === uid);
+    if (!currentMail) return;
+    currentMail.unread = false;
+
+    document.getElementById('email-list-container').style.display = 'none';
+    document.getElementById('list-toolbar').style.display = 'none';
+    document.getElementById('tabs-bar').style.display = 'none';
+    document.getElementById('bulk-actions').classList.remove('show');
+    document.getElementById('email-view').classList.add('show');
+
+    document.getElementById('view-subject').textContent = currentMail.subject;
+    document.getElementById('view-sender').textContent = currentMail.sender;
+    document.getElementById('view-addr').textContent = '<' + currentMail.addr + '>';
+    document.getElementById('view-body').innerHTML = currentMail.body;
+    document.getElementById('view-time').textContent = currentMail.time;
+    document.getElementById('view-star').textContent = currentMail.starred ? 'star' : 'star_border';
+
+    const av = document.getElementById('view-avatar');
+    av.className = 'sender-avatar ' + currentMail.avatarColor;
+    av.textContent = currentMail.sender[0];
+
+    document.getElementById('action-buttons').style.display = (currentFolder === 'junk' || currentFolder === 'trash' || currentMail.processed) ? 'none' : 'flex';
+    resetReply();
+    renderList();
+}
+
+function closeReader() {
+    currentMail = null;
+    document.getElementById('email-view').classList.remove('show');
+    document.getElementById('email-list-container').style.display = '';
+    document.getElementById('list-toolbar').style.display = '';
+    document.getElementById('tabs-bar').style.display = '';
+}
+
+function navEmail(dir) {
+    if (!currentMail) return;
+    const active = getActiveList();
+    const idx = active.findIndex(m => m.uid === currentMail.uid);
+    const next = active[idx + dir];
+    if (next) openEmail(next.uid);
+    else showToast(dir > 0 ? 'No older conversations' : 'No newer conversations');
+}
+
+// ===== DECISION =====
+function recordDecision(type) {
+    if (!currentMail || currentMail.processed) return;
+    const isPhish = currentMail.type === 'phish';
+    const win = (type === 'report' && isPhish) || (type === 'safe' && !isPhish);
+
+    if (win) { stats.score += 100; stats.correct++; } else { stats.score -= 200; stats.wrong++; }
+    currentMail.processed = true;
+    processedCount++;
+
+    // Animate score
+    const badge = document.getElementById('score-badge');
+    badge.classList.add('flash');
+    const val = document.getElementById('stat-score');
+    val.classList.add('bump');
+    setTimeout(() => { badge.classList.remove('flash'); val.classList.remove('bump'); }, 400);
+
+    addDebrief(currentMail, win);
+
+    if (type === 'report') { junk.push(currentMail); inbox = inbox.filter(m => m.uid !== currentMail.uid); }
+
+    showToast(win ? '✓ Correct assessment!' : '✗ Incorrect — review the analysis panel', 4000);
+    closeReader();
+    renderList();
+
+    if (processedCount >= 10) setTimeout(showCompletion, 2000);
+}
+
+function addDebrief(mail, success) {
+    debriefHistory.unshift({ mail, success });
+    const c = document.getElementById('debrief-container');
+    c.innerHTML = debriefHistory.map(d => `
+        <div class="debrief-card ${d.success ? 'success' : 'fail'}">
+            <div class="debrief-status ${d.success ? 'success' : 'fail'}">
+                <span class="material-icons" style="font-size:16px;">${d.success ? 'check_circle' : 'cancel'}</span>
+                ${d.success ? 'Correct' : 'Incorrect'}
+            </div>
+            <div class="debrief-subject" title="${d.mail.subject}">${d.mail.subject}</div>
+            <div class="debrief-flags-label">Key Indicators:</div>
+            ${d.mail.flags.map(f => `<div class="debrief-flag"><span class="material-icons">arrow_right</span>${f}</div>`).join('')}
+            <div class="debrief-score"><span class="label">Impact</span><span class="chip ${d.success ? 'pos' : 'neg'}">${d.success ? '+100' : '-200'}</span></div>
+        </div>
+    `).join('');
+}
+
+// ===== COMPLETION =====
+function showCompletion() {
+    document.getElementById('final-score').textContent = stats.score;
+    document.getElementById('stat-correct').textContent = stats.correct;
+    document.getElementById('stat-wrong').textContent = stats.wrong;
+
+    const pct = (stats.correct / 10) * 100;
+
+    // Badge title based on performance
+    const badgeTitle = document.getElementById('badge-title');
+    if (pct >= 90) {
+        badgeTitle.textContent = '🏆 ELITE CYBER DEFENDER';
+        badgeTitle.style.background = 'linear-gradient(135deg, #ceead6, #e6f4ea)';
+        badgeTitle.style.color = '#137333';
+    } else if (pct >= 80) {
+        badgeTitle.textContent = '🛡️ SENIOR THREAT ANALYST';
+        badgeTitle.style.background = '#e8f0fe';
+        badgeTitle.style.color = '#1a73e8';
+    } else if (pct >= 60) {
+        badgeTitle.textContent = '📋 SECURITY AWARE';
+        badgeTitle.style.background = '#fef7e0';
+        badgeTitle.style.color = '#e37400';
+    } else {
+        badgeTitle.textContent = '⚠️ NEEDS ADDITIONAL TRAINING';
+        badgeTitle.style.background = '#fce8e6';
+        badgeTitle.style.color = '#c5221f';
     }
 
-    function deliverOne() {
-        if (availableScenarios.length > 0) {
-            const next = availableScenarios.shift();
-            const avIdx = (next.id - 1) % AVATAR_COLORS.length;
-            inbox.unshift({ ...next, instanceId: Math.random(), avatarColor: AVATAR_COLORS[avIdx], time: TIMES[Math.floor(Math.random()*TIMES.length)], unread: true, starred: false });
-            updateUI();
-        }
+    document.getElementById('completion-subtitle').textContent =
+        pct >= 80 ? 'Outstanding threat detection! You earned a certification badge.' :
+        pct >= 60 ? 'Good work, but some threats slipped through.' :
+        'Additional training is strongly recommended.';
+
+    const advice = document.getElementById('advice-box');
+    if (pct < 80) {
+        advice.innerHTML = `
+            <div class="advice-title warn">⚠ Areas for Improvement</div>
+            <p>Some sophisticated threats bypassed your analysis. Key skills to develop:</p>
+            <ul>
+                <li>Always verify <strong>sender domain extensions</strong> (.net vs .com)</li>
+                <li>Hover links before clicking — check for IP addresses or URL shorteners</li>
+                <li>CEOs never request gift cards via email</li>
+                <li>Legal threats via email are almost always scams</li>
+            </ul>`;
+    } else {
+        advice.innerHTML = `
+            <div class="advice-title good">✓ Elite Defender Status Achieved</div>
+            <p>Excellent work detecting subtle phishing indicators. You've earned your certification badge.</p>
+            <ul>
+                <li>Continue teaching "Hover Before Click" to colleagues</li>
+                <li>Report real-world phishing to IT immediately</li>
+                <li>Stay updated on AI-generated phishing and QR code attacks</li>
+            </ul>`;
     }
 
-    function updateUI() {
-        const list = document.getElementById('email-list-container');
-        const activeList = currentFolder === 'inbox' ? inbox : junk;
+    document.getElementById('modal-completion').classList.remove('hidden');
+}
+// ===== FOLDERS =====
+function switchFolder(folder) {
+    currentFolder = folder;
+    closeReader();
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    const btn = document.getElementById('btn-' + folder);
+    if (btn) btn.classList.add('active');
 
-        document.getElementById('badge-inbox').innerText = inbox.length;
-        document.getElementById('badge-junk').innerText = junk.length;
-        document.getElementById('sync-count').innerText = (10 - processedCount);
-        document.getElementById('stat-score').innerText = stats.score;
-        document.getElementById('progress-bar').style.width = (processedCount * 10) + "%";
+    const titles = { inbox: 'Primary', junk: 'Spam / Threats', trash: 'Trash', sent: 'Sent', starred: 'Starred' };
+    document.getElementById('folder-title-text').textContent = titles[folder] || folder;
+    document.getElementById('tabs-bar').style.display = folder === 'inbox' ? '' : 'none';
+    document.getElementById('select-all-cb').checked = false;
+    selectedIds.clear();
+    getActiveList().forEach(m => m.selected = false);
+    renderList();
+}
 
-        if (activeList.length === 0) {
-            list.innerHTML = `<div class="empty-state"><span class="material-icons">all_inbox</span><p>${currentFolder === 'inbox' ? 'Your inbox is empty.' : 'No reported threats yet.'}</p></div>`;
-            return;
-        }
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.gmail-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab !== 'primary') showToast('No messages in ' + tab.charAt(0).toUpperCase() + tab.slice(1));
+}
 
-        list.innerHTML = activeList.map((m, idx) => `
-            <div onclick="openEmail(${m.instanceId})" id="item-${m.instanceId}"
-                 class="email-row ${m.unread ? 'unread' : ''}"
-                 style="${idx === 0 ? 'border-radius:12px 12px 0 0;margin-top:4px;' : ''} ${idx === activeList.length-1 ? 'border-radius:0 0 12px 12px;border-bottom:none;' : ''}">
-                <div class="checkbox-area" onclick="event.stopPropagation()">
-                    <input type="checkbox">
-                    <span class="star ${m.starred ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar(${m.instanceId})">
-                        <span class="material-icons" style="font-size:20px;">${m.starred ? 'star' : 'star_border'}</span>
-                    </span>
+// ===== SEARCH =====
+function onSearchInput() {
+    const v = document.getElementById('search-input').value;
+    const clear = document.getElementById('search-clear');
+    clear.classList.toggle('has-text', v.length > 0);
+
+    const dd = document.getElementById('search-dropdown');
+    if (v.length === 0) { dd.classList.remove('open'); return; }
+
+    const all = [...inbox, ...junk, ...trash, ...sent];
+    const results = all.filter(m =>
+        m.subject.toLowerCase().includes(v.toLowerCase()) ||
+        m.sender.toLowerCase().includes(v.toLowerCase()) ||
+        m.addr.toLowerCase().includes(v.toLowerCase())
+    );
+
+    if (results.length === 0) {
+        dd.innerHTML = '<div class="search-no-results">No results found</div>';
+    } else {
+        dd.innerHTML = results.slice(0, 6).map(m => `
+            <div class="search-suggestion" onclick="document.getElementById('search-dropdown').classList.remove('open'); openEmail('${m.uid}')">
+                <span class="material-icons">${m.unread ? 'mail' : 'drafts'}</span>
+                <div style="flex:1; overflow:hidden;">
+                    <div style="font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.subject}</div>
+                    <div style="font-size:12px; color:#5f6368;">${m.sender}</div>
                 </div>
-                <div class="email-sender">${m.sender}</div>
-                <div class="email-content">
-                    <span class="email-subject">${m.subject}</span>
-                    <span class="email-snippet"> — ${m.snippet || ''}</span>
-                </div>
-                <div class="email-time">${m.time}</div>
             </div>
         `).join('');
     }
+    dd.classList.add('open');
+}
 
-    function toggleStar(instanceId) {
-        const list = currentFolder === 'inbox' ? inbox : junk;
-        const mail = list.find(m => m.instanceId === instanceId);
-        if (mail) { mail.starred = !mail.starred; updateUI(); }
+function onSearchFocus() { if (document.getElementById('search-input').value) onSearchInput(); }
+function clearSearch() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('search-clear').classList.remove('has-text');
+    document.getElementById('search-dropdown').classList.remove('open');
+}
+function doSearch() { onSearchInput(); }
+
+// Close search on outside click
+document.addEventListener('click', e => {
+    if (!document.getElementById('search-container').contains(e.target)) {
+        document.getElementById('search-dropdown').classList.remove('open');
     }
+});
 
-    function openEmail(instanceId) {
-        const list = currentFolder === 'inbox' ? inbox : junk;
-        currentMail = list.find(m => m.instanceId === instanceId);
-        if (!currentMail) return;
+// ===== CONTEXT MENU =====
+function showContextMenu(e, uid) {
+    e.preventDefault();
+    contextTarget = uid;
+    const menu = document.getElementById('context-menu');
+    menu.style.left = e.clientX + 'px';
+    menu.style.top = e.clientY + 'px';
+    menu.classList.add('show');
+}
 
-        currentMail.unread = false;
+document.addEventListener('click', () => document.getElementById('context-menu').classList.remove('show'));
 
-        document.getElementById('email-list-container').style.display = 'none';
-        document.getElementById('list-toolbar').style.display = 'none';
-        document.querySelector('.gmail-tabs').style.display = 'none';
-
-        const view = document.getElementById('email-view');
-        view.classList.add('show');
-
-        document.getElementById('view-subject').innerText = currentMail.subject;
-        document.getElementById('view-sender').innerText = currentMail.sender;
-        document.getElementById('view-addr').innerText = `<${currentMail.addr}>`;
-        document.getElementById('view-body').innerHTML = currentMail.body;
-        document.getElementById('view-time').innerText = currentMail.time;
-
-        const avatar = document.getElementById('view-avatar');
-        avatar.className = `sender-avatar ${currentMail.avatarColor}`;
-        avatar.innerText = currentMail.sender[0];
-
-        document.getElementById('action-buttons').style.display = currentFolder === 'junk' ? 'none' : 'flex';
-
-        updateUI();
-    }
-
-    function closeReader() {
-        currentMail = null;
-        document.getElementById('email-view').classList.remove('show');
-        document.getElementById('email-list-container').style.display = '';
-        document.getElementById('list-toolbar').style.display = '';
-        document.querySelector('.gmail-tabs').style.display = '';
-    }
-
-    function recordDecision(type) {
-        if (!currentMail) return;
-        const isPhish = currentMail.type === 'phish';
-        const win = (type === 'report' && isPhish) || (type === 'safe' && !isPhish);
-
-        if (win) { stats.score += 100; stats.passed++; }
-        else { stats.score -= 200; }
-
-        processedCount++;
-        showDebrief(win);
-
-        if (type === 'report') { junk.unshift(currentMail); }
-        else { historyIds.push(currentMail.id); }
-
-        inbox = inbox.filter(m => m.instanceId !== currentMail.instanceId);
-        closeReader();
-        updateUI();
-
-        if (processedCount >= 10) setTimeout(showCompletion, 2000);
-    }
-
-    function showDebrief(success) {
-        const c = document.getElementById('debrief-container');
-        c.innerHTML = `
-            <div class="debrief-card ${success ? 'success' : 'fail'}">
-                <div class="debrief-status ${success ? 'success' : 'fail'}">
-                    <span class="material-icons" style="font-size:18px;">${success ? 'check_circle' : 'cancel'}</span>
-                    ${success ? 'Threat Neutralized' : 'Security Breach'}
-                </div>
-                <div class="debrief-subject">${currentMail.subject}</div>
-                <div class="debrief-flags-label">Indicators Detected:</div>
-                ${currentMail.flags.map(f => `<div class="debrief-flag"><span class="material-icons">arrow_right</span>${f}</div>`).join('')}
-                <div class="debrief-score">
-                    <span class="label">Impact</span>
-                    <span class="chip ${success ? 'pos' : 'neg'}">${success ? '+100' : '-200'}</span>
-                </div>
-            </div>
-        `;
-    }
-
-    function showCompletion() {
-        const modal = document.getElementById('modal-completion');
-        const advice = document.getElementById('advice-box');
-        document.getElementById('final-score').innerText = stats.score;
-        modal.classList.remove('hidden');
-
-        if (stats.score < 1200) {
-            advice.innerHTML = `<div class="advice-title warn">⚠ ADDITIONAL TRAINING REQUIRED</div><p>Some sophisticated threats bypassed your analysis. Phishers rely on speed — they want you to click before you think.</p><p><strong>Critical Skills to Develop:</strong></p><ul><li>Always verify the <strong>Domain Extension</strong> (.net vs .com).</li><li>Be suspicious of "System Errors" requiring immediate login.</li><li>If an email from a CEO feels "weird," it's almost certainly a scam.</li></ul>`;
-        } else {
-            advice.innerHTML = `<div class="advice-title good">✓ ELITE DEFENDER STATUS</div><p>Outstanding work. You navigated all 10 complex scenarios with precision. Your ability to detect subtle domain typos and masked links is at a professional level.</p><p><strong>Next Steps for Mastery:</strong></p><ul><li>Teach colleagues the "Hover Before You Click" rule.</li><li>Report real-world phishing attempts to IT immediately.</li><li>Stay updated on Zero-Day phishing tactics involving QR codes and AI-generated voice.</li></ul>`;
+document.querySelectorAll('.context-item').forEach(item => {
+    item.addEventListener('click', () => {
+        if (!contextTarget) return;
+        const action = item.dataset.action;
+        if (action === 'archive') archiveEmail(contextTarget);
+        else if (action === 'star') toggleStar(contextTarget);
+        else if (action === 'mark-read') { toggleRead(contextTarget); }
+        else if (action === 'mark-unread') { const all = [...inbox,...junk,...trash]; const m = all.find(x=>x.uid===contextTarget); if(m) m.unread = true; renderList(); }
+        else if (action === 'report') {
+            const m = inbox.find(x => x.uid === contextTarget);
+            if (m) { junk.push(m); inbox = inbox.filter(x => x.uid !== contextTarget); renderList(); showToast('Reported as phishing'); }
         }
-    }
+        else if (action === 'delete') deleteEmail(contextTarget);
+        contextTarget = null;
+    });
+});
 
-    function switchFolder(folder) {
-        if (folder === 'inbox' || folder === 'junk') {
-            currentFolder = folder;
-            closeReader();
-            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(folder === 'inbox' ? 'btn-inbox' : 'btn-junk').classList.add('active');
-            document.getElementById('folder-title-text').innerText = folder === 'inbox' ? 'Inbox' : 'Spam / Threats';
-            updateUI();
-        }
+// ===== COMPOSE =====
+function openCompose() { document.getElementById('compose-modal').classList.add('show'); document.getElementById('compose-modal').classList.remove('minimized'); document.getElementById('compose-to').focus(); }
+function closeCompose() {
+    const to = document.getElementById('compose-to').value;
+    const subj = document.getElementById('compose-subject').value;
+    const body = document.getElementById('compose-body').value;
+    if (to || subj || body) {
+        showToast('Draft discarded');
     }
+    document.getElementById('compose-modal').classList.remove('show');
+    document.getElementById('compose-to').value = '';
+    document.getElementById('compose-cc').value = '';
+    document.getElementById('compose-subject').value = '';
+    document.getElementById('compose-body').value = '';
+}
+function toggleComposeMinimize() { document.getElementById('compose-modal').classList.toggle('minimized'); }
+function maximizeCompose() { showToast('Full screen compose coming soon'); }
 
-    function switchTab(tab) {
-        document.querySelectorAll('.gmail-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${tab}`).classList.add('active');
+function sendCompose() {
+    const to = document.getElementById('compose-to').value.trim();
+    const subj = document.getElementById('compose-subject').value.trim();
+    if (!to) { showToast('Please specify at least one recipient'); return; }
+    sent.push({ uid: 'sent-' + Date.now(), sender: 'Me', addr: 'analyst@cybersmart.training', subject: subj || '(no subject)', snippet: document.getElementById('compose-body').value.substring(0,60), body: '<p>' + document.getElementById('compose-body').value.replace(/\n/g,'</p><p>') + '</p>', time: 'Just now', unread: false, starred: false, important: false, selected: false, flags: [], type: 'safe', processed: true, avatarColor: 'av-blue', delivering: false });
+    document.getElementById('compose-modal').classList.remove('show');
+    document.getElementById('compose-to').value = '';
+    document.getElementById('compose-cc').value = '';
+    document.getElementById('compose-subject').value = '';
+    document.getElementById('compose-body').value = '';
+    showToast('Message sent');
+}
+
+// ===== REPLY =====
+function expandReply() {
+    const area = document.getElementById('reply-area');
+    if (!area.classList.contains('expanded')) {
+        area.classList.add('expanded');
+        document.getElementById('reply-placeholder').style.display = 'none';
+        document.getElementById('reply-textarea').focus();
     }
+}
 
-    function openCompose() { document.getElementById('compose-modal').classList.add('show'); }
-    function closeCompose() { document.getElementById('compose-modal').classList.remove('show'); }
+function resetReply() {
+    const area = document.getElementById('reply-area');
+    area.classList.remove('expanded');
+    document.getElementById('reply-placeholder').style.display = '';
+    document.getElementById('reply-textarea').value = '';
+}
 
-    function tip(v, u) {
-        const b = document.getElementById('status-bar');
-        if (v) { b.innerText = u; b.style.display = 'block'; }
-        else { b.style.display = 'none'; }
+function sendReply() {
+    const text = document.getElementById('reply-textarea').value.trim();
+    if (!text) { showToast('Cannot send empty reply'); return; }
+    sent.push({ uid: 'sent-' + Date.now(), sender: 'Me', addr: 'analyst@cybersmart.training', subject: 'Re: ' + (currentMail?.subject || ''), snippet: text.substring(0,60), body: '<p>' + text.replace(/\n/g,'</p><p>') + '</p>', time: 'Just now', unread: false, starred: false, important: false, selected: false, flags: [], type: 'safe', processed: true, avatarColor: 'av-blue', delivering: false });
+    resetReply();
+    showToast('Reply sent');
+}
+
+function discardReply() { resetReply(); }
+
+// ===== SIDEBAR =====
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+
+function refreshInbox() {
+    if (availableScenarios.length > 0) {
+        deliverOne();
+        showToast('Checking for new mail...');
+    } else {
+        showToast('No new messages');
     }
+}
+
+// ===== TOAST =====
+function showToast(msg, dur = 4000) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span style="flex:1;">${msg}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.animation = 'toastOut 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, dur);
+}
+
+// ===== LINK HOVER =====
+function tip(show, url) {
+    const bar = document.getElementById('status-bar');
+    if (show) { bar.textContent = url; bar.style.display = 'block'; }
+    else bar.style.display = 'none';
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+let keyBuffer = '';
+document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === '?') { document.getElementById('shortcuts-overlay').classList.toggle('show'); return; }
+    if (e.key === 'Escape') {
+        document.getElementById('shortcuts-overlay').classList.remove('show');
+        if (currentMail) closeReader();
+        return;
+    }
+    if (e.key === 'c') { openCompose(); e.preventDefault(); return; }
+    if (e.key === '/') { document.getElementById('search-input').focus(); e.preventDefault(); return; }
+    if (e.key === 'u' && currentMail) { closeReader(); return; }
+    if (e.key === 's' && currentMail) { toggleStarCurrent(); return; }
+    if (e.key === '!' && currentMail && !currentMail.processed) { recordDecision('report'); return; }
+
+    // G then I for inbox
+    if (e.key === 'g') { keyBuffer = 'g'; setTimeout(() => keyBuffer = '', 1000); return; }
+    if (keyBuffer === 'g' && e.key === 'i') { switchFolder('inbox'); keyBuffer = ''; return; }
+
+    // Arrow keys for email nav
+    if (e.key === 'j' || e.key === 'ArrowDown') { if (currentMail) navEmail(1); }
+    if (e.key === 'k' || e.key === 'ArrowUp') { if (currentMail) navEmail(-1); }
+});
+
+// Close dropdown on escape in search
+document.getElementById('search-input').addEventListener('keydown', e => {
+    if (e.key === 'Escape') { clearSearch(); e.target.blur(); }
+    if (e.key === 'Enter') doSearch();
+});
+
+// Initial render
+renderList();
 </script>
 </body>
 </html>
+```
