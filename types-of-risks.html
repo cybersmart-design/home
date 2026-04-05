@@ -429,223 +429,43 @@ header {
     white-space: nowrap;
 }
 
-/* ===== GATE BUTTON ===== */
+/* ===== ACCESS BUTTON (direct navigation, no effects) ===== */
 .gate-section {
     text-align: center;
     padding: 50px 20px 70px;
 }
 
-.gate-btn {
+.access-btn {
     display: inline-block;
     padding: 20px 40px;
-    background: transparent;
-    border: 2px solid var(--neon-magenta);
-    color: var(--neon-magenta);
+    background: linear-gradient(135deg, rgba(3, 252, 132, 0.12), rgba(9, 238, 245, 0.08));
+    border: 2px solid var(--neon-green);
+    color: var(--neon-green);
     font-family: var(--font-mono);
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
     border-radius: 10px;
-    transition: 0.4s;
+    transition: 0.3s;
     text-transform: uppercase;
     letter-spacing: 2px;
-    position: relative;
-    overflow: hidden;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 15px rgba(3, 252, 132, 0.2);
+    text-decoration: none;
 }
-.gate-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(250, 44, 255, 0.1), transparent);
-    opacity: 0;
-    transition: 0.4s;
-}
-.gate-btn:hover {
-    background: rgba(250, 44, 255, 0.1);
-    box-shadow: 0 0 35px rgba(250, 44, 255, 0.2), inset 0 0 35px rgba(250, 44, 255, 0.05);
+.access-btn:hover {
+    background: rgba(3, 252, 132, 0.18);
     transform: translateY(-3px);
+    box-shadow: 0 0 35px rgba(3, 252, 132, 0.4);
+    border-color: var(--neon-cyan);
 }
-.gate-btn:hover::before { opacity: 1; }
-
 .gate-hint {
     font-family: var(--font-mono);
     font-size: 0.7rem;
     color: var(--text-secondary);
     margin-top: 14px;
-    opacity: 0.5;
+    opacity: 0.6;
 }
-
-/* ===== TERMINAL GATEKEEPER MODAL ===== */
-#terminalModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(0,0,0,0.92);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.terminal-window {
-    width: 100%;
-    max-width: 700px;
-    background: #0a0e14;
-    border: 1px solid rgba(9, 238, 245, 0.25);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow:
-        0 0 60px rgba(9, 238, 245, 0.1),
-        0 0 120px rgba(9, 238, 245, 0.05),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.terminal-titlebar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    user-select: none;
-}
-.terminal-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-.terminal-dot.red { background: #ff5f57; }
-.terminal-dot.yellow { background: #febc2e; }
-.terminal-dot.green { background: #28c840; }
-.terminal-titlebar span {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    color: var(--text-secondary);
-    margin-left: 10px;
-    letter-spacing: 1px;
-}
-
-.terminal-body {
-    padding: 20px;
-    min-height: 300px;
-    max-height: 50vh;
-    overflow-y: auto;
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    line-height: 1.7;
-    scrollbar-width: thin;
-    scrollbar-color: var(--neon-cyan) transparent;
-}
-.terminal-body::-webkit-scrollbar { width: 4px; }
-.terminal-body::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
-.terminal-body::-webkit-scrollbar-track { background: transparent; }
-
-.terminal-line { margin-bottom: 4px; word-break: break-word; }
-.terminal-line.system { color: var(--neon-cyan); }
-.terminal-line.success { color: var(--neon-green); }
-.terminal-line.error { color: var(--neon-magenta); }
-.terminal-line.warning { color: var(--neon-yellow); }
-.terminal-line.dim { color: var(--text-secondary); opacity: 0.6; }
-.terminal-line.question {
-    color: var(--neon-cyan);
-    font-weight: 700;
-    padding: 8px 0;
-    font-size: 0.88rem;
-}
-.terminal-line .prompt-symbol {
-    color: var(--neon-green);
-    margin-right: 8px;
-}
-.terminal-line.typing::after {
-    content: '█';
-    animation: blink-cursor 0.6s step-end infinite;
-    color: var(--neon-cyan);
-}
-@keyframes blink-cursor {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.terminal-input-row {
-    display: flex;
-    align-items: center;
-    padding: 14px 20px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    background: rgba(0,0,0,0.3);
-    gap: 10px;
-}
-.terminal-input-row .prompt-prefix {
-    font-family: var(--font-mono);
-    color: var(--neon-green);
-    font-size: 0.82rem;
-    white-space: nowrap;
-    user-select: none;
-}
-.terminal-input-row input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text-primary);
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    caret-color: var(--neon-cyan);
-}
-.terminal-input-row input::placeholder {
-    color: rgba(163, 184, 204, 0.25);
-}
-
-.terminal-close {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    background: none;
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-secondary);
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-    z-index: 10;
-}
-.terminal-close:hover {
-    border-color: var(--neon-magenta);
-    color: var(--neon-magenta);
-    background: rgba(250, 44, 255, 0.1);
-}
-
-/* ===== HACKER ACCESS OVERLAY ===== */
-#accessOverlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    background: #000;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-mono);
-    color: var(--neon-green);
-}
-
-.scan-line {
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    background: var(--neon-green);
-    box-shadow: 0 0 15px var(--neon-green);
-    top: 0;
-    animation: scan 1.5s linear infinite;
-}
-@keyframes scan { from { top: 0; } to { top: 100%; } }
-.glitch-flash { animation: flash 0.1s steps(2) infinite; }
-@keyframes flash { 0% { background: #000; } 50% { background: #032b17; } }
 
 /* ===== FOOTER ===== */
 footer {
@@ -669,8 +489,6 @@ footer a {
     header { padding: 14px 16px; }
     .logo { font-size: 1.1rem; }
     .card { padding: 22px; }
-    .terminal-body { min-height: 240px; max-height: 45vh; font-size: 0.76rem; }
-    .terminal-input-row input { font-size: 0.76rem; }
     .stats-bar { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 400px) {
@@ -754,7 +572,7 @@ footer a {
     <span class="section-tag">Threat Database</span>
     <h2 style="margin-top: 12px;">Classified Threat Profiles</h2>
     <p style="color: var(--text-secondary); margin-top: 8px; font-size: 0.9rem;">
-        Scroll through each threat card to register your review progress. All cards must be read to unlock the gateway.
+        Scroll through each threat card to register your review progress. Review all to unlock the secure access gateway.
     </p>
 </div>
 
@@ -877,40 +695,12 @@ footer a {
         <span class="defense-tag">Continuous Patching</span>
         <div class="read-badge">✓ Reviewed</div>
     </div>
-
 </div>
 
-<!-- ===== GATE BUTTON ===== -->
+<!-- ===== DIRECT ACCESS BUTTON (pure navigation, no overlay/effect) ===== -->
 <div class="gate-section">
-    <button class="gate-btn" id="gateBtn">
-        ⟩_ Initialize Security Handshake
-    </button>
-    <p class="gate-hint">Review all threat cards above to unlock access</p>
-</div>
-
-<!-- ===== TERMINAL GATEKEEPER MODAL ===== -->
-<div id="terminalModal">
-    <button class="terminal-close" id="terminalClose" aria-label="Close terminal">✕</button>
-    <div class="terminal-window">
-        <div class="terminal-titlebar">
-            <div class="terminal-dot red"></div>
-            <div class="terminal-dot yellow"></div>
-            <div class="terminal-dot green"></div>
-            <span>cybersmart://threat-db — gatekeeper v2.1</span>
-        </div>
-        <div class="terminal-body" id="terminalBody"></div>
-        <div class="terminal-input-row">
-            <span class="prompt-prefix">agent@cybersmart:~$</span>
-            <input type="text" id="terminalInput" placeholder="Type a command..." autocomplete="off" spellcheck="false" />
-        </div>
-    </div>
-</div>
-
-<!-- ===== HACKER ACCESS OVERLAY ===== -->
-<div id="accessOverlay">
-    <div class="scan-line"></div>
-    <div id="termLogs" style="text-align: left; width: 340px; font-size: 13px; margin-bottom: 20px; line-height: 1.5;"></div>
-    <h1 id="grantedTxt" style="font-family: 'Outfit'; font-weight: 900; letter-spacing: 8px; opacity: 0; color: var(--neon-green); font-size: clamp(2rem, 8vw, 5rem); text-shadow: 0 0 40px var(--neon-green);">ACCESS GRANTED</h1>
+    <a href="Simulationpage.html" class="access-btn" id="directAccessBtn">⟩_ Access Solutions Archive</a>
+    <p class="gate-hint">Review all threat cards above to unlock the secure gateway</p>
 </div>
 
 <!-- ===== FOOTER ===== -->
@@ -924,7 +714,7 @@ footer a {
 
 <script>
 // ============================================================
-//  1. READING / SCROLL TRACKING
+//  1. READING / SCROLL TRACKING (Preserved)
 // ============================================================
 const readThreats = new Set();
 const threatCards = document.querySelectorAll('#threatGrid .card[data-threat]');
@@ -933,11 +723,28 @@ const readingStatus = document.getElementById('readingStatus');
 const readingPercent = document.getElementById('readingPercent');
 const TOTAL_THREATS = threatCards.length;
 
+// Get the direct access button (anchor)
+const accessBtn = document.getElementById('directAccessBtn');
+
 function updateReadingProgress() {
     const pct = (readThreats.size / TOTAL_THREATS) * 100;
     readingFill.style.width = pct + '%';
     readingStatus.textContent = `${readThreats.size} / ${TOTAL_THREATS} threats reviewed`;
     readingPercent.textContent = Math.round(pct) + '%';
+    
+    // Enable/disable the button based on reading completion
+    if (readThreats.size >= TOTAL_THREATS) {
+        accessBtn.style.pointerEvents = 'auto';
+        accessBtn.style.opacity = '1';
+        accessBtn.style.cursor = 'pointer';
+        // add visual unlocked glow
+        accessBtn.style.boxShadow = '0 0 20px rgba(3, 252, 132, 0.5)';
+    } else {
+        accessBtn.style.pointerEvents = 'none';
+        accessBtn.style.opacity = '0.5';
+        accessBtn.style.cursor = 'default';
+        accessBtn.style.boxShadow = '0 0 15px rgba(3, 252, 132, 0.2)';
+    }
 }
 
 function hasCompletedReading() {
@@ -954,7 +761,6 @@ const cardObserver = new IntersectionObserver((entries) => {
                     readThreats.add(threat);
                     entry.target.classList.add('read');
                     updateReadingProgress();
-                    // Subtle animation on read
                     gsap.fromTo(entry.target.querySelector('.read-badge'),
                         { opacity: 0, y: 5 },
                         { opacity: 1, y: 0, duration: 0.4 }
@@ -976,7 +782,6 @@ gsap.from('.hero-title', { duration: 1, y: 30, opacity: 0, ease: 'power3.out' })
 gsap.from('.hero-subtitle', { duration: 1, y: 20, opacity: 0, delay: 0.15, ease: 'power3.out' });
 gsap.from('.stat-card', { duration: 0.6, y: 25, opacity: 0, stagger: 0.1, delay: 0.3, ease: 'power2.out' });
 
-// Animate threat cards on scroll
 const cardScrollObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting && !entry.target._animated) {
@@ -991,308 +796,25 @@ const cardScrollObserver = new IntersectionObserver((entries) => {
 threatCards.forEach(card => cardScrollObserver.observe(card));
 
 // ============================================================
-//  3. TERMINAL GATEKEEPER
+//  3. BUTTON BEHAVIOR: Show message if not all threats read, otherwise let navigation work naturally.
 // ============================================================
-const questions = [
-    {
-        q: "Identify the attack type that uses deceptive emails to steal credentials and personal information.",
-        answer: "phishing",
-        hint: "It sounds like a popular outdoor water activity — but instead of catching fish, attackers catch your data.",
-        acceptAlt: ["phising", "phishin", "phish", "spear phishing"]
-    },
-    {
-        q: "What type of malware encrypts your files and demands cryptocurrency payment for their release?",
-        answer: "ransomware",
-        hint: "The name combines a demand for money with the word 'software.' Think hostage negotiation, but digital.",
-        acceptAlt: ["ransom ware", "ransom", "ransomeware"]
-    },
-    {
-        q: "What attack floods a server with massive traffic to make it unavailable to legitimate users?",
-        answer: "dos",
-        hint: "The abbreviation stands for 'Denial of Service.' The distributed version uses botnets.",
-        acceptAlt: ["ddos", "denial of service", "dos attack", "ddos attack", "d.o.s", "distributed denial of service"]
-    },
-    {
-        q: "What do we call a vulnerability that is exploited before the developer has released any patch?",
-        answer: "zero-day",
-        hint: "The developer has had literally zero days to fix it. The name reflects that urgency.",
-        acceptAlt: ["zero day", "zeroday", "0-day", "0 day", "zero day exploit"]
-    }
-];
-
-// DOM references
-const gateBtn = document.getElementById('gateBtn');
-const terminalModal = document.getElementById('terminalModal');
-const terminalBody = document.getElementById('terminalBody');
-const terminalInput = document.getElementById('terminalInput');
-const terminalClose = document.getElementById('terminalClose');
-
-let currentQuestion = null;
-let terminalOpen = false;
-let isTyping = false;
-let hintUsed = false;
-
-// --- Utility: Typing animation ---
-function typeTerminalLine(text, className = '', delay = 0) {
-    return new Promise(resolve => {
+accessBtn.addEventListener('click', (e) => {
+    if (!hasCompletedReading()) {
+        e.preventDefault();  // block navigation if not all threats read
+        // provide subtle feedback: shake + temporary text change
+        gsap.to(accessBtn, { x: 8, repeat: 4, yoyo: true, duration: 0.05, ease: 'power2.inOut', onComplete: () => gsap.set(accessBtn, { x: 0 }) });
+        const originalText = accessBtn.innerText;
+        accessBtn.innerText = '⟩_ ACCESS LOCKED (Review all threats)';
         setTimeout(() => {
-            const line = document.createElement('div');
-            line.className = `terminal-line ${className}`;
-            terminalBody.appendChild(line);
-            scrollTerminal();
-
-            if (!text.length) { resolve(); return; }
-
-            isTyping = true;
-            let i = 0;
-            line.classList.add('typing');
-
-            const typeInterval = setInterval(() => {
-                line.textContent += text[i];
-                i++;
-                scrollTerminal();
-                if (i >= text.length) {
-                    clearInterval(typeInterval);
-                    line.classList.remove('typing');
-                    isTyping = false;
-                    resolve();
-                }
-            }, 16);
-        }, delay);
-    });
-}
-
-function addTerminalLine(text, className = '') {
-    const line = document.createElement('div');
-    line.className = `terminal-line ${className}`;
-    line.textContent = text;
-    terminalBody.appendChild(line);
-    scrollTerminal();
-}
-
-function addTerminalHTML(html, className = '') {
-    const line = document.createElement('div');
-    line.className = `terminal-line ${className}`;
-    line.innerHTML = html;
-    terminalBody.appendChild(line);
-    scrollTerminal();
-}
-
-function scrollTerminal() {
-    terminalBody.scrollTop = terminalBody.scrollHeight;
-}
-
-function clearTerminal() {
-    terminalBody.innerHTML = '';
-}
-
-// --- Open Terminal ---
-async function openTerminal() {
-    terminalOpen = true;
-    hintUsed = false;
-    clearTerminal();
-
-    currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-
-    terminalModal.style.display = 'flex';
-    gsap.from(terminalModal.querySelector('.terminal-window'), {
-        scale: 0.9, opacity: 0, duration: 0.4, ease: 'power3.out'
-    });
-
-    terminalInput.disabled = false;
-    terminalInput.value = '';
-    terminalInput.focus();
-
-    await typeTerminalLine('CYBERSMART THREAT-DB — Gatekeeper Terminal v2.1', 'system');
-    await typeTerminalLine('Establishing encrypted session...', 'dim', 80);
-    await typeTerminalLine('Connection secured. Agent authentication required.', 'success', 150);
-    await typeTerminalLine('', '', 80);
-    await typeTerminalLine('>> SECURITY CHALLENGE:', 'system', 80);
-    await typeTerminalLine(`   ${currentQuestion.q}`, 'question', 50);
-    await typeTerminalLine('', '', 50);
-    await typeTerminalLine('Submit your answer:  @answer_<your_answer>', 'dim', 50);
-    await typeTerminalLine('Type @help for available commands.', 'dim', 50);
-}
-
-// --- Close Terminal ---
-function closeTerminal() {
-    terminalOpen = false;
-    gsap.to(terminalModal.querySelector('.terminal-window'), {
-        scale: 0.9, opacity: 0, duration: 0.25, ease: 'power2.in',
-        onComplete: () => { terminalModal.style.display = 'none'; }
-    });
-}
-
-// --- Validate Answer ---
-function validateAnswer(input) {
-    const normalized = input.toLowerCase().trim().replace(/[^a-z0-9\- ]/g, '');
-    const correct = currentQuestion.answer.toLowerCase();
-    const alts = currentQuestion.acceptAlt.map(a => a.toLowerCase().replace(/[^a-z0-9\- ]/g, ''));
-
-    if (normalized === correct || alts.includes(normalized)) return true;
-    if (normalized.includes(correct)) return true;
-    for (const alt of alts) {
-        if (normalized.includes(alt)) return true;
+            accessBtn.innerText = originalText;
+        }, 1800);
     }
-    return false;
-}
-
-// --- Command Handler ---
-async function handleCommand(raw) {
-    if (isTyping) return;
-
-    const trimmed = raw.trim();
-    if (!trimmed) return;
-
-    addTerminalHTML(`<span class="prompt-symbol">$</span> ${trimmed}`, '');
-
-    const lower = trimmed.toLowerCase();
-
-    // @clear
-    if (lower === '@clear') {
-        clearTerminal();
-        await typeTerminalLine('Terminal cleared.', 'dim');
-        await typeTerminalLine(`>> ${currentQuestion.q}`, 'question', 80);
-        return;
-    }
-
-    // @help
-    if (lower === '@help') {
-        await typeTerminalLine('──────── AVAILABLE COMMANDS ────────', 'system');
-        await typeTerminalLine('@answer_<value>  — Submit your answer', 'dim', 25);
-        await typeTerminalLine('@hint            — Request a clue', 'dim', 25);
-        await typeTerminalLine('@clear           — Clear terminal output', 'dim', 25);
-        await typeTerminalLine('@help            — Show this help menu', 'dim', 25);
-        await typeTerminalLine('────────────────────────────────────', 'system', 25);
-        return;
-    }
-
-    // @hint
-    if (lower === '@hint') {
-        if (hintUsed) {
-            await typeTerminalLine('[SYSTEM] Hint already displayed. Review the clue above.', 'warning');
-        } else {
-            hintUsed = true;
-            await typeTerminalLine(`[HINT] ${currentQuestion.hint}`, 'warning');
-        }
-        return;
-    }
-
-    // @answer_<value>
-    if (lower.startsWith('@answer_') || lower.startsWith('@answer ')) {
-        const userAnswer = trimmed.replace(/^@answer[_ ]/i, '').trim();
-
-        if (!userAnswer) {
-            await typeTerminalLine('[ERROR] No answer provided. Use format: @answer_<your_answer>', 'error');
-            return;
-        }
-
-        // Check reading requirement
-        if (!hasCompletedReading()) {
-            await denyAccess('ACCESS DENIED: Insufficient module clearance. You must review all threat profiles before authentication.');
-            await typeTerminalLine(`[SYSTEM] Progress: ${readThreats.size}/${TOTAL_THREATS} threats reviewed. Scroll through the content above.`, 'warning');
-            return;
-        }
-
-        // Validate
-        if (validateAnswer(userAnswer)) {
-            await grantAccess();
-        } else {
-            await denyAccess('ACCESS DENIED: Invalid response. Verify your answer and try again.');
-        }
-        return;
-    }
-
-    // Unknown command
-    await typeTerminalLine(`[ERROR] Unrecognized command: "${trimmed}"`, 'error');
-    await typeTerminalLine('Type @help for a list of available commands.', 'dim');
-}
-
-// --- Grant Access ---
-async function grantAccess() {
-    await typeTerminalLine('[✓] Authentication successful.', 'success');
-    await typeTerminalLine('[✓] Generating secure access token...', 'success', 120);
-    await typeTerminalLine('[✓] Access granted. Redirecting to solutions archive...', 'success', 120);
-
-    terminalInput.disabled = true;
-
-    setTimeout(() => {
-        closeTerminal();
-        startHackingSequence();
-    }, 700);
-}
-
-// --- Deny Access ---
-async function denyAccess(message) {
-    await typeTerminalLine(`[✗] ${message}`, 'error');
-    gsap.to(terminalModal.querySelector('.terminal-window'), {
-        x: 8, repeat: 5, yoyo: true, duration: 0.05,
-        ease: 'power2.inOut',
-        onComplete: () => {
-            gsap.set(terminalModal.querySelector('.terminal-window'), { x: 0 });
-        }
-    });
-}
-
-// --- Hacker Sequence (preserved & enhanced) ---
-async function startHackingSequence() {
-    const overlay = document.getElementById('accessOverlay');
-    const term = document.getElementById('termLogs');
-    const granted = document.getElementById('grantedTxt');
-
-    term.innerHTML = '';
-    granted.style.opacity = 0;
-    overlay.classList.remove('glitch-flash');
-    overlay.style.display = 'flex';
-
-    const logs = [
-        "> DECRYPTING MODULE LEVEL 03...",
-        "> BYPASSING ENCRYPTION LAYERS...",
-        "> ESTABLISHING SECURE TUNNEL...",
-        "> VALIDATING SECURITY TOKEN...",
-        "> AUTHORIZING AGENT ACCESS...",
-        "> REDIRECTING TO SOLUTIONS ARCHIVE..."
-    ];
-
-    for (const log of logs) {
-        const div = document.createElement('div');
-        div.innerText = log;
-        term.appendChild(div);
-        await new Promise(r => setTimeout(r, 220));
-    }
-
-    overlay.classList.add('glitch-flash');
-    gsap.to(granted, { opacity: 1, scale: 1.1, duration: 0.3 });
-
-    setTimeout(() => {
-        window.location.href = "Simulationpage.html";
-    }, 2000);
-}
-
-// ============================================================
-//  4. EVENT LISTENERS
-// ============================================================
-
-gateBtn.addEventListener('click', () => openTerminal());
-
-terminalInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        const val = terminalInput.value;
-        terminalInput.value = '';
-        handleCommand(val);
-    }
+    // if completed, do nothing extra: default anchor navigation will proceed to Simulationpage.html
 });
 
-terminalClose.addEventListener('click', closeTerminal);
+// Initialize button state
+updateReadingProgress();
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && terminalOpen) closeTerminal();
-});
-
-terminalModal.addEventListener('click', (e) => {
-    if (e.target === terminalModal) closeTerminal();
-});
 </script>
-
 </body>
 </html>
