@@ -34,6 +34,77 @@ body {
     line-height: 1.6;
 }
 
+/* ====== NAVIGATION BAR (from About Us) ====== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(12px);
+    background: rgba(4, 8, 15, 0.8);
+    border-bottom: 1px solid rgba(9, 238, 245, 0.2);
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #09eef5, #03fc84);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    cursor: pointer;
+}
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(9, 238, 245, 0.15);
+    border: 1px solid rgba(9, 238, 245, 0.4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #09eef5;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+.nav-links a {
+    color: #a3b8cc;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+}
+.nav-links a:hover, .nav-links a.active {
+    color: #09eef5;
+}
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #09eef5, #03fc84);
+    border-radius: 2px;
+}
+.nav-links a {
+    position: relative;
+}
+
 /* ====== MOBILE / DESKTOP MODE WARNING OVERLAY ====== */
 .desktop-warning-overlay {
     display: none;
@@ -406,7 +477,7 @@ body {
     justify-content: center;
     overflow: hidden;
     background: radial-gradient(circle at center, #0a101a 0%, #04080f 100%);
-    padding: 80px 20px;
+    padding: 100px 20px 80px;
 }
 #heroCanvas { 
     position: absolute; 
@@ -683,6 +754,21 @@ footer {
 </style>
 </head>
 <body>
+
+<!-- ===== NAVIGATION BAR (from About Us) ===== -->
+<nav class="navbar">
+    <div class="logo" onclick="window.location.href='lobby.html'">
+        <div class="logo-icon"><span class="material-icons">shield</span></div>
+        <span>CyberSmart</span>
+    </div>
+    <div class="nav-links">
+        <a href="lobby.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="types-of-risks.html">Academy</a>
+        <a href="Simulationpage.html">Brief</a>
+        <a href="solutions.html">Simulations</a>
+    </div>
+</nav>
 
 <!-- ============================================================ -->
 <!--  DESKTOP MODE WARNING OVERLAY (Mobile Only)                   -->
@@ -996,6 +1082,11 @@ function dismissDesktopWarning() {
     }
 })();
 
+// Material Icons link (needed for navbar icons)
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
+document.head.appendChild(link);
 
 // ============================================================
 //  1. THREE.JS PARTICLE BACKGROUND
@@ -1069,13 +1160,7 @@ const cardObserver = new IntersectionObserver((entries) => {
 infoCards.forEach(card => cardObserver.observe(card));
 
 // ============================================================
-//  3. KNOWLEDGE HUB BUTTON - Direct redirect to types-of-risks.html
-// ============================================================
-// The button already has href="types-of-risks.html", so no extra JS needed.
-// But we keep this comment for clarity. The button will behave as a normal link.
-
-// ============================================================
-//  4. CHATBOT TOGGLE
+//  3. CHATBOT TOGGLE
 // ============================================================
 const chatbotToggle = document.getElementById('chatbotToggle');
 const chatbotContainer = document.getElementById('chatbotContainer');
