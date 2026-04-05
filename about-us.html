@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSmart | About - Cybersecurity Research Simulation</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0c12;
+            color: #eef2ff;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Animated Background */
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at 20% 30%, #0f111a, #04060c);
+        }
+
+        .cyber-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, rgba(9, 238, 245, 0.03) 0px, rgba(9, 238, 245, 0.03) 1px, transparent 1px, transparent 12px),
+                repeating-linear-gradient(90deg, rgba(3, 252, 132, 0.03) 0px, rgba(3, 252, 132, 0.03) 1px, transparent 1px, transparent 12px);
+            pointer-events: none;
+        }
+
+        /* Glowing Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .orb-1 { width: 400px; height: 400px; background: #09eef5; top: -150px; left: -150px; }
+        .orb-2 { width: 500px; height: 500px; background: #03fc84; bottom: -200px; right: -150px; opacity: 0.25; }
+        .orb-3 { width: 300px; height: 300px; background: #fa2cff; top: 40%; right: 20%; opacity: 0.15; }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            background: rgba(4, 8, 15, 0.7);
+            border-bottom: 1px solid rgba(9, 238, 245, 0.2);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #09eef5, #03fc84);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(9, 238, 245, 0.15);
+            border: 1px solid rgba(9, 238, 245, 0.4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #09eef5;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: #a3b8cc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: #09eef5;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 5% 80px;
+        }
+
+        /* Hero Section */
+        .hero-about {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(9, 238, 245, 0.1);
+            border: 1px solid rgba(9, 238, 245, 0.3);
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #09eef5;
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .hero-about h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #09eef5, #03fc84);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            animation: gradientShift 6s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .hero-about p {
+            font-size: 1.1rem;
+            color: #a3b8cc;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Mission Card */
+        .mission-card {
+            background: rgba(16, 24, 39, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(9, 238, 245, 0.2);
+            border-radius: 28px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .mission-card:hover {
+            border-color: rgba(9, 238, 245, 0.5);
+            box-shadow: 0 0 30px rgba(9, 238, 245, 0.08);
+        }
+        .mission-icon {
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+        .mission-card h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #09eef5, #03fc84);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .mission-card p {
+            color: #b8c7e0;
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .info-card {
+            background: rgba(10, 16, 26, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .info-card:hover {
+            border-color: rgba(9, 238, 245, 0.3);
+            transform: translateY(-3px);
+        }
+        .info-card .material-icons {
+            font-size: 32px;
+            color: #09eef5;
+            margin-bottom: 1rem;
+        }
+        .info-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .info-card p {
+            font-size: 0.85rem;
+            color: #b0c4de;
+            line-height: 1.6;
+        }
+
+        /* Team Sections */
+        .team-section {
+            margin-bottom: 3rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            border-left: 4px solid #09eef5;
+            padding-left: 1rem;
+        }
+        .section-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .section-header .sub {
+            color: #09eef5;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background: rgba(9, 238, 245, 0.1);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-card {
+            background: rgba(10, 16, 26, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .team-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(9, 238, 245, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0f1a2e, #091020);
+            border: 1.5px solid rgba(9, 238, 245, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+            font-size: 24px;
+            font-weight: 600;
+            color: #09eef5;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .team-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .team-role {
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: #03fc84;
+        }
+
+        /* Thesis Note */
+        .thesis-note {
+            background: rgba(3, 252, 132, 0.05);
+            border: 1px solid rgba(3, 252, 132, 0.15);
+            border-radius: 16px;
+            padding: 1.2rem;
+            text-align: center;
+            margin: 2rem 0;
+            font-size: 0.85rem;
+            color: #8bcb9e;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            margin-top: 2rem;
+            background: linear-gradient(135deg, rgba(9, 238, 245, 0.05), rgba(3, 252, 132, 0.02));
+            border-radius: 28px;
+            border: 1px solid rgba(9, 238, 245, 0.2);
+            padding: 2rem;
+            text-align: center;
+        }
+        .email-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(9, 238, 245, 0.1);
+            padding: 10px 24px;
+            border-radius: 60px;
+            border: 1px solid rgba(9, 238, 245, 0.3);
+            margin-top: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .email-chip:hover {
+            background: rgba(9, 238, 245, 0.2);
+            transform: scale(1.02);
+            border-color: #09eef5;
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            color: #03fc84;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 5% 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: #5a6e8a;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 1rem 5%; }
+            .nav-links { gap: 1rem; }
+            .container { padding: 100px 5% 60px; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="cyber-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="logo">
+        <div class="logo-icon"><span class="material-icons">shield</span></div>
+        <span>CyberSmart</span>
+    </div>
+    <div class="nav-links">
+        <a href="lobby.html">Home</a>
+        <a href="#" class="active">About</a>
+        <a href="types-of-risks.html">Academy</a>
+        <a href="Simulationpage.html">Brief</a>
+        <a href="solutions.html">Simulations</a>
+    </div>
+</nav>
+
+<main class="container">
+    <!-- Hero -->
+    <div class="hero-about reveal">
+        <div class="badge">
+            <span class="material-icons" style="font-size: 14px; vertical-align: middle;">verified</span> 
+            RESEARCH SIMULATION
+        </div>
+        <h1>About CyberSmart</h1>
+        <p>A research-based cybersecurity simulation designed to evaluate and improve phishing detection awareness through controlled, realistic email scenario testing.</p>
+    </div>
+
+    <!-- Mission & Objective -->
+    <div class="mission-card reveal">
+        <div class="mission-icon">🎯</div>
+        <h2>Research Objective</h2>
+        <p>This simulation serves as a formal research instrument to measure participants' ability to identify sophisticated phishing attempts. The platform provides a controlled environment for data collection on threat detection patterns, decision-making behaviors, and the effectiveness of structured educational frameworks in improving cybersecurity awareness. Unlike gamified platforms, this simulation prioritizes realistic email interfaces and systematic evaluation over entertainment mechanics.</p>
+    </div>
+
+    <!-- Additional Information Grid -->
+    <div class="info-grid reveal">
+        <div class="info-card">
+            <span class="material-icons">science</span>
+            <h3>Research Methodology</h3>
+            <p>Participants interact with authentic email simulations that replicate real-world phishing tactics. Each decision is recorded for analysis of recognition accuracy, response time, and confidence levels. Data is anonymized for research purposes.</p>
+        </div>
+        <div class="info-card">
+            <span class="material-icons">insights</span>
+            <h3>Key Metrics</h3>
+            <p>The simulation tracks detection accuracy, false positive rates, and response patterns across multiple threat categories including domain spoofing, urgency tactics, and social engineering attempts.</p>
+        </div>
+        <div class="info-card">
+            <span class="material-icons">psychology</span>
+            <h3>Educational Framework</h3>
+            <p>Based on established cybersecurity training protocols, the simulation incorporates real-time feedback and indicator breakdowns to reinforce learning without gamification elements.</p>
+        </div>
+        <div class="info-card">
+            <span class="material-icons">verified_user</span>
+            <h3>Data Privacy</h3>
+            <p>All simulation data is collected exclusively for academic research purposes. No personally identifiable information is stored. Participants remain anonymous throughout the study.</p>
+        </div>
+    </div>
+
+    <!-- Thesis Context -->
+    <div class="thesis-note reveal">
+        <span class="material-icons">description</span> 
+        This simulation was developed as part of a formal research thesis on cybersecurity awareness, phishing detection methodologies, and the effectiveness of structured educational interventions. The platform serves as a data collection instrument for academic analysis.
+    </div>
+
+    <!-- Research Team Section -->
+    <div class="team-section reveal">
+        <div class="section-header">
+            <h2>🔐 Research & Development Team</h2>
+            <div class="sub">Project Researchers</div>
+        </div>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="avatar">JB</div>
+                <h3>Jaybee S. Borgonia</h3>
+                <div class="team-role">Lead Researcher / Developer</div>
+            </div>
+            <div class="team-card">
+                <div class="avatar">SF</div>
+                <h3>Sean Cedric Flores</h3>
+                <div class="team-role">Co-Researcher / Developer</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thesis Advisers Section -->
+    <div class="team-section reveal">
+        <div class="section-header">
+            <h2>⚡ Thesis Advisers</h2>
+            <div class="sub">Research Guidance Committee</div>
+        </div>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="avatar">KD</div>
+                <h3>Kim Dazhell Distor</h3>
+                <div class="team-role">Research Adviser</div>
+            </div>
+            <div class="team-card">
+                <div class="avatar">KC</div>
+                <h3>Kent De Castro</h3>
+                <div class="team-role">Technical Adviser</div>
+            </div>
+            <div class="team-card">
+                <div class="avatar">KB</div>
+                <h3>Khen Beltran</h3>
+                <div class="team-role">Methodology Adviser</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Research Information -->
+    <div class="info-grid reveal">
+        <div class="info-card">
+            <span class="material-icons">school</span>
+            <h3>Institutional Context</h3>
+            <p>This research is conducted in partial fulfillment of academic requirements for [Your Institution Name]. The study examines human factors in cybersecurity and the efficacy of simulation-based training.</p>
+        </div>
+        <div class="info-card">
+            <span class="material-icons">date_range</span>
+            <h3>Study Period</h3>
+            <p>Data collection for this research is conducted over [specify period]. Participants' interactions contribute to the broader understanding of phishing detection behaviors.</p>
+        </div>
+        <div class="info-card">
+            <span class="material-icons">contact_support</span>
+            <h3>Research Questions</h3>
+            <p>Primary inquiries include: How accurately can participants identify phishing attempts? What indicators are most commonly missed? How does structured feedback improve detection rates?</p>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section reveal">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+            <span class="material-icons" style="color: #03fc84;">mail_outline</span>
+            <h3 style="font-weight: 600; font-size: 1.3rem;">Research Contact</h3>
+        </div>
+        <p style="color: #b0c4de; max-width: 500px; margin: 0 auto 0.5rem auto;">For research inquiries, collaboration, or feedback on the simulation platform.</p>
+        
+        <div class="email-chip" id="emailChip" onclick="copyEmail()">
+            <span class="material-icons">email</span>
+            <span id="businessEmail">cybersmart@gmail.com</span>
+            <button class="copy-btn" id="copyBtn" onclick="event.stopPropagation(); copyEmail()">
+                <span class="material-icons" style="font-size: 18px;">content_copy</span>
+            </button>
+        </div>
+        <p style="font-size: 0.7rem; margin-top: 0.8rem; color: #5a6e8a;">📧 Click to copy email address</p>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>© 2026 CyberSmart — Cybersecurity Research Simulation | Thesis Project</p>
+    <p style="margin-top: 8px; opacity: 0.5;">Developed for academic research purposes on phishing detection and security awareness training.</p>
+</footer>
+
+<script>
+    // Scroll reveal
+    const revealElements = document.querySelectorAll('.reveal');
+    
+    function checkReveal() {
+        const windowHeight = window.innerHeight;
+        const revealThreshold = 100;
+        
+        revealElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < windowHeight - revealThreshold) {
+                el.classList.add('visible');
+            }
+        });
+    }
+    
+    window.addEventListener('scroll', checkReveal);
+    window.addEventListener('resize', checkReveal);
+    checkReveal();
+
+    // Copy email
+    function copyEmail() {
+        const email = "cybersmart@gmail.com";
+        navigator.clipboard.writeText(email).then(() => {
+            const chip = document.getElementById('emailChip');
+            const originalBorder = chip.style.borderColor;
+            chip.style.borderColor = '#03fc84';
+            
+            const toast = document.createElement('div');
+            toast.innerText = '✓ Email copied to clipboard!';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.backgroundColor = '#0f1a2e';
+            toast.style.color = '#03fc84';
+            toast.style.padding = '12px 24px';
+            toast.style.borderRadius = '40px';
+            toast.style.fontSize = '0.85rem';
+            toast.style.fontFamily = "'JetBrains Mono', monospace";
+            toast.style.border = '1px solid rgba(3, 252, 132, 0.5)';
+            toast.style.backdropFilter = 'blur(12px)';
+            toast.style.zIndex = '1000';
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 400);
+                chip.style.borderColor = originalBorder;
+            }, 1800);
+        });
+    }
+
+    console.log("CyberSmart — Phishing Detection Research Simulation | Thesis Project");
+</script>
+</body>
+</html>
