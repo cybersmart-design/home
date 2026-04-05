@@ -7,6 +7,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
 <style>
 :root {
@@ -47,63 +48,78 @@ body::before {
     z-index: 0;
 }
 
-/* ===== NAVBAR ===== */
-header {
-    background: rgba(10, 16, 26, 0.9);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 16px 30px;
-    border-bottom: 1px solid var(--glass-border);
+/* ===== NAVBAR (Full version like About Us) ===== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
-    top: 0;
+    backdrop-filter: blur(12px);
+    background: rgba(4, 8, 15, 0.9);
+    border-bottom: 1px solid rgba(9, 238, 245, 0.2);
     z-index: 100;
+    transition: all 0.3s ease;
 }
 
 .logo {
-    font-family: 'Outfit';
-    color: var(--neon-cyan);
-    font-size: 1.3rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
     display: flex;
     align-items: center;
     gap: 10px;
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #09eef5, #03fc84);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    cursor: pointer;
 }
-.logo-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--neon-green);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--neon-green);
-    animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.7); }
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(9, 238, 245, 0.15);
+    border: 1px solid rgba(9, 238, 245, 0.4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #09eef5;
 }
 
-.nav-link {
-    color: var(--neon-cyan);
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+.nav-links a {
+    color: #a3b8cc;
     text-decoration: none;
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    padding: 8px 16px;
-    border: 1px solid var(--glass-border);
-    border-radius: 6px;
-    transition: 0.3s;
+    font-weight: 500;
+    transition: color 0.2s;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    position: relative;
 }
-.nav-link:hover {
-    border-color: var(--neon-cyan);
-    background: rgba(9, 238, 245, 0.08);
-    box-shadow: 0 0 15px rgba(9, 238, 245, 0.15);
+.nav-links a:hover {
+    color: #09eef5;
+}
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #09eef5, #03fc84);
+    border-radius: 2px;
 }
 
-/* ===== HERO SECTION ===== */
+/* ===== HERO SECTION (adjusted for fixed navbar) ===== */
 .hero-mini {
-    padding: 80px 20px 60px;
+    padding: 120px 20px 60px;
     text-align: center;
     background: linear-gradient(to bottom, rgba(10, 16, 26, 0.95), var(--dark-bg));
     position: relative;
@@ -290,7 +306,6 @@ header {
     box-shadow: 0 8px 40px rgba(9, 238, 245, 0.1);
 }
 
-/* Threat severity indicator */
 .card::before {
     content: attr(data-severity);
     position: absolute;
@@ -318,7 +333,6 @@ header {
     background: rgba(254, 188, 46, 0.08);
 }
 
-/* Threat card read indicator */
 .card.read {
     border-left: 3px solid var(--neon-green);
 }
@@ -358,7 +372,6 @@ header {
     line-height: 1.7;
 }
 
-/* Real-world stat inside card */
 .threat-stat {
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -429,7 +442,7 @@ header {
     white-space: nowrap;
 }
 
-/* ===== ACCESS BUTTON (direct navigation, no effects) ===== */
+/* ===== ACCESS BUTTON ===== */
 .gate-section {
     text-align: center;
     padding: 50px 20px 70px;
@@ -484,28 +497,42 @@ footer a {
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     .threat-grid { grid-template-columns: 1fr; }
+    .nav-links { gap: 1rem; }
+}
+@media (max-width: 768px) {
+    .navbar { padding: 0.8rem 5%; }
+    .nav-links a { font-size: 0.75rem; }
+    .logo { font-size: 1.1rem; }
+    .logo-icon { width: 28px; height: 28px; }
 }
 @media (max-width: 600px) {
-    header { padding: 14px 16px; }
-    .logo { font-size: 1.1rem; }
     .card { padding: 22px; }
     .stats-bar { grid-template-columns: 1fr 1fr; }
+    .nav-links { gap: 0.6rem; }
+    .nav-links a { font-size: 0.7rem; }
 }
-@media (max-width: 400px) {
-    .stats-bar { grid-template-columns: 1fr; }
+@media (max-width: 480px) {
+    .nav-links { gap: 0.4rem; }
+    .navbar { padding: 0.6rem 4%; }
 }
 </style>
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
-<header>
-    <div class="logo">
-        <div class="logo-dot"></div>
-        CyberSmart // DB
+<!-- ===== NAVBAR (Full version like About Us) ===== -->
+<nav class="navbar">
+    <div class="logo" onclick="window.location.href='lobby.html'">
+        <div class="logo-icon"><span class="material-icons">shield</span></div>
+        <span>CyberSmart</span>
     </div>
-    <a href="lobby.html" class="nav-link">⟨ Return to Base</a>
-</header>
+    <div class="nav-links">
+        <a href="lobby.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="types-of-risks.html">Academy</a>
+        <a href="Simulationpage.html">Brief</a>
+        <a href="solutions.html">Simulations</a>
+    </div>
+</nav>
 
 <!-- ===== HERO ===== -->
 <section class="hero-mini">
@@ -697,7 +724,7 @@ footer a {
     </div>
 </div>
 
-<!-- ===== DIRECT ACCESS BUTTON (pure navigation, no overlay/effect) ===== -->
+<!-- ===== DIRECT ACCESS BUTTON ===== -->
 <div class="gate-section">
     <a href="Simulationpage.html" class="access-btn" id="directAccessBtn">⟩_ Access Solutions Archive</a>
     <p class="gate-hint">Review all threat cards above to unlock the secure gateway</p>
@@ -712,9 +739,19 @@ footer a {
     </p>
 </footer>
 
+<!-- ===== SITESPEAK AI CHATBOT ===== -->
+<script type="text/javascript">
+(function(){
+    var d = document, s = d.createElement("script");
+    s.src = "https://sitespeak.ai/chatbots/242fdaac-e3a9-4026-a0ec-9916faf7ab9b.js";
+    s.async = 1;
+    d.getElementsByTagName("head")[0].appendChild(s);
+})();
+</script>
+
 <script>
 // ============================================================
-//  1. READING / SCROLL TRACKING (Preserved)
+//  1. READING / SCROLL TRACKING
 // ============================================================
 const readThreats = new Set();
 const threatCards = document.querySelectorAll('#threatGrid .card[data-threat]');
@@ -737,7 +774,6 @@ function updateReadingProgress() {
         accessBtn.style.pointerEvents = 'auto';
         accessBtn.style.opacity = '1';
         accessBtn.style.cursor = 'pointer';
-        // add visual unlocked glow
         accessBtn.style.boxShadow = '0 0 20px rgba(3, 252, 132, 0.5)';
     } else {
         accessBtn.style.pointerEvents = 'none';
@@ -796,12 +832,11 @@ const cardScrollObserver = new IntersectionObserver((entries) => {
 threatCards.forEach(card => cardScrollObserver.observe(card));
 
 // ============================================================
-//  3. BUTTON BEHAVIOR: Show message if not all threats read, otherwise let navigation work naturally.
+//  3. BUTTON BEHAVIOR
 // ============================================================
 accessBtn.addEventListener('click', (e) => {
     if (!hasCompletedReading()) {
-        e.preventDefault();  // block navigation if not all threats read
-        // provide subtle feedback: shake + temporary text change
+        e.preventDefault();
         gsap.to(accessBtn, { x: 8, repeat: 4, yoyo: true, duration: 0.05, ease: 'power2.inOut', onComplete: () => gsap.set(accessBtn, { x: 0 }) });
         const originalText = accessBtn.innerText;
         accessBtn.innerText = '⟩_ ACCESS LOCKED (Review all threats)';
@@ -809,12 +844,11 @@ accessBtn.addEventListener('click', (e) => {
             accessBtn.innerText = originalText;
         }, 1800);
     }
-    // if completed, do nothing extra: default anchor navigation will proceed to Simulationpage.html
 });
 
 // Initialize button state
 updateReadingProgress();
-
 </script>
+
 </body>
 </html>
