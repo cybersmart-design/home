@@ -576,181 +576,6 @@ body {
     opacity: 0.7;
 }
 
-/* ===== TERMINAL GATEKEEPER MODAL ===== */
-#terminalModal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(0,0,0,0.92);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.terminal-window {
-    width: 100%;
-    max-width: 680px;
-    background: #0a0e14;
-    border: 1px solid rgba(9, 238, 245, 0.25);
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 
-        0 0 60px rgba(9, 238, 245, 0.1),
-        0 0 120px rgba(9, 238, 245, 0.05),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-}
-
-.terminal-titlebar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    user-select: none;
-}
-.terminal-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-.terminal-dot.red { background: #ff5f57; }
-.terminal-dot.yellow { background: #febc2e; }
-.terminal-dot.green { background: #28c840; }
-.terminal-titlebar span {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    margin-left: 10px;
-    letter-spacing: 1px;
-}
-
-.terminal-body {
-    padding: 20px;
-    min-height: 320px;
-    max-height: 55vh;
-    overflow-y: auto;
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    line-height: 1.7;
-    scrollbar-width: thin;
-    scrollbar-color: var(--neon-cyan) transparent;
-}
-.terminal-body::-webkit-scrollbar { width: 4px; }
-.terminal-body::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
-.terminal-body::-webkit-scrollbar-track { background: transparent; }
-
-.terminal-line {
-    margin-bottom: 4px;
-    word-break: break-word;
-}
-.terminal-line.system { color: var(--neon-cyan); }
-.terminal-line.success { color: var(--neon-green); }
-.terminal-line.error { color: var(--neon-magenta); }
-.terminal-line.warning { color: #febc2e; }
-.terminal-line.dim { color: var(--text-secondary); opacity: 0.6; }
-.terminal-line.question { 
-    color: var(--neon-cyan); 
-    font-weight: 700;
-    padding: 8px 0;
-    font-size: 0.9rem;
-}
-.terminal-line .prompt-symbol {
-    color: var(--neon-green);
-    margin-right: 8px;
-}
-
-.terminal-line.typing::after {
-    content: '█';
-    animation: blink-cursor 0.6s step-end infinite;
-    color: var(--neon-cyan);
-}
-@keyframes blink-cursor {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.terminal-input-row {
-    display: flex;
-    align-items: center;
-    padding: 14px 20px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    background: rgba(0,0,0,0.3);
-    gap: 10px;
-}
-.terminal-input-row .prompt-prefix {
-    font-family: var(--font-mono);
-    color: var(--neon-green);
-    font-size: 0.85rem;
-    white-space: nowrap;
-    user-select: none;
-}
-.terminal-input-row input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    color: var(--text-primary);
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    caret-color: var(--neon-cyan);
-}
-.terminal-input-row input::placeholder {
-    color: rgba(163, 184, 204, 0.3);
-}
-
-.terminal-close {
-    position: absolute;
-    top: 16px;
-    right: 20px;
-    background: none;
-    border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-secondary);
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-    z-index: 10;
-}
-.terminal-close:hover {
-    border-color: var(--neon-magenta);
-    color: var(--neon-magenta);
-    background: rgba(250, 44, 255, 0.1);
-}
-
-/* HACKER OVERLAY */
-#accessOverlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    background: #000;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-mono);
-    color: var(--neon-green);
-}
-.scan-line {
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    background: var(--neon-green);
-    box-shadow: 0 0 15px var(--neon-green);
-    top: 0;
-    animation: scan 1.5s linear infinite;
-}
-@keyframes scan { from { top: 0; } to { top: 100%; } }
-.glitch-flash { animation: flash 0.1s steps(2) infinite; }
-@keyframes flash { 0% { background: #000; } 50% { background: #032b17; } }
-
 footer { 
     text-align: center; 
     padding: 60px 20px; 
@@ -763,8 +588,6 @@ footer {
 @media (max-width: 900px){ .container { flex-direction: column; } }
 @media (max-width: 500px){ 
     .box { padding:20px; font-size:14px; } 
-    .terminal-body { min-height: 250px; max-height: 45vh; font-size: 0.78rem; }
-    .terminal-input-row input { font-size: 0.78rem; }
 }
 
 /* ===== CHATBOT WIDGET ===== */
@@ -869,7 +692,7 @@ footer {
     <div class="dw-header-icon">🖥️</div>
     <div class="dw-title">Desktop Mode Recommended</div>
     <div class="dw-subtitle">
-        CyberSmart's interactive simulations, terminal challenges, and educational layouts are optimized for <strong>desktop-sized screens</strong>. Switch your browser to <strong>Desktop Mode</strong> for the best experience.
+        CyberSmart's interactive simulations and educational layouts are optimized for <strong>desktop-sized screens</strong>. Switch your browser to <strong>Desktop Mode</strong> for the best experience.
     </div>
 
     <!-- Instruction Card -->
@@ -998,8 +821,7 @@ footer {
         <strong>💡 Why Desktop Mode?</strong><br><br>
         CyberSmart features interactive elements including:
         <div class="dw-feature-list">
-            <div class="dw-feature-item"><span class="dw-check">✓</span> Terminal-based security challenges</div>
-            <div class="dw-feature-item"><span class="dw-check">✓</span> Full-size phone malware simulations</div>
+            <div class="dw-feature-item"><span class="dw-check">✓</span> Full-size malware simulations</div>
             <div class="dw-feature-item"><span class="dw-check">✓</span> Multi-panel educational layouts</div>
             <div class="dw-feature-item"><span class="dw-check">✓</span> Interactive step-by-step response guides</div>
         </div>
@@ -1085,7 +907,7 @@ footer {
             <div class="step-num">03</div>
             <div>
                 <h4 style="color: var(--neon-green);">Step 3: Apply</h4>
-                <p style="color: var(--text-secondary);">Test your knowledge through our terminal gatekeeper challenge below.</p>
+                <p style="color: var(--text-secondary);">Review the modules above and integrate these practices into your daily digital life.</p>
             </div>
         </div>
 
@@ -1103,34 +925,9 @@ footer {
             </div>
         </div>
 
-        <a href="types-of-risks.html" class="btn btn-primary btn-block" style="margin-top: 30px;" id="gateBtn">⟩_ Launch Terminal Gateway</a>
+        <a href="types-of-risks.html" class="btn btn-primary btn-block" id="knowledgeHubBtn">📘 Explore Knowledge Hub</a>
     </div>
 
-</div>
-
-<!-- ===== TERMINAL GATEKEEPER MODAL ===== -->
-<div id="terminalModal">
-    <button class="terminal-close" id="terminalClose" aria-label="Close terminal">✕</button>
-    <div class="terminal-window">
-        <div class="terminal-titlebar">
-            <div class="terminal-dot red"></div>
-            <div class="terminal-dot yellow"></div>
-            <div class="terminal-dot green"></div>
-            <span>cybersmart://gatekeeper — v2.1</span>
-        </div>
-        <div class="terminal-body" id="terminalBody"></div>
-        <div class="terminal-input-row">
-            <span class="prompt-prefix">guest@cybersmart:~$</span>
-            <input type="text" id="terminalInput" placeholder="Type a command..." autocomplete="off" spellcheck="false" />
-        </div>
-    </div>
-</div>
-
-<!-- ===== HACKER ACCESS OVERLAY ===== -->
-<div id="accessOverlay">
-    <div class="scan-line"></div>
-    <div id="termLogs" style="text-align: left; width: 320px; font-size: 13px; margin-bottom: 20px; line-height: 1.4;"></div>
-    <h1 id="grantedTxt" style="font-size: 8vw; font-family: 'Outfit'; text-shadow: 0 0 30px var(--neon-green); opacity: 0; font-weight: 900; letter-spacing: 10px;">ACCESS GRANTED</h1>
 </div>
 
 <!-- ===== CHATBOT WIDGET ===== -->
@@ -1164,17 +961,13 @@ footer {
 //  0. DESKTOP WARNING OVERLAY LOGIC
 // ============================================================
 function switchDWGuide(browser) {
-    // Hide all guides
     document.getElementById('dwGuideChrome').style.display = 'none';
     document.getElementById('dwGuideSafari').style.display = 'none';
     document.getElementById('dwGuideSamsung').style.display = 'none';
-
-    // Deactivate all tabs
     document.getElementById('dwTabChrome').classList.remove('active');
     document.getElementById('dwTabSafari').classList.remove('active');
     document.getElementById('dwTabSamsung').classList.remove('active');
 
-    // Show selected
     const guideMap = {
         chrome: 'dwGuideChrome',
         safari: 'dwGuideSafari',
@@ -1194,7 +987,6 @@ function dismissDesktopWarning() {
     document.getElementById('desktopWarning').classList.add('dismissed');
 }
 
-// Auto-detect browser for initial tab
 (function autoDetectBrowser() {
     const ua = navigator.userAgent.toLowerCase();
     if (/safari/i.test(ua) && !/chrome/i.test(ua) && !/crios/i.test(ua)) {
@@ -1202,7 +994,6 @@ function dismissDesktopWarning() {
     } else if (/samsungbrowser/i.test(ua)) {
         switchDWGuide('samsung');
     }
-    // Default: Chrome (already active)
 })();
 
 
@@ -1251,16 +1042,11 @@ const infoCards = document.querySelectorAll('#learnPanel .info-card[data-topic]'
 const readingFill = document.getElementById('readingFill');
 const readingStatus = document.getElementById('readingStatus');
 const TOTAL_MODULES = infoCards.length;
-const READ_THRESHOLD = TOTAL_MODULES;
 
 function updateReadingProgress() {
     const pct = (readModules.size / TOTAL_MODULES) * 100;
     readingFill.style.width = pct + '%';
     readingStatus.textContent = `${readModules.size} / ${TOTAL_MODULES} modules reviewed`;
-}
-
-function hasCompletedReading() {
-    return readModules.size >= READ_THRESHOLD;
 }
 
 const cardObserver = new IntersectionObserver((entries) => {
@@ -1283,289 +1069,13 @@ const cardObserver = new IntersectionObserver((entries) => {
 infoCards.forEach(card => cardObserver.observe(card));
 
 // ============================================================
-//  3. TERMINAL GATEKEEPER
+//  3. KNOWLEDGE HUB BUTTON - Direct redirect to types-of-risks.html
 // ============================================================
-const questions = [
-    {
-        q: "Identify the cyber attack that uses fake emails or messages to steal sensitive information.",
-        answer: "phishing",
-        hint: "Think about a term that sounds like 'fishing' — baiting victims with deceptive messages.",
-        acceptAlt: ["phising", "phishin", "phish"]
-    },
-    {
-        q: "What type of malware encrypts your files and demands payment for their release?",
-        answer: "ransomware",
-        hint: "The name combines a demand for money with malicious software.",
-        acceptAlt: ["ransom ware", "ransom", "ransomware"]
-    },
-    {
-        q: "What security measure requires two different forms of verification to access an account?",
-        answer: "2fa",
-        hint: "It's a two-step verification process. The abbreviation has a number and two letters.",
-        acceptAlt: ["two factor authentication", "two-factor authentication", "twofactor", "mfa", "2 fa", "two factor"]
-    }
-];
-
-const gateBtn = document.getElementById('gateBtn');
-const terminalModal = document.getElementById('terminalModal');
-const terminalBody = document.getElementById('terminalBody');
-const terminalInput = document.getElementById('terminalInput');
-const terminalClose = document.getElementById('terminalClose');
-
-let currentQuestion = null;
-let terminalOpen = false;
-let isTyping = false;
-let hintUsed = false;
-
-function typeTerminalLine(text, className = '', delay = 0) {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            const line = document.createElement('div');
-            line.className = `terminal-line ${className}`;
-            terminalBody.appendChild(line);
-            scrollTerminal();
-
-            if (text.length === 0) {
-                resolve();
-                return;
-            }
-
-            isTyping = true;
-            let i = 0;
-            line.classList.add('typing');
-
-            const typeInterval = setInterval(() => {
-                line.textContent += text[i];
-                i++;
-                scrollTerminal();
-                if (i >= text.length) {
-                    clearInterval(typeInterval);
-                    line.classList.remove('typing');
-                    isTyping = false;
-                    resolve();
-                }
-            }, 18);
-        }, delay);
-    });
-}
-
-function addTerminalLine(text, className = '') {
-    const line = document.createElement('div');
-    line.className = `terminal-line ${className}`;
-    line.textContent = text;
-    terminalBody.appendChild(line);
-    scrollTerminal();
-    return line;
-}
-
-function addTerminalHTML(html, className = '') {
-    const line = document.createElement('div');
-    line.className = `terminal-line ${className}`;
-    line.innerHTML = html;
-    terminalBody.appendChild(line);
-    scrollTerminal();
-    return line;
-}
-
-function scrollTerminal() {
-    terminalBody.scrollTop = terminalBody.scrollHeight;
-}
-
-function clearTerminal() {
-    terminalBody.innerHTML = '';
-}
-
-async function openTerminal() {
-    terminalOpen = true;
-    hintUsed = false;
-    clearTerminal();
-    currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-    terminalModal.style.display = 'flex';
-    gsap.from(terminalModal.querySelector('.terminal-window'), {
-        scale: 0.9, opacity: 0, duration: 0.4, ease: 'power3.out'
-    });
-    terminalInput.focus();
-
-    await typeTerminalLine('CYBERSMART GATEWAY v2.1 — Secure Terminal Interface', 'system');
-    await typeTerminalLine('Establishing encrypted connection...', 'dim', 100);
-    await typeTerminalLine('Connection secured. Authentication required.', 'success', 200);
-    await typeTerminalLine('', '', 100);
-    await typeTerminalLine('>> SECURITY CHALLENGE:', 'system', 100);
-    await typeTerminalLine(`   ${currentQuestion.q}`, 'question', 50);
-    await typeTerminalLine('', '', 50);
-    await typeTerminalLine('Submit your answer:  @answer_<your_answer>', 'dim', 50);
-    await typeTerminalLine('Type @help for available commands.', 'dim', 50);
-}
-
-function closeTerminal() {
-    terminalOpen = false;
-    gsap.to(terminalModal.querySelector('.terminal-window'), {
-        scale: 0.9, opacity: 0, duration: 0.25, ease: 'power2.in',
-        onComplete: () => {
-            terminalModal.style.display = 'none';
-        }
-    });
-}
-
-function validateAnswer(input) {
-    const normalized = input.toLowerCase().trim().replace(/[^a-z0-9 ]/g, '');
-    const correct = currentQuestion.answer.toLowerCase();
-    const alts = currentQuestion.acceptAlt.map(a => a.toLowerCase().replace(/[^a-z0-9 ]/g, ''));
-
-    if (normalized === correct || alts.includes(normalized)) return true;
-    if (normalized.includes(correct)) return true;
-    for (const alt of alts) {
-        if (normalized.includes(alt)) return true;
-    }
-    return false;
-}
-
-async function handleCommand(raw) {
-    if (isTyping) return;
-    const trimmed = raw.trim();
-    if (!trimmed) return;
-    addTerminalHTML(`<span class="prompt-symbol">$</span> ${trimmed}`, '');
-    const lower = trimmed.toLowerCase();
-
-    if (lower === '@clear') {
-        clearTerminal();
-        await typeTerminalLine('Terminal cleared.', 'dim');
-        await typeTerminalLine(`>> ${currentQuestion.q}`, 'question', 100);
-        return;
-    }
-
-    if (lower === '@help') {
-        await typeTerminalLine('──────── AVAILABLE COMMANDS ────────', 'system');
-        await typeTerminalLine('@answer_<value>  — Submit your answer', 'dim', 30);
-        await typeTerminalLine('@hint            — Request a clue', 'dim', 30);
-        await typeTerminalLine('@clear           — Clear terminal output', 'dim', 30);
-        await typeTerminalLine('@help            — Show this help menu', 'dim', 30);
-        await typeTerminalLine('────────────────────────────────────', 'system', 30);
-        return;
-    }
-
-    if (lower === '@hint') {
-        if (hintUsed) {
-            await typeTerminalLine('[SYSTEM] Hint already provided. Review the clue above.', 'warning');
-        } else {
-            hintUsed = true;
-            await typeTerminalLine(`[HINT] ${currentQuestion.hint}`, 'warning');
-        }
-        return;
-    }
-
-    if (lower.startsWith('@answer_') || lower.startsWith('@answer ')) {
-        const userAnswer = trimmed.replace(/^@answer[_ ]/i, '').trim();
-
-        if (!userAnswer) {
-            await typeTerminalLine('[ERROR] No answer provided. Format: @answer_<your_answer>', 'error');
-            return;
-        }
-
-        if (!hasCompletedReading()) {
-            await denyAccess('ACCESS DENIED: Insufficient clearance. Please review all learning modules before attempting authentication.');
-            await typeTerminalLine(`[SYSTEM] Progress: ${readModules.size}/${TOTAL_MODULES} modules reviewed. Scroll through the content above.`, 'warning');
-            return;
-        }
-
-        if (validateAnswer(userAnswer)) {
-            await grantAccess();
-        } else {
-            await denyAccess('ACCESS DENIED: Invalid response. Verify your answer and try again.');
-        }
-        return;
-    }
-
-    await typeTerminalLine(`[ERROR] Unrecognized command: "${trimmed}"`, 'error');
-    await typeTerminalLine('Type @help for a list of available commands.', 'dim');
-}
-
-async function grantAccess() {
-    await typeTerminalLine('[✓] Authentication successful.', 'success');
-    await typeTerminalLine('[✓] Generating access token...', 'success', 150);
-    await typeTerminalLine('[✓] Access granted. Redirecting to secure module...', 'success', 150);
-    terminalInput.disabled = true;
-    setTimeout(() => {
-        closeTerminal();
-        startHackingSequence();
-    }, 800);
-}
-
-async function denyAccess(message) {
-    await typeTerminalLine(`[✗] ${message}`, 'error');
-    gsap.to(terminalModal.querySelector('.terminal-window'), {
-        x: 8, repeat: 5, yoyo: true, duration: 0.05,
-        ease: 'power2.inOut',
-        onComplete: () => {
-            gsap.set(terminalModal.querySelector('.terminal-window'), { x: 0 });
-        }
-    });
-}
-
-async function startHackingSequence() {
-    const overlay = document.getElementById('accessOverlay');
-    const term = document.getElementById('termLogs');
-    const granted = document.getElementById('grantedTxt');
-
-    term.innerHTML = '';
-    granted.style.opacity = 0;
-    overlay.classList.remove('glitch-flash');
-    overlay.style.display = 'flex';
-
-    const logs = [
-        "> INITIALIZING SECURE BYPASS PROTOCOL...",
-        "> ENCRYPTING SESSION PAYLOAD...",
-        "> TRAVERSING FIREWALL LAYERS...",
-        "> ACCESS TOKEN VALIDATED...",
-        "> AUTHORIZING GUEST SESSION...",
-        "> REDIRECTING TO KNOWLEDGE DATABASE..."
-    ];
-
-    for (const log of logs) {
-        const line = document.createElement('div');
-        line.innerText = log;
-        term.appendChild(line);
-        await new Promise(r => setTimeout(r, 200));
-    }
-
-    overlay.classList.add('glitch-flash');
-    gsap.to(granted, { opacity: 1, scale: 1.1, duration: 0.2 });
-
-    setTimeout(() => {
-        window.location.href = "types-of-risks.html";
-    }, 1800);
-}
+// The button already has href="types-of-risks.html", so no extra JS needed.
+// But we keep this comment for clarity. The button will behave as a normal link.
 
 // ============================================================
-//  4. EVENT LISTENERS
-// ============================================================
-gateBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    openTerminal();
-});
-
-terminalInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        const val = terminalInput.value;
-        terminalInput.value = '';
-        handleCommand(val);
-    }
-});
-
-terminalClose.addEventListener('click', closeTerminal);
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && terminalOpen) closeTerminal();
-});
-
-terminalModal.addEventListener('click', (e) => {
-    if (e.target === terminalModal) closeTerminal();
-});
-
-gsap.from(".hero-title", { duration: 1.2, y: 40, opacity: 0, ease: "power3.out" });
-
-// ============================================================
-//  5. CHATBOT TOGGLE
+//  4. CHATBOT TOGGLE
 // ============================================================
 const chatbotToggle = document.getElementById('chatbotToggle');
 const chatbotContainer = document.getElementById('chatbotContainer');
@@ -1576,6 +1086,9 @@ chatbotToggle.addEventListener('click', () => {
     chatbotContainer.style.display = chatOpen ? 'block' : 'none';
     chatbotToggle.classList.toggle('open', chatOpen);
 });
+
+// Initial GSAP animation
+gsap.from(".hero-title", { duration: 1.2, y: 40, opacity: 0, ease: "power3.out" });
 </script>
 
 </body>
