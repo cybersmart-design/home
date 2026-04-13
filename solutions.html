@@ -2,27 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>CyberSmart | Simulation Command Center</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    
+    <!-- SiteSpeakAI Chatbot Script -->
+    <script type="text/javascript">
+        (function(){
+            var d=document;
+            var s=d.createElement("script");
+            s.src="https://sitespeak.ai/chatbots/242fdaac-e3a9-4026-a0ec-9916faf7ab9b.js";
+            s.async=1;
+            s.id="sitespeak-script";
+            d.getElementsByTagName("head")[0].appendChild(s);
+        })();
+    </script>
+    
     <style>
         :root {
-            --bg: #0b0e14;
-            --bg-deeper: #070a0f;
-            --accent: #00e5ff;
-            --accent-dim: rgba(0, 229, 255, 0.15);
-            --accent-glow: rgba(0, 229, 255, 0.4);
-            --green: #00ff88;
-            --red: #ff3e3e;
-            --orange: #ff9500;
-            --silver: #b0b3b8;
-            --silver-dim: #6b7280;
-            --panel-bg: rgba(11, 14, 20, 0.7);
-            --panel-border: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(0, 229, 255, 0.12);
-            --glass-bg: rgba(11, 14, 20, 0.65);
+            /* Eye-Friendly Tech Color Palette */
+            --bg: #11161d;
+            --bg-deeper: #0c1017;
+            --accent: #6ec8ff;
+            --accent-dim: rgba(110, 200, 255, 0.08);
+            --accent-glow: rgba(110, 200, 255, 0.2);
+            --green: #9bdeac;
+            --red: #ff9a8a;
+            --orange: #ffb86b;
+            --silver: #b8c5d6;
+            --silver-dim: #7a8aa0;
+            --panel-bg: rgba(17, 22, 29, 0.7);
+            --panel-border: rgba(110, 200, 255, 0.08);
+            --glass-border: rgba(110, 200, 255, 0.06);
+            --glass-bg: rgba(17, 22, 29, 0.6);
             --font-mono: 'JetBrains Mono', monospace;
             --font-display: 'Outfit', sans-serif;
             --font-body: 'Inter', sans-serif;
@@ -33,7 +47,7 @@
 
         body {
             background: var(--bg);
-            color: #fff;
+            color: #e8edf2;
             font-family: var(--font-body);
             overflow-x: hidden;
             min-height: 100vh;
@@ -48,300 +62,6 @@
             z-index: 0;
             pointer-events: none;
         }
-
-        /* ===== MOBILE WARNING OVERLAY ===== */
-        .mobile-warning {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            background: var(--bg);
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        @media (max-width: 1024px) {
-            .mobile-warning { display: flex !important; }
-            .mobile-warning.dismissed { display: none !important; }
-            .command-center { display: none !important; }
-        }
-
-        .mw-icon {
-            font-size: 52px;
-            margin: 28px 0 14px;
-            animation: mwFloat 3s ease-in-out infinite;
-        }
-        @keyframes mwFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-
-        .mw-title {
-            font-family: var(--font-display);
-            font-size: 22px;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 6px;
-            background: linear-gradient(135deg, var(--accent), var(--green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .mw-subtitle {
-            font-size: 13px;
-            color: var(--silver);
-            text-align: center;
-            line-height: 1.65;
-            max-width: 400px;
-            margin-bottom: 22px;
-        }
-        .mw-subtitle strong { color: var(--accent); }
-
-        .mw-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 440px;
-            margin-bottom: 14px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-        }
-
-        .mw-card h3 {
-            font-family: var(--font-display);
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .mw-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 16px;
-        }
-
-        .mw-tab {
-            flex: 1;
-            padding: 10px 6px;
-            border-radius: 10px;
-            border: 1px solid var(--panel-border);
-            background: rgba(255, 255, 255, 0.02);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.25s;
-            font-size: 11px;
-            color: var(--silver-dim);
-        }
-        .mw-tab.active {
-            background: var(--accent-dim);
-            border-color: rgba(0, 229, 255, 0.3);
-            color: var(--accent);
-        }
-        .mw-tab-icon {
-            font-size: 20px;
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .mw-step {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            margin-bottom: 10px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.015);
-            border-radius: 10px;
-        }
-
-        .mw-step-num {
-            width: 26px;
-            height: 26px;
-            min-width: 26px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: var(--bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .mw-step-text {
-            font-size: 12.5px;
-            line-height: 1.5;
-            color: var(--silver);
-        }
-        .mw-step-text strong { color: #fff; }
-
-        .mw-phone-visual {
-            display: flex;
-            justify-content: center;
-            margin: 14px 0 4px;
-        }
-
-        .mw-phone-mockup {
-            width: 130px;
-            height: 210px;
-            background: #0d1420;
-            border-radius: 18px;
-            border: 2px solid rgba(255, 255, 255, 0.06);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            padding: 10px 8px 8px;
-            overflow: hidden;
-        }
-
-        .mw-phone-notch {
-            width: 44px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 2px;
-            margin: 0 auto 6px;
-        }
-
-        .mw-phone-url {
-            height: 14px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 3px;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            padding: 0 5px;
-            font-size: 4.5px;
-            color: rgba(255, 255, 255, 0.12);
-            font-family: var(--font-mono);
-        }
-
-        .mw-phone-lines { width: 78%; }
-        .mw-phone-line {
-            height: 2.5px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 1px;
-            margin-bottom: 4px;
-        }
-        .mw-phone-line:nth-child(2) { width: 60%; }
-        .mw-phone-line:nth-child(3) { width: 75%; }
-
-        .mw-phone-highlight {
-            width: 82%;
-            padding: 5px 6px;
-            background: var(--accent-dim);
-            border: 1px solid rgba(0, 229, 255, 0.2);
-            border-radius: 4px;
-            font-size: 5.5px;
-            color: var(--accent);
-            text-align: center;
-            font-family: var(--font-mono);
-            margin-top: auto;
-            margin-bottom: 12px;
-            align-self: center;
-        }
-
-        .mw-phone-dots {
-            position: absolute;
-            top: 28px;
-            right: 9px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .mw-phone-dots .d {
-            width: 2.5px;
-            height: 2.5px;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 50%;
-        }
-
-        .mw-phone-aa {
-            position: absolute;
-            top: 29px;
-            left: 11px;
-            font-size: 5.5px;
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .mw-phone-samsung-bar {
-            position: absolute;
-            bottom: 7px;
-            left: 7px;
-            right: 7px;
-            display: flex;
-            justify-content: space-around;
-            padding: 3px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 5px;
-            color: rgba(255, 255, 255, 0.15);
-        }
-        .mw-phone-samsung-bar .act { color: var(--accent); font-weight: 700; }
-
-        .mw-arrow {
-            position: absolute;
-            font-size: 10px;
-            animation: mwArrow 1.2s ease-in-out infinite;
-        }
-        @keyframes mwArrow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.85); }
-        }
-
-        .mw-reason {
-            background: rgba(0, 229, 255, 0.03);
-            border: 1px solid rgba(0, 229, 255, 0.08);
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 11.5px;
-            line-height: 1.6;
-            color: var(--silver);
-            text-align: center;
-            max-width: 440px;
-            width: 100%;
-            margin-bottom: 14px;
-        }
-        .mw-reason strong { color: var(--accent); }
-
-        .mw-features {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 10px;
-        }
-        .mw-feat {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 11px;
-            color: var(--silver);
-        }
-        .mw-feat .ck { color: var(--green); font-weight: 700; }
-
-        .mw-skip {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: var(--silver-dim);
-            font-family: var(--font-mono);
-            font-size: 11px;
-            padding: 10px 22px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.25s;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-        .mw-skip:hover { border-color: rgba(255, 255, 255, 0.15); opacity: 0.7; }
 
         /* ===== BACK NAVIGATION ===== */
         .back-nav {
@@ -367,7 +87,7 @@
         .back-nav:hover {
             border-color: var(--glass-border);
             color: var(--accent);
-            background: rgba(0, 229, 255, 0.04);
+            background: rgba(110, 200, 255, 0.04);
         }
         .back-nav .arrow {
             font-size: 14px;
@@ -382,7 +102,7 @@
             left: 0;
             right: 0;
             height: 52px;
-            background: rgba(7, 10, 15, 0.85);
+            background: rgba(12, 16, 23, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--panel-border);
@@ -410,7 +130,7 @@
             height: 6px;
             border-radius: 50%;
             background: var(--green);
-            box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 8px rgba(155, 222, 172, 0.4);
             animation: statusPulse 2s ease-in-out infinite;
         }
         @keyframes statusPulse {
@@ -418,8 +138,8 @@
             50% { opacity: 0.4; }
         }
 
-        .status-dot.warn { background: var(--orange); box-shadow: 0 0 8px rgba(255, 149, 0, 0.5); }
-        .status-dot.danger { background: var(--red); box-shadow: 0 0 8px rgba(255, 62, 62, 0.5); }
+        .status-dot.warn { background: var(--orange); box-shadow: 0 0 8px rgba(255, 184, 107, 0.4); }
+        .status-dot.danger { background: var(--red); box-shadow: 0 0 8px rgba(255, 154, 138, 0.4); }
 
         .status-clock {
             font-family: var(--font-mono);
@@ -470,10 +190,14 @@
         .section-title {
             font-family: var(--font-display);
             font-size: clamp(24px, 3.5vw, 42px);
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 8px;
+            background: linear-gradient(135deg, #e8edf2, #b8c5d6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .section-subtitle {
@@ -514,7 +238,7 @@
         }
 
         .glass-panel:hover {
-            border-color: rgba(0, 229, 255, 0.22);
+            border-color: rgba(110, 200, 255, 0.15);
         }
 
         /* ===== LEFT COLUMN: MISSION LIST ===== */
@@ -570,18 +294,17 @@
             height: 100%;
             background: transparent;
             transition: background 0.3s;
-            border-radius: 0 2px 2px 0;
         }
 
         .mission-card:hover {
             background: rgba(255, 255, 255, 0.035);
-            border-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.08);
             transform: translateX(4px);
         }
 
         .mission-card.active {
-            background: rgba(0, 229, 255, 0.04);
-            border-color: rgba(0, 229, 255, 0.2);
+            background: rgba(110, 200, 255, 0.04);
+            border-color: rgba(110, 200, 255, 0.15);
         }
 
         .mission-card.active::before {
@@ -613,9 +336,9 @@
         }
 
         .badge-ready {
-            background: rgba(0, 255, 136, 0.08);
+            background: rgba(155, 222, 172, 0.08);
             color: var(--green);
-            border: 1px solid rgba(0, 255, 136, 0.15);
+            border: 1px solid rgba(155, 222, 172, 0.15);
         }
 
         .mission-icon-row {
@@ -648,12 +371,6 @@
             font-size: 9px;
             color: var(--silver-dim);
             margin-top: 2px;
-        }
-
-        .mission-card-desc {
-            font-size: 11.5px;
-            color: var(--silver-dim);
-            line-height: 1.55;
         }
 
         .mission-threat-bar {
@@ -707,10 +424,9 @@
             padding: 30px;
         }
 
-        /* Orbital rings around phone */
         .orbit-ring {
             position: absolute;
-            border: 1px solid rgba(0, 229, 255, 0.06);
+            border: 1px solid rgba(110, 200, 255, 0.05);
             border-radius: 50%;
             animation: orbitSpin linear infinite;
         }
@@ -733,14 +449,13 @@
             animation-duration: 30s;
             animation-direction: reverse;
             border-style: dashed;
-            border-color: rgba(0, 229, 255, 0.03);
+            border-color: rgba(110, 200, 255, 0.03);
         }
 
         @keyframes orbitSpin {
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        /* Orbit dots */
         .orbit-dot {
             position: absolute;
             width: 6px;
@@ -765,31 +480,20 @@
         .phone-device {
             width: 280px;
             height: 580px;
-            background: #000;
+            background: #0d121c;
             border-radius: 44px;
             position: relative;
             z-index: 2;
             overflow: hidden;
             box-shadow:
-                0 0 0 2px #1a1d24,
-                0 0 0 4px #0d1018,
-                inset 0 0 0 1.5px #1a1d24,
+                0 0 0 2px #1a2028,
+                0 0 0 4px #0a0e16,
+                inset 0 0 0 1.5px #1a2028,
                 0 25px 80px rgba(0, 0, 0, 0.6),
-                0 0 60px rgba(0, 229, 255, 0.06);
+                0 0 60px rgba(110, 200, 255, 0.06);
             transition: box-shadow 0.5s;
         }
 
-        .phone-device.glow-active {
-            box-shadow:
-                0 0 0 2px #1a1d24,
-                0 0 0 4px #0d1018,
-                inset 0 0 0 1.5px #1a1d24,
-                0 25px 80px rgba(0, 0, 0, 0.6),
-                0 0 80px rgba(0, 229, 255, 0.12),
-                0 0 160px rgba(0, 229, 255, 0.04);
-        }
-
-        /* Phone notch */
         .phone-notch {
             position: absolute;
             top: 8px;
@@ -797,7 +501,7 @@
             transform: translateX(-50%);
             width: 100px;
             height: 28px;
-            background: #000;
+            background: #0d121c;
             border-radius: 16px;
             z-index: 10;
         }
@@ -809,22 +513,20 @@
             transform: translateX(-50%);
             width: 10px;
             height: 10px;
-            background: #0a0a0f;
+            background: #0a0f18;
             border-radius: 50%;
-            border: 2px solid #15171e;
+            border: 2px solid #151e28;
             z-index: 11;
         }
 
-        /* Phone screen */
         .phone-screen {
             position: absolute;
             inset: 0;
             border-radius: 44px;
             overflow: hidden;
-            background: linear-gradient(170deg, #0a0f18 0%, #060a12 50%, #0d1220 100%);
+            background: linear-gradient(170deg, #0d141f 0%, #090e17 50%, #101622 100%);
         }
 
-        /* Phone status bar */
         .phone-status-bar {
             position: absolute;
             top: 0;
@@ -873,7 +575,6 @@
             border-radius: 1px;
         }
 
-        /* Scanner Screen Content */
         .scanner-content {
             position: absolute;
             inset: 0;
@@ -884,12 +585,11 @@
             padding: 60px 20px 40px;
         }
 
-        /* Scanner Circle */
         .scanner-ring-outer {
             width: 180px;
             height: 180px;
             border-radius: 50%;
-            border: 1.5px solid rgba(0, 229, 255, 0.12);
+            border: 1.5px solid rgba(110, 200, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -899,21 +599,15 @@
         }
 
         @keyframes scannerBreath {
-            0%, 100% {
-                border-color: rgba(0, 229, 255, 0.12);
-                box-shadow: 0 0 20px rgba(0, 229, 255, 0);
-            }
-            50% {
-                border-color: rgba(0, 229, 255, 0.3);
-                box-shadow: 0 0 40px rgba(0, 229, 255, 0.08);
-            }
+            0%, 100% { border-color: rgba(110, 200, 255, 0.1); box-shadow: 0 0 20px rgba(110, 200, 255, 0); }
+            50% { border-color: rgba(110, 200, 255, 0.25); box-shadow: 0 0 40px rgba(110, 200, 255, 0.06); }
         }
 
         .scanner-ring-inner {
             width: 140px;
             height: 140px;
             border-radius: 50%;
-            border: 1px dashed rgba(0, 229, 255, 0.08);
+            border: 1px dashed rgba(110, 200, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -928,7 +622,7 @@
             width: 90px;
             height: 90px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(110, 200, 255, 0.08) 0%, transparent 70%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -945,7 +639,6 @@
             50% { opacity: 1; transform: scale(1.08); }
         }
 
-        /* Scanner sweep line */
         .scanner-sweep {
             position: absolute;
             top: 50%;
@@ -962,7 +655,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Scanner data readout */
         .scanner-readout {
             width: 100%;
             text-align: center;
@@ -993,7 +685,6 @@
             margin-bottom: 16px;
         }
 
-        /* Scanner metrics row */
         .scanner-metrics {
             display: flex;
             gap: 1px;
@@ -1027,7 +718,6 @@
             color: var(--silver-dim);
         }
 
-        /* Log feed in phone */
         .scanner-log-feed {
             width: 100%;
             padding: 8px 10px;
@@ -1050,7 +740,6 @@
         .scanner-log-line.alert { color: var(--red); }
         .scanner-log-line.ok { color: var(--green); }
 
-        /* Phone home indicator */
         .phone-home-bar {
             position: absolute;
             bottom: 6px;
@@ -1058,12 +747,11 @@
             transform: translateX(-50%);
             width: 100px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
             z-index: 5;
         }
 
-        /* Phone label underneath */
         .phone-device-label {
             text-align: center;
             margin-top: 16px;
@@ -1080,7 +768,7 @@
             height: 5px;
             border-radius: 50%;
             background: var(--green);
-            box-shadow: 0 0 6px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 6px rgba(155, 222, 172, 0.4);
             margin-right: 6px;
             vertical-align: middle;
             animation: statusPulse 2s ease-in-out infinite;
@@ -1100,7 +788,6 @@
             padding: 22px;
         }
 
-        /* Threat classification badge */
         .threat-classification {
             display: inline-flex;
             align-items: center;
@@ -1121,7 +808,6 @@
             border-radius: 50%;
         }
 
-        /* Briefing description */
         .briefing-description {
             font-size: 13px;
             color: var(--silver);
@@ -1129,7 +815,6 @@
             margin-bottom: 24px;
         }
 
-        /* Intel Section */
         .intel-section {
             margin-bottom: 20px;
         }
@@ -1184,11 +869,10 @@
             line-height: 1.5;
         }
 
-        /* Fact callout */
         .fact-callout {
             padding: 14px;
-            background: rgba(0, 229, 255, 0.03);
-            border: 1px solid rgba(0, 229, 255, 0.08);
+            background: rgba(110, 200, 255, 0.03);
+            border: 1px solid rgba(110, 200, 255, 0.08);
             border-radius: 12px;
             margin-bottom: 24px;
         }
@@ -1211,7 +895,6 @@
             line-height: 1.6;
         }
 
-        /* START MISSION BUTTON */
         .start-mission-btn {
             display: flex;
             align-items: center;
@@ -1239,7 +922,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(0, 229, 255, 0.02));
+            background: linear-gradient(135deg, rgba(110, 200, 255, 0.08), rgba(110, 200, 255, 0.02));
             opacity: 0;
             transition: opacity 0.4s;
         }
@@ -1249,12 +932,8 @@
         }
 
         .start-mission-btn:hover {
-            box-shadow:
-                0 0 30px rgba(0, 229, 255, 0.2),
-                0 0 80px rgba(0, 229, 255, 0.06),
-                inset 0 0 30px rgba(0, 229, 255, 0.04);
+            box-shadow: 0 0 30px rgba(110, 200, 255, 0.12), 0 0 80px rgba(110, 200, 255, 0.04);
             transform: translateY(-2px);
-            border-color: var(--accent);
         }
 
         .start-mission-btn .btn-glow-dot {
@@ -1269,21 +948,6 @@
         @keyframes btnDotPulse {
             0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--accent-glow); }
             50% { opacity: 0.5; box-shadow: 0 0 6px var(--accent-glow); }
-        }
-
-        .start-mission-btn .btn-text {
-            position: relative;
-            z-index: 1;
-        }
-
-        .start-mission-btn .btn-arrow {
-            position: relative;
-            z-index: 1;
-            transition: transform 0.3s;
-        }
-
-        .start-mission-btn:hover .btn-arrow {
-            transform: translateX(4px);
         }
 
         /* ===== BOTTOM NETWORK LOG ===== */
@@ -1344,6 +1008,101 @@
         .log-line.alert { color: var(--red); }
         .log-line.ok { color: var(--green); }
 
+        /* ===== CUSTOM ROBOT VIDEO CONTAINER ===== */
+        .custom-robot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            z-index: 9999999;
+            cursor: pointer;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 0 2px rgba(110, 200, 255, 0.25), 0 0 15px rgba(110, 200, 255, 0.15);
+            transition: all 0.3s ease;
+            background: rgba(17, 22, 29, 0.6);
+            animation: float 3s ease-in-out infinite;
+        }
+        .custom-robot-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .custom-robot-container:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 0 2px rgba(110, 200, 255, 0.4), 0 0 20px rgba(110, 200, 255, 0.25);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .custom-robot-container::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(110, 200, 255, 0.15), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .custom-robot-container:hover::before {
+            opacity: 1;
+            animation: pulseRing 1s infinite;
+        }
+        @keyframes pulseRing {
+            0% { transform: scale(0.95); opacity: 0.4; }
+            100% { transform: scale(1.2); opacity: 0; }
+        }
+        
+        .robot-tooltip {
+            position: fixed;
+            bottom: 110px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 9px;
+            font-family: var(--font-mono);
+            color: var(--accent);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 9999998;
+            background: rgba(17, 22, 29, 0.95);
+            backdrop-filter: blur(8px);
+        }
+        .robot-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 15px;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--accent);
+        }
+        .custom-robot-container:hover + .robot-tooltip,
+        .robot-tooltip:hover {
+            opacity: 1;
+        }
+        
+        #sitespeak-launcher {
+            display: none !important;
+        }
+        
+        /* Adjust chatbox position */
+        #sitespeak-iframe {
+            bottom: 110px !important;
+            right: 20px !important;
+        }
+        
         /* ===== FOOTER ===== */
         .sim-footer {
             text-align: center;
@@ -1355,18 +1114,8 @@
             opacity: 0.4;
         }
 
-        /* ===== TRANSITIONS ===== */
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1100px) and (min-width: 1025px) {
+        /* Responsive */
+        @media (max-width: 1100px) and (min-width: 769px) {
             .three-col-grid {
                 grid-template-columns: 1fr 1fr;
             }
@@ -1375,97 +1124,14 @@
                 order: -1;
             }
         }
+        
+        @media (max-width: 560px) {
+            .custom-robot-container { width: 60px; height: 60px; bottom: 10px; right: 10px; }
+            .robot-tooltip { bottom: 80px; right: 10px; font-size: 8px; padding: 4px 8px; }
+        }
     </style>
 </head>
 <body>
-
-<!-- ===== MOBILE WARNING OVERLAY ===== -->
-<div class="mobile-warning" id="mobileWarning">
-    <div class="mw-icon">🖥️</div>
-    <div class="mw-title">Desktop Mode Required</div>
-    <div class="mw-subtitle">
-        The Simulation Command Center features a <strong>three-column layout</strong> with an interactive phone display. Switch to <strong>Desktop Mode</strong> for the full experience.
-    </div>
-
-    <div class="mw-card">
-        <h3>📱 How to Enable Desktop Mode</h3>
-        <div class="mw-tabs">
-            <div class="mw-tab active" onclick="switchMWGuide('chrome')" id="mwTabChrome">
-                <span class="mw-tab-icon">🌐</span>Chrome
-            </div>
-            <div class="mw-tab" onclick="switchMWGuide('safari')" id="mwTabSafari">
-                <span class="mw-tab-icon">🧭</span>Safari
-            </div>
-            <div class="mw-tab" onclick="switchMWGuide('samsung')" id="mwTabSamsung">
-                <span class="mw-tab-icon">🔵</span>Samsung
-            </div>
-        </div>
-
-        <div id="mwGuideChrome">
-            <div class="mw-step"><div class="mw-step-num">1</div><div class="mw-step-text">Tap the <strong>three-dot menu ( ⋮ )</strong> in the top-right corner</div></div>
-            <div class="mw-step"><div class="mw-step-num">2</div><div class="mw-step-text">Find and enable <strong>"Desktop site"</strong></div></div>
-            <div class="mw-step"><div class="mw-step-num">3</div><div class="mw-step-text">Page will <strong>reload automatically</strong></div></div>
-            <div class="mw-phone-visual">
-                <div class="mw-phone-mockup">
-                    <div class="mw-phone-notch"></div>
-                    <div class="mw-phone-url">🔒 cybersmart.edu</div>
-                    <div class="mw-phone-dots"><div class="d"></div><div class="d"></div><div class="d"></div></div>
-                    <div class="mw-arrow" style="top:24px;right:16px;">👆</div>
-                    <div class="mw-phone-content" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                        <div class="mw-phone-lines"><div class="mw-phone-line"></div><div class="mw-phone-line"></div><div class="mw-phone-line"></div></div>
-                    </div>
-                    <div class="mw-phone-highlight">☑ Desktop site</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="mwGuideSafari" style="display:none">
-            <div class="mw-step"><div class="mw-step-num">1</div><div class="mw-step-text">Tap <strong>"aA"</strong> in the address bar (top-left)</div></div>
-            <div class="mw-step"><div class="mw-step-num">2</div><div class="mw-step-text">Tap <strong>"Request Desktop Website"</strong></div></div>
-            <div class="mw-step"><div class="mw-step-num">3</div><div class="mw-step-text">Page will <strong>reload</strong> in desktop view</div></div>
-            <div class="mw-phone-visual">
-                <div class="mw-phone-mockup">
-                    <div class="mw-phone-notch"></div>
-                    <div class="mw-phone-url">🔒 cybersmart.edu</div>
-                    <div class="mw-phone-aa">aA</div>
-                    <div class="mw-arrow" style="top:24px;left:12px;">👆</div>
-                    <div class="mw-phone-content" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-                        <div style="width:85%;padding:5px;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.12);border-radius:4px;font-size:5px;color:var(--accent);text-align:center;font-family:var(--font-mono);">📱→🖥 Request Desktop</div>
-                    </div>
-                    <div class="mw-phone-highlight">Desktop view loaded</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="mwGuideSamsung" style="display:none">
-            <div class="mw-step"><div class="mw-step-num">1</div><div class="mw-step-text">Tap <strong>hamburger menu ( ≡ )</strong> at bottom-right</div></div>
-            <div class="mw-step"><div class="mw-step-num">2</div><div class="mw-step-text">Tap <strong>"Desktop site"</strong></div></div>
-            <div class="mw-step"><div class="mw-step-num">3</div><div class="mw-step-text">Page will <strong>reload</strong></div></div>
-            <div class="mw-phone-visual">
-                <div class="mw-phone-mockup">
-                    <div class="mw-phone-notch"></div>
-                    <div class="mw-phone-url">🔒 cybersmart.edu</div>
-                    <div class="mw-phone-content" style="flex:1"></div>
-                    <div class="mw-phone-samsung-bar"><span>←</span><span>→</span><span>🏠</span><span>⊞</span><span class="act">≡</span></div>
-                    <div class="mw-arrow" style="bottom:16px;right:12px;">👆</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mw-reason">
-        <strong>💡 Why Desktop Mode?</strong><br><br>
-        <div class="mw-features">
-            <div class="mw-feat"><span class="ck">✓</span> Three-column command center layout</div>
-            <div class="mw-feat"><span class="ck">✓</span> Interactive CSS phone with scanner animation</div>
-            <div class="mw-feat"><span class="ck">✓</span> Real-time threat data panels</div>
-            <div class="mw-feat"><span class="ck">✓</span> Full simulation launch experience</div>
-        </div>
-    </div>
-
-    <button class="mw-skip" onclick="dismissMobileWarning()">Continue in mobile view anyway →</button>
-</div>
-
 
 <!-- ===== CANVAS BACKGROUND ===== -->
 <canvas id="bgCanvas"></canvas>
@@ -1491,7 +1157,6 @@
         <span>MISSIONS: 3 AVAILABLE</span>
     </div>
 </div>
-
 
 <!-- ===== COMMAND CENTER ===== -->
 <div class="command-center">
@@ -1523,7 +1188,7 @@
                 <div class="orbit-ring orbit-ring-1"><div class="orbit-dot"></div></div>
                 <div class="orbit-ring orbit-ring-2"><div class="orbit-dot"></div></div>
 
-                <div class="phone-device glow-active" id="phoneDevice">
+                <div class="phone-device" id="phoneDevice">
                     <div class="phone-notch"></div>
                     <div class="phone-camera"></div>
 
@@ -1614,37 +1279,17 @@
     &copy; 2026 CyberSmart — Simulation Command Center v3.0
 </div>
 
+<!-- ===== CUSTOM ROBOT VIDEO ===== -->
+<div class="custom-robot-container" id="customRobot">
+    <video id="robotVideo" autoplay loop muted playsinline>
+        <source src="video-robot.mp4" type="video/mp4">
+        <!-- Fallback emoji -->
+        <div style="width:100%; height:100%; background: linear-gradient(135deg, #6ec8ff, #9bdeac); display: flex; align-items: center; justify-content: center; font-size: 40px;">🤖</div>
+    </video>
+</div>
+<div class="robot-tooltip" id="robotTooltip">🤖 Click me!</div>
 
 <script>
-// ===== MOBILE WARNING =====
-function switchMWGuide(browser) {
-    ['chrome','safari','samsung'].forEach(b => {
-        const guide = document.getElementById('mwGuide' + b.charAt(0).toUpperCase() + b.slice(1));
-        const tab = document.getElementById('mwTab' + b.charAt(0).toUpperCase() + b.slice(1));
-        if (guide) guide.style.display = 'none';
-        if (tab) tab.classList.remove('active');
-    });
-    const selGuide = document.getElementById('mwGuide' + browser.charAt(0).toUpperCase() + browser.slice(1));
-    const selTab = document.getElementById('mwTab' + browser.charAt(0).toUpperCase() + browser.slice(1));
-    if (selGuide) selGuide.style.display = 'block';
-    if (selTab) selTab.classList.add('active');
-}
-
-function dismissMobileWarning() {
-    document.getElementById('mobileWarning').classList.add('dismissed');
-}
-
-// Auto-detect browser
-(function() {
-    const ua = navigator.userAgent.toLowerCase();
-    if (/safari/i.test(ua) && !/chrome/i.test(ua) && !/crios/i.test(ua)) {
-        switchMWGuide('safari');
-    } else if (/samsungbrowser/i.test(ua)) {
-        switchMWGuide('samsung');
-    }
-})();
-
-
 // ===== MISSION DATA =====
 const missions = [
     {
@@ -1653,8 +1298,8 @@ const missions = [
         title: 'Phishing Attack',
         shortTitle: 'Phishing',
         icon: '🎣',
-        iconBg: 'rgba(0, 229, 255, 0.1)',
-        color: '#00e5ff',
+        iconBg: 'rgba(110, 200, 255, 0.1)',
+        color: '#6ec8ff',
         vector: 'SMTP / Social Engineering',
         vectorShort: 'SMTP',
         danger: 88,
@@ -1663,9 +1308,9 @@ const missions = [
         description: 'Social engineering attack where adversaries craft deceptive emails and messages masquerading as trusted entities. The goal is credential harvesting and unauthorized system access.',
         fact: 'Over 90% of successful cyberattacks begin with a phishing email. AI-generated lures are now virtually indistinguishable from legitimate communications.',
         solutions: [
-            { icon: '🔍', title: 'SPF_ENFORCE', desc: 'Sender Policy Framework verification for inbound mail.', iconBg: 'rgba(0, 229, 255, 0.08)' },
-            { icon: '🧪', title: 'URL_SANDBOX', desc: 'Detonate suspicious links in isolated analysis environment.', iconBg: 'rgba(0, 229, 255, 0.08)' },
-            { icon: '🎓', title: 'USER_TRAINING', desc: 'Ongoing phishing simulation drills for all personnel.', iconBg: 'rgba(0, 229, 255, 0.08)' }
+            { icon: '🔍', title: 'SPF_ENFORCE', desc: 'Sender Policy Framework verification for inbound mail.', iconBg: 'rgba(110, 200, 255, 0.08)' },
+            { icon: '🧪', title: 'URL_SANDBOX', desc: 'Detonate suspicious links in isolated analysis environment.', iconBg: 'rgba(110, 200, 255, 0.08)' },
+            { icon: '🎓', title: 'USER_TRAINING', desc: 'Ongoing phishing simulation drills for all personnel.', iconBg: 'rgba(110, 200, 255, 0.08)' }
         ],
         feed: [
             '> Analyzing email headers...',
@@ -1683,8 +1328,8 @@ const missions = [
         title: 'Malware Infection',
         shortTitle: 'Malware',
         icon: '🦠',
-        iconBg: 'rgba(255, 62, 62, 0.1)',
-        color: '#ff3e3e',
+        iconBg: 'rgba(255, 154, 138, 0.1)',
+        color: '#ff9a8a',
         vector: 'Binary / Drive-by Download',
         vectorShort: 'BINARY',
         danger: 97,
@@ -1693,9 +1338,9 @@ const missions = [
         description: 'Malicious software engineered to infiltrate, damage, or gain unauthorized access to systems. Includes ransomware, trojans, spyware, and polymorphic variants.',
         fact: 'Ransomware-as-a-Service (RaaS) platforms have democratized cybercrime, allowing low-skilled attackers to launch devastating encrypted payload attacks.',
         solutions: [
-            { icon: '🛡️', title: 'EDR_SENTINEL', desc: 'Endpoint Detection & Response with behavioral analysis.', iconBg: 'rgba(255, 62, 62, 0.08)' },
-            { icon: '🔒', title: 'VLAN_ISOLATE', desc: 'Network segmentation to contain lateral movement.', iconBg: 'rgba(255, 62, 62, 0.08)' },
-            { icon: '💾', title: 'BACKUP_CORE', desc: 'Air-gapped encrypted backup with hourly snapshots.', iconBg: 'rgba(255, 62, 62, 0.08)' }
+            { icon: '🛡️', title: 'EDR_SENTINEL', desc: 'Endpoint Detection & Response with behavioral analysis.', iconBg: 'rgba(255, 154, 138, 0.08)' },
+            { icon: '🔒', title: 'VLAN_ISOLATE', desc: 'Network segmentation to contain lateral movement.', iconBg: 'rgba(255, 154, 138, 0.08)' },
+            { icon: '💾', title: 'BACKUP_CORE', desc: 'Air-gapped encrypted backup with hourly snapshots.', iconBg: 'rgba(255, 154, 138, 0.08)' }
         ],
         feed: [
             '> Deep scanning registry...',
@@ -1713,8 +1358,8 @@ const missions = [
         title: 'Account Takeover',
         shortTitle: 'Hijack',
         icon: '🔓',
-        iconBg: 'rgba(255, 149, 0, 0.1)',
-        color: '#ff9500',
+        iconBg: 'rgba(255, 184, 107, 0.1)',
+        color: '#ffb86b',
         vector: 'Credential Stuffing / SQLi',
         vectorShort: 'SQLi',
         danger: 94,
@@ -1723,9 +1368,9 @@ const missions = [
         description: 'Unauthorized access to user accounts through stolen credentials, brute force attacks, or session hijacking. Leads to data theft and identity fraud.',
         fact: 'The average cost of a data breach in 2024 reached $4.88 million. Speed of detection is the most critical factor in reducing total impact.',
         solutions: [
-            { icon: '🔐', title: 'MFA_LEVEL_3', desc: 'Biometric + hardware token multi-factor enforcement.', iconBg: 'rgba(255, 149, 0, 0.08)' },
-            { icon: '🕵️', title: 'ZERO_TRUST', desc: 'Never trust, always verify — continuous authentication.', iconBg: 'rgba(255, 149, 0, 0.08)' },
-            { icon: '🚧', title: 'DLP_SHIELD', desc: 'Data Loss Prevention monitoring at network gateway.', iconBg: 'rgba(255, 149, 0, 0.08)' }
+            { icon: '🔐', title: 'MFA_LEVEL_3', desc: 'Biometric + hardware token multi-factor enforcement.', iconBg: 'rgba(255, 184, 107, 0.08)' },
+            { icon: '🕵️', title: 'ZERO_TRUST', desc: 'Never trust, always verify — continuous authentication.', iconBg: 'rgba(255, 184, 107, 0.08)' },
+            { icon: '🚧', title: 'DLP_SHIELD', desc: 'Data Loss Prevention monitoring at network gateway.', iconBg: 'rgba(255, 184, 107, 0.08)' }
         ],
         feed: [
             '> Scanning authentication logs...',
@@ -1784,11 +1429,10 @@ function renderBriefing(m) {
     const body = document.getElementById('briefingBody');
 
     const dangerColor = m.danger >= 95 ? 'var(--red)' : m.danger >= 90 ? 'var(--orange)' : 'var(--accent)';
-    const dangerBg = m.danger >= 95 ? 'rgba(255,62,62,0.08)' : m.danger >= 90 ? 'rgba(255,149,0,0.08)' : 'var(--accent-dim)';
-    const dangerBorder = m.danger >= 95 ? 'rgba(255,62,62,0.15)' : m.danger >= 90 ? 'rgba(255,149,0,0.15)' : 'rgba(0,229,255,0.15)';
+    const dangerBg = m.danger >= 95 ? 'rgba(255,154,138,0.08)' : m.danger >= 90 ? 'rgba(255,184,107,0.08)' : 'var(--accent-dim)';
 
     body.innerHTML = `
-        <div class="threat-classification" style="background:${dangerBg};color:${dangerColor};border:1px solid ${dangerBorder};">
+        <div class="threat-classification" style="background:${dangerBg};color:${dangerColor};border:1px solid ${dangerColor}20;">
             <div class="threat-dot" style="background:${dangerColor};box-shadow:0 0 8px ${dangerColor};"></div>
             THREAT: ${m.threatLevel}
         </div>
@@ -1835,19 +1479,13 @@ function updateScanner(m) {
     document.getElementById('smVector').textContent = m.vectorShort;
     document.getElementById('smVector').style.color = m.color;
 
-    // Update scanner ring glow
     const outerRing = document.querySelector('.scanner-ring-outer');
     outerRing.style.borderColor = m.color + '20';
-    outerRing.style.setProperty('--scanner-color', m.color);
-
-    // Update sweep color
     document.querySelector('.scanner-sweep').style.background =
         `linear-gradient(90deg, transparent 0%, ${m.color} 100%)`;
 
-    // Scanner feed
     startScannerFeed(m);
 
-    // Status bar threat indicator
     const dot = document.getElementById('threatStatusDot');
     const text = document.getElementById('threatLevelText');
     text.textContent = m.threatLevel;
@@ -1876,15 +1514,15 @@ function startScannerFeed(m) {
 function startBottomLog() {
     const container = document.getElementById('logBody');
     const genericLogs = [
-        '> Firewall rule updated: BLOCK 185.234.xx.0/24',
-        '> DNS query intercepted: suspicious C2 callback',
-        '!! Anomalous outbound traffic: 2.4 MB/min to unknown host',
-        '> IDS signature match: ET MALWARE Common RAT Beacon',
+        '> Firewall rule updated: BLOCK suspicious IP range',
+        '> DNS query intercepted: potential C2 callback',
+        '!! Anomalous outbound traffic detected',
+        '> IDS signature match: known malware pattern',
         '> SSL certificate pinning violation detected',
-        '!! Brute force attempt: 347 requests/min on auth endpoint',
+        '!! Brute force attempt detected on auth endpoint',
         '> Geofence alert: login from unrecognized region',
-        '> Packet inspection: encrypted payload with known malware entropy',
-        '!! Data exfiltration pattern detected on port 443',
+        '> Packet inspection: encrypted payload analyzed',
+        '!! Data exfiltration pattern detected',
         '> Honeypot triggered: lateral movement attempt',
     ];
 
@@ -1905,24 +1543,19 @@ function selectMission(index) {
     currentMission = index;
     const m = missions[index];
 
-    // Update cards
     document.querySelectorAll('.mission-card').forEach((c, i) => {
         c.classList.toggle('active', i === index);
         c.style.setProperty('--mission-color', missions[i].color);
     });
 
-    // Update briefing
     renderBriefing(m);
-
-    // Update scanner
     updateScanner(m);
 
-    // Phone glow color
     const phone = document.getElementById('phoneDevice');
     phone.style.boxShadow = `
-        0 0 0 2px #1a1d24,
-        0 0 0 4px #0d1018,
-        inset 0 0 0 1.5px #1a1d24,
+        0 0 0 2px #1a2028,
+        0 0 0 4px #0a0e16,
+        inset 0 0 0 1.5px #1a2028,
         0 25px 80px rgba(0,0,0,0.6),
         0 0 80px ${m.color}18,
         0 0 160px ${m.color}06
@@ -1957,10 +1590,10 @@ for (let i = 0; i < 1200; i++) {
 }
 geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 const particleMat = new THREE.PointsMaterial({
-    color: 0x00e5ff,
+    color: 0x6ec8ff,
     size: 0.08,
     transparent: true,
-    opacity: 0.15
+    opacity: 0.1
 });
 const particles = new THREE.Points(geo, particleMat);
 scene.add(particles);
@@ -1980,6 +1613,53 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// ===== ROBOT CHATBOT INTEGRATION =====
+const robotContainer = document.getElementById('customRobot');
+const robotVideo = document.getElementById('robotVideo');
+
+function openSiteSpeakChatbot() {
+    const launcher = document.getElementById('sitespeak-launcher');
+    if (launcher) {
+        launcher.click();
+        animateRobotClick();
+        return;
+    }
+    
+    const iframe = document.getElementById('sitespeak-iframe');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ openChat: true }, '*');
+        animateRobotClick();
+        return;
+    }
+}
+
+function animateRobotClick() {
+    gsap.to(robotContainer, { 
+        scale: 1.15, 
+        duration: 0.15, 
+        yoyo: true, 
+        repeat: 1,
+        onComplete: () => {
+            gsap.to(robotContainer, { scale: 1, duration: 0.1 });
+        }
+    });
+}
+
+robotContainer.addEventListener('click', openSiteSpeakChatbot);
+
+if (robotVideo) {
+    robotVideo.addEventListener('canplay', () => {
+        robotVideo.play().catch(e => console.log('Video autoplay prevented:', e));
+    });
+    
+    document.body.addEventListener('click', function initPlay() {
+        if (robotVideo && robotVideo.paused) {
+            robotVideo.play().catch(() => {});
+        }
+        document.body.removeEventListener('click', initPlay);
+    }, { once: true });
+}
+
 // ===== GSAP ANIMATIONS =====
 gsap.from('.section-header', { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' });
 gsap.from('.mission-list-panel', { opacity: 0, x: -40, duration: 0.8, delay: 0.2, ease: 'power3.out' });
@@ -1987,11 +1667,31 @@ gsap.from('.phone-column', { opacity: 0, y: 40, duration: 0.8, delay: 0.3, ease:
 gsap.from('.briefing-panel', { opacity: 0, x: 40, duration: 0.8, delay: 0.4, ease: 'power3.out' });
 gsap.from('.bottom-log-bar', { opacity: 0, y: 20, duration: 0.6, delay: 0.6, ease: 'power3.out' });
 
+// Hide tooltip after 5 seconds
+setTimeout(() => {
+    const tooltip = document.getElementById('robotTooltip');
+    if (tooltip) {
+        gsap.to(tooltip, { opacity: 0, duration: 1, delay: 4 });
+    }
+}, 5000);
+
 // ===== INIT =====
 renderMissionCards();
 selectMission(0);
 startBottomLog();
-</script>
 
+// Hide default SiteSpeakAI launcher after it loads
+setTimeout(() => {
+    const defaultLauncher = document.getElementById('sitespeak-launcher');
+    if (defaultLauncher) {
+        defaultLauncher.style.display = 'none';
+    }
+    const iframe = document.getElementById('sitespeak-iframe');
+    if (iframe) {
+        iframe.style.bottom = '110px';
+        iframe.style.right = '20px';
+    }
+}, 2000);
+</script>
 </body>
 </html>
