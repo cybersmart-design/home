@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>CyberSmart | Archive: Risks & Threats</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -11,16 +11,17 @@
 
 <style>
 :root {
-    --dark-bg: #04080f;
-    --dark-surface: #0a101a;
-    --neon-cyan: #09eef5;
-    --neon-green: #03fc84;
-    --neon-magenta: #fa2cff;
-    --neon-yellow: #febc2e;
+    /* Eye-Friendly Tech Color Palette */
+    --dark-bg: #0f141c;
+    --dark-surface: #161d2a;
+    --neon-cyan: #6ec8ff;
+    --neon-green: #9bdeac;
+    --neon-magenta: #e599c7;
+    --neon-yellow: #f0c48f;
     --text-primary: #eef4ff;
-    --text-secondary: #a3b8cc;
-    --glass-bg: rgba(16, 24, 39, 0.85);
-    --glass-border: rgba(9, 238, 245, 0.2);
+    --text-secondary: #a8bcd4;
+    --glass-bg: rgba(22, 29, 42, 0.85);
+    --glass-border: rgba(110, 200, 255, 0.15);
     --font-mono: "JetBrains Mono", monospace;
 }
 
@@ -35,20 +36,20 @@ body {
     line-height: 1.6;
 }
 
-/* ===== ANIMATED GRID BACKGROUND ===== */
+/* ===== ANIMATED GRID BACKGROUND (softer) ===== */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
     background: 
-        linear-gradient(rgba(9, 238, 245, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(9, 238, 245, 0.03) 1px, transparent 1px);
+        linear-gradient(rgba(110, 200, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(110, 200, 255, 0.02) 1px, transparent 1px);
     background-size: 60px 60px;
     pointer-events: none;
     z-index: 0;
 }
 
-/* ===== NAVBAR (Full version like About Us) ===== */
+/* ===== NAVBAR ===== */
 .navbar {
     position: fixed;
     top: 0;
@@ -59,8 +60,8 @@ body::before {
     justify-content: space-between;
     align-items: center;
     backdrop-filter: blur(12px);
-    background: rgba(4, 8, 15, 0.9);
-    border-bottom: 1px solid rgba(9, 238, 245, 0.2);
+    background: rgba(15, 20, 28, 0.9);
+    border-bottom: 1px solid rgba(110, 200, 255, 0.15);
     z-index: 100;
     transition: all 0.3s ease;
 }
@@ -72,7 +73,7 @@ body::before {
     font-weight: 800;
     font-size: 1.5rem;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #09eef5, #03fc84);
+    background: linear-gradient(135deg, #6ec8ff, #9bdeac);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -81,13 +82,14 @@ body::before {
 .logo-icon {
     width: 32px;
     height: 32px;
-    background: rgba(9, 238, 245, 0.15);
-    border: 1px solid rgba(9, 238, 245, 0.4);
+    background: rgba(110, 200, 255, 0.1);
+    border: 1px solid rgba(110, 200, 255, 0.3);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #09eef5;
+    color: #6ec8ff;
+    font-size: 18px;
 }
 
 .nav-links {
@@ -95,7 +97,7 @@ body::before {
     gap: 2rem;
 }
 .nav-links a {
-    color: #a3b8cc;
+    color: #a8bcd4;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s;
@@ -104,7 +106,7 @@ body::before {
     position: relative;
 }
 .nav-links a:hover {
-    color: #09eef5;
+    color: #6ec8ff;
 }
 .nav-links a.active::after {
     content: '';
@@ -113,15 +115,15 @@ body::before {
     left: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(90deg, #09eef5, #03fc84);
+    background: linear-gradient(90deg, #6ec8ff, #9bdeac);
     border-radius: 2px;
 }
 
-/* ===== HERO SECTION (adjusted for fixed navbar) ===== */
+/* ===== HERO SECTION ===== */
 .hero-mini {
     padding: 120px 20px 60px;
     text-align: center;
-    background: linear-gradient(to bottom, rgba(10, 16, 26, 0.95), var(--dark-bg));
+    background: linear-gradient(to bottom, rgba(22, 29, 42, 0.95), var(--dark-bg));
     position: relative;
     overflow: hidden;
 }
@@ -133,7 +135,7 @@ body::before {
     width: 600px;
     height: 600px;
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(9, 238, 245, 0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(110, 200, 255, 0.04) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -145,9 +147,9 @@ body::before {
     text-transform: uppercase;
     display: inline-block;
     padding: 4px 14px;
-    border: 1px solid rgba(250, 44, 255, 0.3);
+    border: 1px solid rgba(229, 153, 199, 0.3);
     border-radius: 20px;
-    background: rgba(250, 44, 255, 0.06);
+    background: rgba(229, 153, 199, 0.06);
 }
 
 .hero-title {
@@ -190,7 +192,7 @@ body::before {
 .stat-card:hover {
     border-color: var(--neon-cyan);
     transform: translateY(-3px);
-    box-shadow: 0 0 25px rgba(9, 238, 245, 0.1);
+    box-shadow: 0 0 25px rgba(110, 200, 255, 0.08);
 }
 .stat-number {
     font-family: 'Outfit';
@@ -245,7 +247,7 @@ body::before {
 }
 .video-wrapper:hover {
     border-color: var(--neon-cyan);
-    box-shadow: 0 0 30px rgba(9, 238, 245, 0.12);
+    box-shadow: 0 0 30px rgba(110, 200, 255, 0.08);
     transform: translateY(-3px);
 }
 .video-wrapper iframe {
@@ -303,7 +305,7 @@ body::before {
 .card:hover {
     border-color: var(--neon-cyan);
     transform: translateY(-5px);
-    box-shadow: 0 8px 40px rgba(9, 238, 245, 0.1);
+    box-shadow: 0 8px 40px rgba(110, 200, 255, 0.06);
 }
 
 .card::before {
@@ -319,18 +321,18 @@ body::before {
 }
 .card[data-severity="CRITICAL"]::before {
     color: var(--neon-magenta);
-    border: 1px solid rgba(250, 44, 255, 0.3);
-    background: rgba(250, 44, 255, 0.08);
+    border: 1px solid rgba(229, 153, 199, 0.3);
+    background: rgba(229, 153, 199, 0.08);
 }
 .card[data-severity="HIGH"]::before {
-    color: #ff6b35;
-    border: 1px solid rgba(255, 107, 53, 0.3);
-    background: rgba(255, 107, 53, 0.08);
+    color: #ff9a6e;
+    border: 1px solid rgba(255, 154, 110, 0.3);
+    background: rgba(255, 154, 110, 0.08);
 }
 .card[data-severity="MEDIUM"]::before {
     color: var(--neon-yellow);
-    border: 1px solid rgba(254, 188, 46, 0.3);
-    background: rgba(254, 188, 46, 0.08);
+    border: 1px solid rgba(240, 196, 143, 0.3);
+    background: rgba(240, 196, 143, 0.08);
 }
 
 .card.read {
@@ -377,8 +379,8 @@ body::before {
     font-size: 0.72rem;
     color: var(--neon-yellow);
     padding: 8px 12px;
-    background: rgba(254, 188, 46, 0.06);
-    border: 1px solid rgba(254, 188, 46, 0.15);
+    background: rgba(240, 196, 143, 0.06);
+    border: 1px solid rgba(240, 196, 143, 0.15);
     border-radius: 6px;
     margin-bottom: 14px;
     display: flex;
@@ -393,8 +395,8 @@ body::before {
 .defense-tag {
     display: inline-block;
     padding: 6px 14px;
-    background: rgba(3, 252, 132, 0.08);
-    border: 1px solid rgba(3, 252, 132, 0.3);
+    background: rgba(155, 222, 172, 0.08);
+    border: 1px solid rgba(155, 222, 172, 0.25);
     color: var(--neon-green);
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -433,7 +435,7 @@ body::before {
     border-radius: 2px;
     width: 0%;
     transition: width 0.5s ease;
-    box-shadow: 0 0 10px rgba(3, 252, 132, 0.4);
+    box-shadow: 0 0 10px rgba(155, 222, 172, 0.3);
 }
 .reading-progress-text {
     font-family: var(--font-mono);
@@ -451,7 +453,7 @@ body::before {
 .access-btn {
     display: inline-block;
     padding: 20px 40px;
-    background: linear-gradient(135deg, rgba(3, 252, 132, 0.12), rgba(9, 238, 245, 0.08));
+    background: linear-gradient(135deg, rgba(155, 222, 172, 0.1), rgba(110, 200, 255, 0.06));
     border: 2px solid var(--neon-green);
     color: var(--neon-green);
     font-family: var(--font-mono);
@@ -463,13 +465,13 @@ body::before {
     text-transform: uppercase;
     letter-spacing: 2px;
     backdrop-filter: blur(4px);
-    box-shadow: 0 0 15px rgba(3, 252, 132, 0.2);
+    box-shadow: 0 0 15px rgba(155, 222, 172, 0.15);
     text-decoration: none;
 }
 .access-btn:hover {
-    background: rgba(3, 252, 132, 0.18);
+    background: rgba(155, 222, 172, 0.12);
     transform: translateY(-3px);
-    box-shadow: 0 0 35px rgba(3, 252, 132, 0.4);
+    box-shadow: 0 0 35px rgba(155, 222, 172, 0.3);
     border-color: var(--neon-cyan);
 }
 .gate-hint {
@@ -478,6 +480,101 @@ body::before {
     color: var(--text-secondary);
     margin-top: 14px;
     opacity: 0.6;
+}
+
+/* ===== CUSTOM ROBOT VIDEO CONTAINER ===== */
+.custom-robot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 80px;
+    height: 80px;
+    z-index: 8001;
+    cursor: pointer;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 2px rgba(110, 200, 255, 0.25), 0 0 15px rgba(110, 200, 255, 0.15);
+    transition: all 0.3s ease;
+    background: rgba(22, 29, 42, 0.6);
+    animation: float 3s ease-in-out infinite;
+}
+.custom-robot-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.custom-robot-container:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 2px rgba(110, 200, 255, 0.4), 0 0 20px rgba(110, 200, 255, 0.25);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+.custom-robot-container::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(110, 200, 255, 0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+.custom-robot-container:hover::before {
+    opacity: 1;
+    animation: pulseRing 1s infinite;
+}
+@keyframes pulseRing {
+    0% { transform: scale(0.95); opacity: 0.4; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+
+.robot-tooltip {
+    position: fixed;
+    bottom: 110px;
+    right: 20px;
+    background: var(--glass-bg);
+    border: 1px solid #6ec8ff;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: #6ec8ff;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 8000;
+    background: rgba(22, 29, 42, 0.95);
+    backdrop-filter: blur(8px);
+}
+.robot-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    right: 15px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #6ec8ff;
+}
+.custom-robot-container:hover + .robot-tooltip,
+.robot-tooltip:hover {
+    opacity: 1;
+}
+
+#sitespeak-launcher {
+    display: none !important;
+}
+
+/* Adjust chatbox position */
+#sitespeak-iframe {
+    bottom: 110px !important;
+    right: 20px !important;
 }
 
 /* ===== FOOTER ===== */
@@ -511,6 +608,10 @@ footer a {
     .nav-links { gap: 0.6rem; }
     .nav-links a { font-size: 0.7rem; }
 }
+@media (max-width: 560px) {
+    .custom-robot-container { width: 60px; height: 60px; bottom: 10px; right: 10px; }
+    .robot-tooltip { bottom: 80px; right: 10px; font-size: 8px; padding: 4px 8px; }
+}
 @media (max-width: 480px) {
     .nav-links { gap: 0.4rem; }
     .navbar { padding: 0.6rem 4%; }
@@ -519,16 +620,16 @@ footer a {
 </head>
 <body>
 
-<!-- ===== NAVBAR (Full version like About Us) ===== -->
+<!-- ===== NAVBAR ===== -->
 <nav class="navbar">
     <div class="logo" onclick="window.location.href='lobby.html'">
-        <div class="logo-icon"><span class="material-icons">shield</span></div>
+        <div class="logo-icon">🛡️</div>
         <span>CyberSmart</span>
     </div>
     <div class="nav-links">
         <a href="lobby.html">Home</a>
         <a href="about-us.html">About</a>
-        <a href="types-of-risks.html">Academy</a>
+        <a href="types-of-risks.html" class="active">Academy</a>
         <a href="Simulationpage.html">Brief</a>
         <a href="solutions.html">Simulations</a>
     </div>
@@ -730,14 +831,15 @@ footer a {
     <p class="gate-hint">Review all threat cards above to unlock the secure gateway</p>
 </div>
 
-<!-- ===== FOOTER ===== -->
-<footer>
-    <p>&copy; 2026 CyberSmart. All Systems Operational.</p>
-    <p style="margin-top: 8px; opacity: 0.4;">
-        Threat data sourced from Fortinet, ENISA, Verizon DBIR & NordLayer reports.
-        <br><a href="lobby.html">Return to Lobby</a>
-    </p>
-</footer>
+<!-- ===== CUSTOM ROBOT VIDEO CONTAINER ===== -->
+<div class="custom-robot-container" id="customRobot">
+    <video id="robotVideo" autoplay loop muted playsinline>
+        <source src="video-robot.mp4" type="video/mp4">
+        <!-- Fallback animated emoji -->
+        <div style="width:100%; height:100%; background: linear-gradient(135deg, #6ec8ff, #9bdeac); display: flex; align-items: center; justify-content: center; font-size: 40px;">🤖</div>
+    </video>
+</div>
+<div class="robot-tooltip" id="robotTooltip">🤖 Click me to chat!</div>
 
 <!-- ===== SITESPEAK AI CHATBOT ===== -->
 <script type="text/javascript">
@@ -748,6 +850,15 @@ footer a {
     d.getElementsByTagName("head")[0].appendChild(s);
 })();
 </script>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <p>&copy; 2026 CyberSmart. All Systems Operational.</p>
+    <p style="margin-top: 8px; opacity: 0.4;">
+        Threat data sourced from Fortinet, ENISA, Verizon DBIR & NordLayer reports.
+        <br><a href="lobby.html">Return to Lobby</a>
+    </p>
+</footer>
 
 <script>
 // ============================================================
@@ -760,7 +871,6 @@ const readingStatus = document.getElementById('readingStatus');
 const readingPercent = document.getElementById('readingPercent');
 const TOTAL_THREATS = threatCards.length;
 
-// Get the direct access button (anchor)
 const accessBtn = document.getElementById('directAccessBtn');
 
 function updateReadingProgress() {
@@ -769,17 +879,16 @@ function updateReadingProgress() {
     readingStatus.textContent = `${readThreats.size} / ${TOTAL_THREATS} threats reviewed`;
     readingPercent.textContent = Math.round(pct) + '%';
     
-    // Enable/disable the button based on reading completion
     if (readThreats.size >= TOTAL_THREATS) {
         accessBtn.style.pointerEvents = 'auto';
         accessBtn.style.opacity = '1';
         accessBtn.style.cursor = 'pointer';
-        accessBtn.style.boxShadow = '0 0 20px rgba(3, 252, 132, 0.5)';
+        accessBtn.style.boxShadow = '0 0 20px rgba(155, 222, 172, 0.4)';
     } else {
         accessBtn.style.pointerEvents = 'none';
         accessBtn.style.opacity = '0.5';
         accessBtn.style.cursor = 'default';
-        accessBtn.style.boxShadow = '0 0 15px rgba(3, 252, 132, 0.2)';
+        accessBtn.style.boxShadow = '0 0 15px rgba(155, 222, 172, 0.15)';
     }
 }
 
@@ -846,8 +955,78 @@ accessBtn.addEventListener('click', (e) => {
     }
 });
 
+// ============================================================
+//  4. ROBOT CHATBOT INTEGRATION
+// ============================================================
+const robotContainer = document.getElementById('customRobot');
+const robotVideo = document.getElementById('robotVideo');
+
+function openSiteSpeakChatbot() {
+    const launcher = document.getElementById('sitespeak-launcher');
+    if (launcher) {
+        launcher.click();
+        animateRobotClick();
+        return;
+    }
+    
+    const iframe = document.getElementById('sitespeak-iframe');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ openChat: true }, '*');
+        animateRobotClick();
+        return;
+    }
+}
+
+function animateRobotClick() {
+    gsap.to(robotContainer, { 
+        scale: 1.15, 
+        duration: 0.15, 
+        yoyo: true, 
+        repeat: 1,
+        onComplete: () => {
+            gsap.to(robotContainer, { scale: 1, duration: 0.1 });
+        }
+    });
+}
+
+robotContainer.addEventListener('click', openSiteSpeakChatbot);
+
+if (robotVideo) {
+    robotVideo.addEventListener('canplay', () => {
+        robotVideo.play().catch(e => console.log('Video autoplay prevented:', e));
+    });
+    
+    document.body.addEventListener('click', function initPlay() {
+        if (robotVideo && robotVideo.paused) {
+            robotVideo.play().catch(() => {});
+        }
+        document.body.removeEventListener('click', initPlay);
+    }, { once: true });
+}
+
 // Initialize button state
 updateReadingProgress();
+
+// Hide default SiteSpeakAI launcher and adjust position
+setTimeout(() => {
+    const defaultLauncher = document.getElementById('sitespeak-launcher');
+    if (defaultLauncher) {
+        defaultLauncher.style.display = 'none';
+    }
+    const iframe = document.getElementById('sitespeak-iframe');
+    if (iframe) {
+        iframe.style.bottom = '110px';
+        iframe.style.right = '20px';
+    }
+}, 2000);
+
+// Hide tooltip after 5 seconds
+setTimeout(() => {
+    const tooltip = document.getElementById('robotTooltip');
+    if (tooltip) {
+        gsap.to(tooltip, { opacity: 0, duration: 1, delay: 4 });
+    }
+}, 5000);
 </script>
 
 </body>
