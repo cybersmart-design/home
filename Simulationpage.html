@@ -10,24 +10,27 @@
     
     <style>
         :root {
-            --bg: #12151c;
-            --bg-surface: #1a1e26;
-            --bg-card: #1e232b;
-            --primary: #6ec8ff;
-            --primary-dim: rgba(110, 200, 255, 0.12);
-            --secondary: #9bdeac;
-            --secondary-dim: rgba(155, 222, 172, 0.1);
-            --accent: #ffb347;
-            --accent-dim: rgba(255, 179, 71, 0.1);
-            --magenta: #e599c7;
-            --red: #ff8a7a;
-            --silver: #9aaebf;
-            --silver-dim: #6a7a8c;
-            --text: #e4e9f2;
-            --text-muted: #a0b0c2;
-            --panel-border: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(110, 200, 255, 0.1);
-            --glass-bg: rgba(30, 35, 43, 0.7);
+            /* Techy but Eye-Friendly Color Palette */
+            --bg: #0f1419;           /* Deep charcoal - not pure black */
+            --bg-surface: #1a1f26;   /* Soft dark surface */
+            --bg-card: #222831;       /* Card background */
+            --primary: #5fc3e0;      /* Soft cyan/blue - less harsh */
+            --primary-dim: rgba(95, 195, 224, 0.1);
+            --primary-glow: rgba(95, 195, 224, 0.15);
+            --secondary: #7cb892;     /* Soft mint green */
+            --secondary-dim: rgba(124, 184, 146, 0.08);
+            --accent: #e0a86b;        /* Warm amber */
+            --accent-dim: rgba(224, 168, 107, 0.1);
+            --magenta: #c97b9e;       /* Soft rose */
+            --magenta-dim: rgba(201, 123, 158, 0.08);
+            --red: #d97a6e;           /* Muted coral/red */
+            --silver: #8a95a5;        /* Soft gray-blue */
+            --silver-dim: #5c6670;    /* Darker gray */
+            --text: #e8edf2;          /* Soft white (not pure white) */
+            --text-muted: #9aa7b5;    /* Muted text */
+            --panel-border: rgba(95, 195, 224, 0.12);
+            --glass-border: rgba(95, 195, 224, 0.08);
+            --glass-bg: rgba(34, 40, 49, 0.7);
             --font-mono: 'JetBrains Mono', monospace;
             --font-display: 'Outfit', sans-serif;
             --font-body: 'Inter', -apple-system, sans-serif;
@@ -55,8 +58,8 @@
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(12px);
-            background: rgba(18, 21, 28, 0.85);
-            border-bottom: 1px solid rgba(110, 200, 255, 0.15);
+            background: rgba(15, 20, 25, 0.85);
+            border-bottom: 1px solid rgba(95, 195, 224, 0.15);
             z-index: 100;
         }
 
@@ -66,7 +69,7 @@
             gap: 10px;
             font-weight: 800;
             font-size: 1.5rem;
-            background: linear-gradient(135deg, #6ec8ff, #9bdeac);
+            background: linear-gradient(135deg, #5fc3e0, #7cb892);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -75,30 +78,34 @@
         .logo-icon {
             width: 32px;
             height: 32px;
-            background: rgba(110, 200, 255, 0.1);
-            border: 1px solid rgba(110, 200, 255, 0.3);
+            background: rgba(95, 195, 224, 0.1);
+            border: 1px solid rgba(95, 195, 224, 0.3);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6ec8ff;
+            color: #5fc3e0;
             font-size: 18px;
         }
 
         .nav-links { display: flex; gap: 2rem; }
         .nav-links a {
-            color: #a0b0c2;
+            color: #9aa7b5;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.2s;
             font-size: 0.9rem;
         }
-        .nav-links a:hover { color: #6ec8ff; }
+        .nav-links a:hover { color: #5fc3e0; }
 
-        /* ===== BACKGROUND ===== */
+        /* ===== BACKGROUND GRID (subtle tech pattern) ===== */
         .bg-grid-overlay {
             position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background-image: radial-gradient(circle at 50% 50%, rgba(110,200,255,0.02) 0%, transparent 70%);
+            background-image: 
+                radial-gradient(circle at 25% 50%, rgba(95, 195, 224, 0.02) 0%, transparent 50%),
+                linear-gradient(rgba(95, 195, 224, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(95, 195, 224, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
         }
 
         /* ===== BACK BUTTON ===== */
@@ -123,13 +130,13 @@
         .back-nav:hover {
             border-color: var(--glass-border);
             color: var(--primary);
-            background: rgba(110,200,255,0.06);
+            background: rgba(95, 195, 224, 0.08);
         }
 
         /* ===== TOP STATUS BAR ===== */
         .top-bar {
             position: fixed; top: 0; left: 0; right: 0; height: 50px;
-            background: rgba(18,21,28,0.9); backdrop-filter: blur(20px);
+            background: rgba(15, 20, 25, 0.9); backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--panel-border); z-index: 90;
             display: flex; align-items: center; justify-content: center; gap: 36px; padding: 0 20px;
         }
@@ -145,10 +152,10 @@
         .tb-dot.green { background: var(--secondary); }
         .tb-dot.cyan { background: var(--primary); }
         .tb-dot.orange { background: var(--accent); }
-        @keyframes tbPulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+        @keyframes tbPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
         .tb-clock { font-family: var(--font-mono); font-size: 11px; color: var(--primary); }
         .tb-progress-bar {
-            width: 80px; height: 4px; background: rgba(255,255,255,0.05);
+            width: 80px; height: 4px; background: rgba(95, 195, 224, 0.15);
             border-radius: 2px; overflow: hidden;
         }
         .tb-progress-fill {
@@ -171,12 +178,12 @@
         }
         .s-tag::before, .s-tag::after {
             content: ''; width: 40px; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(110,200,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(95, 195, 224, 0.4), transparent);
         }
         .s-title {
             font-family: var(--font-display); font-size: clamp(22px, 3.5vw, 40px);
             font-weight: 800; text-transform: uppercase;
-            background: linear-gradient(135deg, #e4e9f2, #9aaebf);
+            background: linear-gradient(135deg, #e8edf2, #9aa7b5);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -197,23 +204,23 @@
         }
         .node-circle {
             width: 80px; height: 80px; border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.08);
+            border: 2px solid rgba(95, 195, 224, 0.15);
             display: flex; align-items: center; justify-content: center;
             font-size: 28px;
-            background: rgba(255,255,255,0.02);
+            background: rgba(95, 195, 224, 0.03);
             transition: all 0.4s;
         }
         .intel-node:not(.decrypted) .node-circle {
             animation: nodePulse 2.5s infinite;
         }
         @keyframes nodePulse {
-            0%,100% { box-shadow: 0 0 0 rgba(110,200,255,0); }
-            50% { box-shadow: 0 0 20px rgba(110,200,255,0.3); }
+            0%,100% { box-shadow: 0 0 0 rgba(95, 195, 224, 0); }
+            50% { box-shadow: 0 0 20px rgba(95, 195, 224, 0.2); }
         }
         .node-status {
             font-family: var(--font-mono); font-size: 8px;
             padding: 3px 10px; border-radius: 4px;
-            background: rgba(255,255,255,0.03);
+            background: rgba(95, 195, 224, 0.05);
             color: var(--silver-dim);
         }
         .intel-node.decrypted .node-status {
@@ -236,12 +243,12 @@
         .bio-text { font-size: 13.5px; color: var(--text-muted); line-height: 1.75; }
         .data-callout {
             padding: 14px 16px; border-radius: 12px; margin-bottom: 16px;
-            background: rgba(110,200,255,0.03); border: 1px solid rgba(110,200,255,0.1);
+            background: rgba(95, 195, 224, 0.04); border: 1px solid rgba(95, 195, 224, 0.08);
             display: flex; gap: 12px;
         }
         .sim-item, .skill-card {
             display: flex; gap: 12px; padding: 14px;
-            background: rgba(255,255,255,0.02); border: 1px solid var(--panel-border);
+            background: rgba(95, 195, 224, 0.03); border: 1px solid var(--panel-border);
             border-radius: 12px; margin-bottom: 10px;
         }
         .proceed-section { text-align: center; margin-bottom: 60px; }
@@ -249,13 +256,18 @@
             display: inline-flex; padding: 20px 48px; border-radius: 16px;
             font-family: var(--font-mono); font-size: 14px; font-weight: 700;
             text-transform: uppercase; text-decoration: none;
-            border: 2px solid rgba(255,255,255,0.08);
-            color: var(--silver-dim); background: rgba(255,255,255,0.02);
-            cursor: not-allowed; filter: grayscale(1); opacity: 0.4;
+            border: 2px solid rgba(95, 195, 224, 0.2);
+            color: var(--silver-dim); background: rgba(95, 195, 224, 0.05);
+            cursor: not-allowed; filter: grayscale(1); opacity: 0.5;
         }
         .proceed-btn.unlocked {
             border-color: var(--primary); color: var(--primary);
             cursor: pointer; filter: grayscale(0); opacity: 1;
+            background: rgba(95, 195, 224, 0.08);
+        }
+        .proceed-btn.unlocked:hover {
+            background: rgba(95, 195, 224, 0.12);
+            transform: translateY(-2px);
         }
         .sources-section { border-top: 1px solid var(--panel-border); padding: 48px 0; }
         .sources-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; max-width: 900px; margin: 0 auto; }
@@ -268,13 +280,12 @@
             background: var(--primary-dim); color: var(--primary);
             text-decoration: none; font-size: 10px;
         }
-        .unlock-flash { position: fixed; inset: 0; z-index: 9999; background: rgba(110,200,255,0.03); pointer-events: none; opacity: 0; }
+        .unlock-flash { position: fixed; inset: 0; z-index: 9999; background: rgba(95, 195, 224, 0.03); pointer-events: none; opacity: 0; }
         .unlock-flash.active { opacity: 1; animation: flashBang 0.5s; }
-        @keyframes flashBang { 0% { background: rgba(110,200,255,0.15); } 100% { background: transparent; } }
+        @keyframes flashBang { 0% { background: rgba(95, 195, 224, 0.1); } 100% { background: transparent; } }
         .site-footer { text-align: center; padding: 24px; font-size: 9px; color: var(--silver-dim); border-top: 1px solid var(--panel-border); }
 
-        /* ===== CUSTOM ROBOT VIDEO CONTAINER ===== */
-        /* This will REPLACE the default SiteSpeakAI launcher */
+        /* ===== CUSTOM ROBOT CONTAINER ===== */
         .custom-robot-container {
             position: fixed;
             bottom: 20px;
@@ -285,9 +296,9 @@
             cursor: pointer;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 0 3px rgba(110, 200, 255, 0.3), 0 0 20px rgba(110, 200, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(95, 195, 224, 0.25), 0 0 20px rgba(95, 195, 224, 0.15);
             transition: all 0.3s ease;
-            background: rgba(0,0,0,0.2);
+            background: rgba(34, 40, 49, 0.5);
             animation: float 3s ease-in-out infinite;
         }
         .custom-robot-container video {
@@ -298,22 +309,21 @@
             transition: all 0.3s ease;
         }
         .custom-robot-container:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 0 3px rgba(110, 200, 255, 0.6), 0 0 30px rgba(110, 200, 255, 0.5);
+            transform: scale(1.05);
+            box-shadow: 0 0 0 2px rgba(95, 195, 224, 0.4), 0 0 30px rgba(95, 195, 224, 0.25);
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+            50% { transform: translateY(-6px); }
         }
         
-        /* Pulse ring effect */
         .custom-robot-container::before {
             content: '';
             position: absolute;
             inset: -5px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(110,200,255,0.3), transparent);
+            background: radial-gradient(circle, rgba(95, 195, 224, 0.2), transparent);
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
@@ -323,11 +333,10 @@
             animation: pulseRing 1s infinite;
         }
         @keyframes pulseRing {
-            0% { transform: scale(0.95); opacity: 0.5; }
+            0% { transform: scale(0.95); opacity: 0.4; }
             100% { transform: scale(1.2); opacity: 0; }
         }
         
-        /* Tooltip */
         .robot-tooltip {
             position: fixed;
             bottom: 170px;
@@ -344,9 +353,9 @@
             transition: opacity 0.3s;
             pointer-events: none;
             z-index: 9999998;
-            background: rgba(30,35,43,0.95);
+            background: rgba(34, 40, 49, 0.95);
             backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .robot-tooltip::after {
             content: '';
@@ -362,7 +371,6 @@
             opacity: 1;
         }
         
-        /* Hide the default SiteSpeakAI launcher */
         #sitespeak-launcher {
             display: none !important;
         }
@@ -471,18 +479,17 @@
     <div class="site-footer">© 2026 CyberSmart — Project Intel & Rationale Briefing v1.0</div>
 </div>
 
-<!-- ===== CUSTOM ROBOT VIDEO (REPLACES DEFAULT LAUNCHER) ===== -->
+<!-- CUSTOM ROBOT VIDEO CONTAINER -->
 <div class="custom-robot-container" id="customRobot">
-    <!-- IMPORTANT: Replace "YOUR_ROBOT_VIDEO_URL.mp4" with your actual video file URL -->
     <video id="robotVideo" autoplay loop muted playsinline>
         <source src="video-robot.mp4" type="video/mp4">
-        <!-- Fallback text if video doesn't load -->
+        <!-- Fallback - subtle animated gradient if no video -->
         Your browser does not support the video tag.
     </video>
 </div>
 <div class="robot-tooltip" id="robotTooltip">🤖 Click Cyber Buddy to chat! 💬</div>
 
-<!-- ===== SITESPEAKAI CHATBOT SCRIPT ===== -->
+<!-- SITESPEAKAI CHATBOT SCRIPT -->
 <script type="text/javascript">
     (function(){
         var d=document;
@@ -492,10 +499,8 @@
         s.id="sitespeak-script";
         d.getElementsByTagName("head")[0].appendChild(s);
         
-        // Wait for SiteSpeakAI to load, then hide its default launcher
         s.onload = function() {
             setTimeout(function() {
-                // Hide the default SiteSpeakAI launcher button
                 var defaultLauncher = document.getElementById('sitespeak-launcher');
                 if (defaultLauncher) {
                     defaultLauncher.style.display = 'none';
@@ -507,7 +512,6 @@
 </script>
 
 <script>
-    // ===== PAGE FUNCTIONALITY =====
     function updateClock() {
         document.getElementById('topClock').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
     }
@@ -516,7 +520,7 @@
     
     let decrypted = [false, false, false];
     let totalDecrypted = 0;
-    const nodeColors = ['#6ec8ff', '#9bdeac', '#ffb347'];
+    const nodeColors = ['#5fc3e0', '#7cb892', '#e0a86b'];
     
     function decryptNode(index) {
         if (decrypted[index]) return;
@@ -564,7 +568,6 @@
         lockText.textContent = 'UNLOCKED';
         lockText.style.color = 'var(--secondary)';
         
-        // Robot celebration animation
         const robotContainer = document.getElementById('customRobot');
         gsap.to(robotContainer, { 
             scale: 1.2, 
@@ -586,53 +589,24 @@
         return true;
     }
     
-    // ===== ROBOT CLICK HANDLER - OPENS SITESPEAKAI CHATBOT =====
     const robotContainer = document.getElementById('customRobot');
     const robotVideo = document.getElementById('robotVideo');
     
     function openSiteSpeakChatbot() {
-        console.log('Opening SiteSpeakAI chatbot...');
-        
-        // Method 1: Find and click the SiteSpeakAI launcher (which we hid but still exists)
         const launcher = document.getElementById('sitespeak-launcher');
         if (launcher) {
             launcher.click();
-            console.log('Chatbot opened via launcher click');
             animateRobotClick();
             return;
         }
         
-        // Method 2: Find by class or other selectors
-        const possibleSelectors = ['.sitespeak-chat-launcher', '[id*="sitespeak-launcher"]'];
-        for (const selector of possibleSelectors) {
-            const element = document.querySelector(selector);
-            if (element && typeof element.click === 'function') {
-                element.click();
-                console.log('Chatbot opened via selector:', selector);
-                animateRobotClick();
-                return;
-            }
-        }
-        
-        // Method 3: Try to call global SiteSpeakAI API
-        if (window.sitespeak && typeof window.sitespeak.open === 'function') {
-            window.sitespeak.open();
-            console.log('Chatbot opened via sitespeak.open()');
-            animateRobotClick();
-            return;
-        }
-        
-        // Method 4: Post message to iframe
         const iframe = document.getElementById('sitespeak-iframe');
         if (iframe && iframe.contentWindow) {
             iframe.contentWindow.postMessage({ openChat: true }, '*');
-            console.log('Chatbot opened via postMessage');
             animateRobotClick();
             return;
         }
         
-        // Fallback: Show message
-        console.warn('Could not find SiteSpeakAI launcher');
         showTempNotification('🤖 Chatbot is loading... Please wait a moment and try again!');
     }
     
@@ -667,16 +641,13 @@
         setTimeout(() => notification.remove(), 3000);
     }
     
-    // Add click event to robot
     robotContainer.addEventListener('click', openSiteSpeakChatbot);
     
-    // Ensure video plays properly
     if (robotVideo) {
         robotVideo.addEventListener('canplay', () => {
             robotVideo.play().catch(e => console.log('Video autoplay prevented:', e));
         });
         
-        // Try to play on first user interaction
         document.body.addEventListener('click', function initPlay() {
             if (robotVideo && robotVideo.paused) {
                 robotVideo.play().catch(() => {});
@@ -685,12 +656,10 @@
         }, { once: true });
     }
     
-    // Initial animations
     gsap.from('.section-header', { opacity: 0, y: 30, duration: 0.8 });
     gsap.from('.intel-nodes-section', { opacity: 0, y: 20, duration: 0.7, delay: 0.2 });
     gsap.from('.proceed-section', { opacity: 0, y: 20, duration: 0.6, delay: 0.4 });
     
-    // Tooltip auto-hide after 6 seconds
     setTimeout(() => {
         const tooltip = document.getElementById('robotTooltip');
         if (tooltip) {
