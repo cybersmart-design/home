@@ -11,23 +11,21 @@
     <style>
         :root {
             /* Techy but Eye-Friendly Color Palette */
-            --bg: #0f1419;           /* Deep charcoal - not pure black */
-            --bg-surface: #1a1f26;   /* Soft dark surface */
-            --bg-card: #222831;       /* Card background */
-            --primary: #5fc3e0;      /* Soft cyan/blue - less harsh */
+            --bg: #0f1419;
+            --bg-surface: #1a1f26;
+            --bg-card: #222831;
+            --primary: #5fc3e0;
             --primary-dim: rgba(95, 195, 224, 0.1);
-            --primary-glow: rgba(95, 195, 224, 0.15);
-            --secondary: #7cb892;     /* Soft mint green */
+            --secondary: #7cb892;
             --secondary-dim: rgba(124, 184, 146, 0.08);
-            --accent: #e0a86b;        /* Warm amber */
+            --accent: #e0a86b;
             --accent-dim: rgba(224, 168, 107, 0.1);
-            --magenta: #c97b9e;       /* Soft rose */
-            --magenta-dim: rgba(201, 123, 158, 0.08);
-            --red: #d97a6e;           /* Muted coral/red */
-            --silver: #8a95a5;        /* Soft gray-blue */
-            --silver-dim: #5c6670;    /* Darker gray */
-            --text: #e8edf2;          /* Soft white (not pure white) */
-            --text-muted: #9aa7b5;    /* Muted text */
+            --magenta: #c97b9e;
+            --red: #d97a6e;
+            --silver: #8a95a5;
+            --silver-dim: #5c6670;
+            --text: #e8edf2;
+            --text-muted: #9aa7b5;
             --panel-border: rgba(95, 195, 224, 0.12);
             --glass-border: rgba(95, 195, 224, 0.08);
             --glass-bg: rgba(34, 40, 49, 0.7);
@@ -98,7 +96,7 @@
         }
         .nav-links a:hover { color: #5fc3e0; }
 
-        /* ===== BACKGROUND GRID (subtle tech pattern) ===== */
+        /* ===== BACKGROUND GRID ===== */
         .bg-grid-overlay {
             position: fixed; inset: 0; z-index: 0; pointer-events: none;
             background-image: 
@@ -285,18 +283,18 @@
         @keyframes flashBang { 0% { background: rgba(95, 195, 224, 0.1); } 100% { background: transparent; } }
         .site-footer { text-align: center; padding: 24px; font-size: 9px; color: var(--silver-dim); border-top: 1px solid var(--panel-border); }
 
-        /* ===== CUSTOM ROBOT CONTAINER ===== */
+        /* ===== CUSTOM ROBOT CONTAINER - SMALLER & BETTER POSITIONED ===== */
         .custom-robot-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 140px;
-            height: 140px;
+            width: 85px;
+            height: 85px;
             z-index: 9999999;
             cursor: pointer;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 0 0 2px rgba(95, 195, 224, 0.25), 0 0 20px rgba(95, 195, 224, 0.15);
+            box-shadow: 0 0 0 2px rgba(95, 195, 224, 0.25), 0 0 15px rgba(95, 195, 224, 0.15);
             transition: all 0.3s ease;
             background: rgba(34, 40, 49, 0.5);
             animation: float 3s ease-in-out infinite;
@@ -309,19 +307,19 @@
             transition: all 0.3s ease;
         }
         .custom-robot-container:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 2px rgba(95, 195, 224, 0.4), 0 0 30px rgba(95, 195, 224, 0.25);
+            transform: scale(1.08);
+            box-shadow: 0 0 0 2px rgba(95, 195, 224, 0.4), 0 0 20px rgba(95, 195, 224, 0.25);
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-6px); }
+            50% { transform: translateY(-5px); }
         }
         
         .custom-robot-container::before {
             content: '';
             position: absolute;
-            inset: -5px;
+            inset: -3px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(95, 195, 224, 0.2), transparent);
             opacity: 0;
@@ -339,13 +337,13 @@
         
         .robot-tooltip {
             position: fixed;
-            bottom: 170px;
-            right: 30px;
+            bottom: 115px;
+            right: 20px;
             background: var(--bg-card);
             border: 1px solid var(--primary);
-            border-radius: 20px;
-            padding: 10px 18px;
-            font-size: 11px;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 9px;
             font-family: var(--font-mono);
             color: var(--primary);
             white-space: nowrap;
@@ -355,29 +353,36 @@
             z-index: 9999998;
             background: rgba(34, 40, 49, 0.95);
             backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         .robot-tooltip::after {
             content: '';
             position: absolute;
-            bottom: -6px;
-            right: 20px;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 6px solid var(--primary);
+            bottom: -5px;
+            right: 15px;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid var(--primary);
         }
         .custom-robot-container:hover + .robot-tooltip,
         .robot-tooltip:hover {
             opacity: 1;
         }
         
+        /* Hide the default SiteSpeakAI launcher */
         #sitespeak-launcher {
             display: none !important;
         }
         
+        /* Make SiteSpeakAI chatbox not overlap the robot */
+        #sitespeak-iframe {
+            bottom: 100px !important;
+            right: 20px !important;
+        }
+        
         @media (max-width: 560px) {
-            .custom-robot-container { width: 90px; height: 90px; bottom: 10px; right: 10px; }
-            .robot-tooltip { bottom: 110px; right: 15px; font-size: 9px; padding: 6px 12px; }
+            .custom-robot-container { width: 65px; height: 65px; bottom: 10px; right: 10px; }
+            .robot-tooltip { bottom: 85px; right: 10px; font-size: 8px; padding: 4px 8px; }
         }
     </style>
 </head>
@@ -479,15 +484,15 @@
     <div class="site-footer">© 2026 CyberSmart — Project Intel & Rationale Briefing v1.0</div>
 </div>
 
-<!-- CUSTOM ROBOT VIDEO CONTAINER -->
+<!-- CUSTOM ROBOT VIDEO CONTAINER - SMALLER SIZE -->
 <div class="custom-robot-container" id="customRobot">
     <video id="robotVideo" autoplay loop muted playsinline>
         <source src="video-robot.mp4" type="video/mp4">
-        <!-- Fallback - subtle animated gradient if no video -->
-        Your browser does not support the video tag.
+        <!-- Fallback animated emoji if no video -->
+        <div style="width:100%; height:100%; background: linear-gradient(135deg, #5fc3e0, #7cb892); display: flex; align-items: center; justify-content: center; font-size: 40px;">🤖</div>
     </video>
 </div>
-<div class="robot-tooltip" id="robotTooltip">🤖 Click Cyber Buddy to chat! 💬</div>
+<div class="robot-tooltip" id="robotTooltip">🤖 Click me!</div>
 
 <!-- SITESPEAKAI CHATBOT SCRIPT -->
 <script type="text/javascript">
@@ -504,6 +509,12 @@
                 var defaultLauncher = document.getElementById('sitespeak-launcher');
                 if (defaultLauncher) {
                     defaultLauncher.style.display = 'none';
+                }
+                // Adjust iframe position to not cover the robot
+                var iframe = document.getElementById('sitespeak-iframe');
+                if (iframe) {
+                    iframe.style.bottom = '110px';
+                    iframe.style.right = '20px';
                 }
                 console.log('SiteSpeakAI loaded - custom robot will trigger chat');
             }, 1000);
@@ -663,9 +674,9 @@
     setTimeout(() => {
         const tooltip = document.getElementById('robotTooltip');
         if (tooltip) {
-            gsap.to(tooltip, { opacity: 0, duration: 1, delay: 5 });
+            gsap.to(tooltip, { opacity: 0, duration: 1, delay: 4 });
         }
-    }, 6000);
+    }, 5000);
 </script>
 </body>
 </html>
