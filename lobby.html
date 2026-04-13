@@ -12,15 +12,16 @@
 
 <style>
 :root {
-    --dark-bg: #04080f;
-    --dark-surface: #0a101a;
-    --neon-cyan: #09eef5;
-    --neon-green: #03fc84;
-    --neon-magenta: #fa2cff;
+    /* Eye-Friendly Tech Color Palette - Soft but modern */
+    --dark-bg: #0f141c;
+    --dark-surface: #161d2a;
+    --neon-cyan: #6ec8ff;
+    --neon-green: #9bdeac;
+    --neon-magenta: #e599c7;
     --text-primary: #eef4ff;
-    --text-secondary: #a3b8cc;
-    --glass-bg: rgba(16, 24, 39, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-secondary: #a8bcd4;
+    --glass-bg: rgba(22, 29, 42, 0.75);
+    --glass-border: rgba(110, 200, 255, 0.12);
     --font-mono: "JetBrains Mono", monospace;
 }
 
@@ -34,7 +35,7 @@ body {
     line-height: 1.6;
 }
 
-/* ====== NAVIGATION BAR (from About Us) ====== */
+/* ====== NAVIGATION BAR ====== */
 .navbar {
     position: fixed;
     top: 0;
@@ -45,8 +46,8 @@ body {
     justify-content: space-between;
     align-items: center;
     backdrop-filter: blur(12px);
-    background: rgba(4, 8, 15, 0.8);
-    border-bottom: 1px solid rgba(9, 238, 245, 0.2);
+    background: rgba(15, 20, 28, 0.85);
+    border-bottom: 1px solid rgba(110, 200, 255, 0.15);
     z-index: 100;
     transition: all 0.3s ease;
 }
@@ -58,7 +59,7 @@ body {
     font-weight: 800;
     font-size: 1.5rem;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #09eef5, #03fc84);
+    background: linear-gradient(135deg, #6ec8ff, #9bdeac);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -67,13 +68,14 @@ body {
 .logo-icon {
     width: 32px;
     height: 32px;
-    background: rgba(9, 238, 245, 0.15);
-    border: 1px solid rgba(9, 238, 245, 0.4);
+    background: rgba(110, 200, 255, 0.1);
+    border: 1px solid rgba(110, 200, 255, 0.3);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #09eef5;
+    color: #6ec8ff;
+    font-size: 18px;
 }
 
 .nav-links {
@@ -81,7 +83,7 @@ body {
     gap: 2rem;
 }
 .nav-links a {
-    color: #a3b8cc;
+    color: #a8bcd4;
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s;
@@ -89,7 +91,7 @@ body {
     letter-spacing: 0.3px;
 }
 .nav-links a:hover, .nav-links a.active {
-    color: #09eef5;
+    color: #6ec8ff;
 }
 .nav-links a.active::after {
     content: '';
@@ -98,14 +100,14 @@ body {
     left: 0;
     width: 100%;
     height: 2px;
-    background: linear-gradient(90deg, #09eef5, #03fc84);
+    background: linear-gradient(90deg, #6ec8ff, #9bdeac);
     border-radius: 2px;
 }
 .nav-links a {
     position: relative;
 }
 
-/* ====== MOBILE / DESKTOP MODE WARNING OVERLAY ====== */
+/* ====== DESKTOP MODE WARNING OVERLAY (PRESERVED) ====== */
 .desktop-warning-overlay {
     display: none;
     position: fixed;
@@ -120,7 +122,6 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-/* Show on small screens */
 @media (max-width: 1024px) {
     .desktop-warning-overlay {
         display: flex !important;
@@ -146,7 +147,7 @@ body {
     font-weight: 800;
     text-align: center;
     margin-bottom: 6px;
-    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+    background: linear-gradient(135deg, #6ec8ff, #9bdeac);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -163,10 +164,9 @@ body {
 }
 
 .dw-subtitle strong {
-    color: var(--neon-cyan);
+    color: #6ec8ff;
 }
 
-/* Main instruction card */
 .dw-card {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
@@ -176,7 +176,6 @@ body {
     max-width: 440px;
     margin-bottom: 14px;
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
 }
 
 .dw-card h3 {
@@ -190,7 +189,6 @@ body {
     color: var(--text-primary);
 }
 
-/* Browser tabs */
 .dw-tabs {
     display: flex;
     gap: 6px;
@@ -210,14 +208,10 @@ body {
     color: var(--text-secondary);
 }
 
-.dw-tab:active {
-    transform: scale(0.97);
-}
-
 .dw-tab.active {
-    background: rgba(9, 238, 245, 0.08);
-    border-color: rgba(9, 238, 245, 0.3);
-    color: var(--neon-cyan);
+    background: rgba(110, 200, 255, 0.08);
+    border-color: rgba(110, 200, 255, 0.3);
+    color: #6ec8ff;
 }
 
 .dw-tab .dw-tab-icon {
@@ -226,7 +220,6 @@ body {
     margin-bottom: 3px;
 }
 
-/* Steps */
 .dw-step {
     display: flex;
     gap: 12px;
@@ -243,7 +236,7 @@ body {
     height: 26px;
     min-width: 26px;
     border-radius: 50%;
-    background: var(--neon-cyan);
+    background: #6ec8ff;
     color: var(--dark-bg);
     display: flex;
     align-items: center;
@@ -251,7 +244,6 @@ body {
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
-    margin-top: 1px;
 }
 
 .dw-step-text {
@@ -264,7 +256,6 @@ body {
     color: var(--text-primary);
 }
 
-/* Visual mockup of phone browser */
 .dw-phone-visual {
     width: 100%;
     margin: 14px 0 4px;
@@ -331,18 +322,17 @@ body {
 .dw-phone-highlight {
     width: 85%;
     padding: 6px 8px;
-    background: rgba(9, 238, 245, 0.08);
-    border: 1px solid rgba(9, 238, 245, 0.2);
+    background: rgba(110, 200, 255, 0.08);
+    border: 1px solid rgba(110, 200, 255, 0.2);
     border-radius: 5px;
     font-size: 6px;
-    color: var(--neon-cyan);
+    color: #6ec8ff;
     text-align: center;
     font-family: var(--font-mono);
     margin-top: auto;
     margin-bottom: 14px;
 }
 
-/* Menu dots for Chrome mockup */
 .dw-phone-menu-dots {
     position: absolute;
     top: 30px;
@@ -359,18 +349,15 @@ body {
     border-radius: 50%;
 }
 
-/* Safari aA button mockup */
 .dw-phone-aa {
     position: absolute;
     top: 31px;
     left: 12px;
     font-size: 6px;
-    color: var(--neon-cyan);
+    color: #6ec8ff;
     font-weight: 700;
-    font-family: -apple-system, sans-serif;
 }
 
-/* Samsung bottom bar */
 .dw-phone-samsung-bar {
     position: absolute;
     bottom: 8px;
@@ -389,11 +376,10 @@ body {
 }
 
 .dw-phone-samsung-bar span.active {
-    color: var(--neon-cyan);
+    color: #6ec8ff;
     font-weight: 700;
 }
 
-/* Arrow indicator pulsing on mockup */
 .dw-arrow-indicator {
     position: absolute;
     font-size: 12px;
@@ -404,10 +390,9 @@ body {
     50% { opacity: 0.5; transform: scale(0.85); }
 }
 
-/* Info / Reason note */
 .dw-reason-box {
-    background: rgba(9, 238, 245, 0.04);
-    border: 1px solid rgba(9, 238, 245, 0.1);
+    background: rgba(110, 200, 255, 0.04);
+    border: 1px solid rgba(110, 200, 255, 0.1);
     border-radius: 12px;
     padding: 14px;
     font-size: 11.5px;
@@ -420,31 +405,9 @@ body {
 }
 
 .dw-reason-box strong {
-    color: var(--neon-cyan);
+    color: #6ec8ff;
 }
 
-/* Bottom continue anyway button */
-.dw-skip-btn {
-    background: none;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: var(--text-secondary);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    padding: 10px 22px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.25s;
-    margin-bottom: 24px;
-    opacity: 0.5;
-}
-
-.dw-skip-btn:hover, .dw-skip-btn:active {
-    border-color: rgba(255, 255, 255, 0.2);
-    color: var(--text-primary);
-    opacity: 0.8;
-}
-
-/* Specific feature cards that only show for the OS */
 .dw-feature-list {
     display: flex;
     flex-direction: column;
@@ -462,9 +425,29 @@ body {
 }
 
 .dw-feature-item .dw-check {
-    color: var(--neon-green);
+    color: #9bdeac;
     font-weight: 700;
     font-size: 12px;
+}
+
+.dw-skip-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 10px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-bottom: 24px;
+    opacity: 0.5;
+}
+
+.dw-skip-btn:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    opacity: 0.8;
 }
 
 /* Hero & Background */
@@ -476,7 +459,7 @@ body {
     align-items: center; 
     justify-content: center;
     overflow: hidden;
-    background: radial-gradient(circle at center, #0a101a 0%, #04080f 100%);
+    background: radial-gradient(circle at center, #161d2a 0%, #0f141c 100%);
     padding: 100px 20px 80px;
 }
 #heroCanvas { 
@@ -494,7 +477,7 @@ body {
 }
 .section-tag {
     font-family: var(--font-mono);
-    color: var(--neon-cyan);
+    color: #6ec8ff;
     font-size: 0.75rem;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -504,11 +487,14 @@ body {
 .hero-title {
     font-family: 'Outfit', sans-serif;
     font-size: clamp(2.2rem, 8vw, 5rem);
-    text-shadow: 0 0 25px rgba(9, 238, 245, 0.5);
+    text-shadow: 0 0 25px rgba(110, 200, 255, 0.3);
     margin-bottom: 20px;
     text-transform: uppercase;
     line-height: 1.1;
-    word-wrap: break-word;
+    background: linear-gradient(135deg, #eef4ff, #a8bcd4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 /* Content Grid */
@@ -522,9 +508,6 @@ body {
     gap: 30px;
 }
 
-.container { display: flex; }
-.box { padding: 30px; }
-
 @media (min-width: 992px) {
     .content-container {
         grid-template-columns: 1fr 1.5fr; 
@@ -536,14 +519,13 @@ body {
 .glass {
     background: var(--glass-bg);
     backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border);
     border-radius: 16px;
     padding: clamp(20px, 5vw, 40px);
 }
 
 .info-card {
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.02);
     border: 1px solid var(--glass-border);
     padding: 20px; 
     margin-bottom: 15px;
@@ -551,22 +533,21 @@ body {
     transition: 0.3s;
 }
 .info-card:hover {
-    border-color: rgba(9, 238, 245, 0.3);
-    background: rgba(9, 238, 245, 0.03);
+    border-color: rgba(110, 200, 255, 0.25);
+    background: rgba(110, 200, 255, 0.03);
     transform: translateY(-2px);
 }
-.info-card h4 { color: var(--neon-cyan); margin-bottom: 8px; font-family: 'Outfit'; }
+.info-card h4 { color: #6ec8ff; margin-bottom: 8px; font-family: 'Outfit'; }
 .info-card p { font-size: 0.9rem; color: var(--text-secondary); }
 
-/* Read progress indicator */
 .info-card.read {
-    border-left: 3px solid var(--neon-green);
+    border-left: 3px solid #9bdeac;
 }
 .info-card .read-indicator {
     display: inline-block;
     font-family: var(--font-mono);
     font-size: 0.65rem;
-    color: var(--neon-green);
+    color: #9bdeac;
     opacity: 0;
     transition: opacity 0.4s;
     margin-left: 8px;
@@ -593,7 +574,7 @@ body {
 .step-num {
     font-family: 'Outfit'; 
     font-size: 1.5rem; 
-    color: var(--neon-green); 
+    color: #9bdeac; 
     font-weight: 800;
     line-height: 1;
 }
@@ -612,12 +593,12 @@ body {
     text-align: center;
 }
 .btn-primary { 
-    background: var(--neon-cyan); 
-    color: #000; 
-    box-shadow: 0 0 20px rgba(9, 238, 245, 0.3); 
+    background: #6ec8ff; 
+    color: #0f141c; 
+    box-shadow: 0 0 20px rgba(110, 200, 255, 0.2); 
 }
 .btn-primary:hover {
-    box-shadow: 0 0 35px rgba(9, 238, 245, 0.5);
+    box-shadow: 0 0 35px rgba(110, 200, 255, 0.35);
     transform: translateY(-2px);
 }
 .btn-block { display: block; width: 100%; }
@@ -629,15 +610,13 @@ body {
     border-radius: 2px;
     margin-top: 15px;
     overflow: hidden;
-    position: relative;
 }
 .reading-progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    background: linear-gradient(90deg, #6ec8ff, #9bdeac);
     border-radius: 2px;
     width: 0%;
     transition: width 0.5s ease;
-    box-shadow: 0 0 8px rgba(3, 252, 132, 0.4);
 }
 .reading-status {
     font-family: var(--font-mono);
@@ -656,123 +635,119 @@ footer {
     border-top: 1px solid var(--glass-border); 
 }
 
-@media (max-width: 900px){ .container { flex-direction: column; } }
-@media (max-width: 500px){ 
-    .box { padding:20px; font-size:14px; } 
-}
-
-/* ===== CHATBOT WIDGET ===== */
-.chatbot-wrapper {
+/* ===== CUSTOM ROBOT VIDEO CONTAINER ===== */
+.custom-robot-container {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 8000;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.chatbot-iframe-container {
-    display: none;
-    width: 450px;
-    height: 600px;
-    margin-bottom: 12px;
-    border-radius: 16px;
+    bottom: 20px;
+    right: 20px;
+    width: 80px;
+    height: 80px;
+    z-index: 8001;
+    cursor: pointer;
+    border-radius: 50%;
     overflow: hidden;
-    box-shadow: 0 8px 40px rgba(9, 238, 245, 0.2), 0 0 80px rgba(9, 238, 245, 0.05);
-    border: 1px solid var(--glass-border);
-    animation: chatOpen 0.35s ease-out;
+    box-shadow: 0 0 0 2px rgba(110, 200, 255, 0.25), 0 0 15px rgba(110, 200, 255, 0.15);
+    transition: all 0.3s ease;
+    background: rgba(22, 29, 42, 0.6);
+    animation: float 3s ease-in-out infinite;
 }
-
-@keyframes chatOpen {
-    from { opacity: 0; transform: translateY(20px) scale(0.95); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.chatbot-iframe-container iframe {
+.custom-robot-container video {
     width: 100%;
     height: 100%;
-    border: none;
-    border-radius: 16px;
-}
-
-.chatbot-toggle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--neon-cyan), #06b8c4);
-    border: none;
+    object-fit: cover;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 20px rgba(9, 238, 245, 0.4), 0 0 40px rgba(9, 238, 245, 0.15);
-    transition: transform 0.3s, box-shadow 0.3s;
-    position: relative;
+    transition: all 0.3s ease;
 }
-.chatbot-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 30px rgba(9, 238, 245, 0.6), 0 0 60px rgba(9, 238, 245, 0.25);
+.custom-robot-container:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 2px rgba(110, 200, 255, 0.4), 0 0 20px rgba(110, 200, 255, 0.25);
 }
-.chatbot-toggle svg {
-    width: 28px;
-    height: 28px;
-    fill: #04080f;
-    transition: transform 0.3s;
-}
-.chatbot-toggle.open svg.icon-chat { display: none; }
-.chatbot-toggle.open svg.icon-close { display: block; }
-.chatbot-toggle:not(.open) svg.icon-chat { display: block; }
-.chatbot-toggle:not(.open) svg.icon-close { display: none; }
 
-.chatbot-toggle::before {
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+.custom-robot-container::before {
     content: '';
     position: absolute;
-    inset: -4px;
+    inset: -3px;
     border-radius: 50%;
-    border: 2px solid var(--neon-cyan);
+    background: radial-gradient(circle, rgba(110, 200, 255, 0.15), transparent);
     opacity: 0;
-    animation: pulse-ring 2s ease-out infinite;
+    transition: opacity 0.3s;
+    pointer-events: none;
 }
-@keyframes pulse-ring {
-    0%   { transform: scale(1); opacity: 0.6; }
-    100% { transform: scale(1.5); opacity: 0; }
+.custom-robot-container:hover::before {
+    opacity: 1;
+    animation: pulseRing 1s infinite;
 }
-.chatbot-toggle.open::before { animation: none; opacity: 0; }
+@keyframes pulseRing {
+    0% { transform: scale(0.95); opacity: 0.4; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
 
-@media (max-width: 500px) {
-    .chatbot-iframe-container {
-        width: calc(100vw - 32px);
-        height: 70vh;
-        right: 0;
-    }
-    .chatbot-wrapper {
-        right: 16px;
-        bottom: 16px;
-    }
+.robot-tooltip {
+    position: fixed;
+    bottom: 110px;
+    right: 20px;
+    background: var(--glass-bg);
+    border: 1px solid #6ec8ff;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: #6ec8ff;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 8000;
+    background: rgba(22, 29, 42, 0.95);
+    backdrop-filter: blur(8px);
+}
+.robot-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    right: 15px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #6ec8ff;
+}
+.custom-robot-container:hover + .robot-tooltip,
+.robot-tooltip:hover {
+    opacity: 1;
+}
+
+#sitespeak-launcher {
+    display: none !important;
+}
+
+@media (max-width: 560px) {
+    .custom-robot-container { width: 60px; height: 60px; bottom: 10px; right: 10px; }
+    .robot-tooltip { bottom: 80px; right: 10px; font-size: 8px; padding: 4px 8px; }
 }
 </style>
 </head>
 <body>
 
-<!-- ===== NAVIGATION BAR (from About Us) ===== -->
+<!-- ===== NAVIGATION BAR ===== -->
 <nav class="navbar">
     <div class="logo" onclick="window.location.href='lobby.html'">
-        <div class="logo-icon"><span class="material-icons">shield</span></div>
+        <div class="logo-icon">🛡️</div>
         <span>CyberSmart</span>
     </div>
     <div class="nav-links">
         <a href="lobby.html">Home</a>
         <a href="about-us.html">About</a>
-        <a href="types-of-risks.html">Academy</a>
+        <a href="types-of-risks.html" class="active">Academy</a>
         <a href="Simulationpage.html">Brief</a>
         <a href="solutions.html">Simulations</a>
     </div>
 </nav>
 
-<!-- ============================================================ -->
-<!--  DESKTOP MODE WARNING OVERLAY (Mobile Only)                   -->
-<!-- ============================================================ -->
+<!-- ===== DESKTOP MODE WARNING OVERLAY (PRESERVED) ===== -->
 <div class="desktop-warning-overlay" id="desktopWarning">
 
     <div class="dw-header-icon">🖥️</div>
@@ -781,11 +756,9 @@ footer {
         CyberSmart's interactive simulations and educational layouts are optimized for <strong>desktop-sized screens</strong>. Switch your browser to <strong>Desktop Mode</strong> for the best experience.
     </div>
 
-    <!-- Instruction Card -->
     <div class="dw-card">
         <h3>📱 How to Enable Desktop Mode</h3>
 
-        <!-- Browser Tabs -->
         <div class="dw-tabs">
             <div class="dw-tab active" onclick="switchDWGuide('chrome')" id="dwTabChrome">
                 <span class="dw-tab-icon">🌐</span>Chrome
@@ -798,111 +771,54 @@ footer {
             </div>
         </div>
 
-        <!-- Chrome Guide -->
         <div id="dwGuideChrome">
-            <div class="dw-step">
-                <div class="dw-step-num">1</div>
-                <div class="dw-step-text">Tap the <strong>three-dot menu ( ⋮ )</strong> in the top-right corner of Chrome</div>
-            </div>
-            <div class="dw-step">
-                <div class="dw-step-num">2</div>
-                <div class="dw-step-text">Scroll down and find <strong>"Desktop site"</strong></div>
-            </div>
-            <div class="dw-step">
-                <div class="dw-step-num">3</div>
-                <div class="dw-step-text">Toggle the <strong>checkbox ON</strong> next to "Desktop site"</div>
-            </div>
-            <div class="dw-step">
-                <div class="dw-step-num">4</div>
-                <div class="dw-step-text">Page will <strong>reload automatically</strong> in desktop layout</div>
-            </div>
+            <div class="dw-step"><div class="dw-step-num">1</div><div class="dw-step-text">Tap the <strong>three-dot menu ( ⋮ )</strong> in the top-right corner</div></div>
+            <div class="dw-step"><div class="dw-step-num">2</div><div class="dw-step-text">Find and enable <strong>"Desktop site"</strong></div></div>
+            <div class="dw-step"><div class="dw-step-num">3</div><div class="dw-step-text">Page will <strong>reload automatically</strong></div></div>
             <div class="dw-phone-visual">
                 <div class="dw-phone-mockup">
                     <div class="dw-phone-notch"></div>
                     <div class="dw-phone-url-bar">🔒 cybersmart.edu</div>
-                    <div class="dw-phone-menu-dots">
-                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                    </div>
-                    <div class="dw-arrow-indicator" style="top:26px;right:18px;font-size:10px;">👆</div>
+                    <div class="dw-phone-menu-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                    <div class="dw-arrow-indicator" style="top:26px;right:18px;">👆</div>
                     <div class="dw-phone-content">
-                        <div class="dw-phone-lines">
-                            <div class="dw-phone-line"></div>
-                            <div class="dw-phone-line"></div>
-                            <div class="dw-phone-line"></div>
-                        </div>
+                        <div class="dw-phone-lines"><div class="dw-phone-line"></div><div class="dw-phone-line"></div><div class="dw-phone-line"></div></div>
                     </div>
                     <div class="dw-phone-highlight">☑ Desktop site</div>
                 </div>
             </div>
         </div>
 
-        <!-- Safari Guide -->
         <div id="dwGuideSafari" style="display:none">
-            <div class="dw-step">
-                <div class="dw-step-num">1</div>
-                <div class="dw-step-text">Tap the <strong>"aA"</strong> button in the address bar (top-left)</div>
-            </div>
-            <div class="dw-step">
-                <div class="dw-step-num">2</div>
-                <div class="dw-step-text">Tap <strong>"Request Desktop Website"</strong> from the dropdown</div>
-            </div>
-            <div class="dw-step">
-                <div class="dw-step-num">3</div>
-                <div class="dw-step-text">Page will <strong>reload</strong> with the full desktop experience</div>
-            </div>
+            <div class="dw-step"><div class="dw-step-num">1</div><div class="dw-step-text">Tap <strong>"aA"</strong> in the address bar</div></div>
+            <div class="dw-step"><div class="dw-step-num">2</div><div class="dw-step-text">Tap <strong>"Request Desktop Website"</strong></div></div>
+            <div class="dw-step"><div class="dw-step-num">3</div><div class="dw-step-text">Page will <strong>reload</strong> in desktop view</div></div>
             <div class="dw-phone-visual">
                 <div class="dw-phone-mockup">
                     <div class="dw-phone-notch"></div>
                     <div class="dw-phone-url-bar">🔒 cybersmart.edu</div>
                     <div class="dw-phone-aa">aA</div>
-                    <div class="dw-arrow-indicator" style="top:26px;left:14px;font-size:10px;">👆</div>
-                    <div class="dw-phone-content">
-                        <div class="dw-phone-lines" style="width:90%">
-                            <div class="dw-phone-line" style="width:100%;height:2px;margin-bottom:4px;"></div>
-                            <div style="width:85%;padding:5px 6px;background:rgba(9,238,245,.06);border:1px solid rgba(9,238,245,.15);border-radius:4px;font-size:5.5px;color:var(--neon-cyan);text-align:center;font-family:var(--font-mono);margin-bottom:4px;">📱→🖥 Request Desktop Website</div>
-                            <div class="dw-phone-line" style="width:100%;height:2px;"></div>
-                        </div>
-                    </div>
+                    <div class="dw-arrow-indicator" style="top:26px;left:14px;">👆</div>
                     <div class="dw-phone-highlight">Desktop view loaded</div>
                 </div>
             </div>
         </div>
 
-        <!-- Samsung Guide -->
         <div id="dwGuideSamsung" style="display:none">
-            <div class="dw-step">
-                <div class="dw-step-num">1</div>
-                <div class="dw-step-text">Tap the <strong>hamburger menu ( ≡ )</strong> at the bottom-right</div>
-            </div>
-            <div class="dw-step">
-                <div class="dw-step-num">2</div>
-                <div class="dw-step-text">Tap <strong>"Desktop site"</strong> to toggle it on</div>
-            </div>
-            <div class="dw-step">
-                <div class="dw-step-num">3</div>
-                <div class="dw-step-text">Page will <strong>reload</strong> in desktop view</div>
-            </div>
+            <div class="dw-step"><div class="dw-step-num">1</div><div class="dw-step-text">Tap <strong>hamburger menu ( ≡ )</strong> at bottom-right</div></div>
+            <div class="dw-step"><div class="dw-step-num">2</div><div class="dw-step-text">Tap <strong>"Desktop site"</strong></div></div>
+            <div class="dw-step"><div class="dw-step-num">3</div><div class="dw-step-text">Page will <strong>reload</strong></div></div>
             <div class="dw-phone-visual">
                 <div class="dw-phone-mockup">
                     <div class="dw-phone-notch"></div>
                     <div class="dw-phone-url-bar">🔒 cybersmart.edu</div>
-                    <div class="dw-phone-content">
-                        <div class="dw-phone-lines">
-                            <div class="dw-phone-line"></div>
-                            <div class="dw-phone-line"></div>
-                            <div class="dw-phone-line"></div>
-                        </div>
-                    </div>
-                    <div class="dw-phone-samsung-bar">
-                        <span>←</span><span>→</span><span>🏠</span><span>⊞</span><span class="active">≡</span>
-                    </div>
-                    <div class="dw-arrow-indicator" style="bottom:18px;right:14px;font-size:10px;">👆</div>
+                    <div class="dw-phone-samsung-bar"><span>←</span><span>→</span><span>🏠</span><span>⊞</span><span class="active">≡</span></div>
+                    <div class="dw-arrow-indicator" style="bottom:18px;right:14px;">👆</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Why desktop mode? -->
     <div class="dw-reason-box">
         <strong>💡 Why Desktop Mode?</strong><br><br>
         CyberSmart features interactive elements including:
@@ -911,21 +827,14 @@ footer {
             <div class="dw-feature-item"><span class="dw-check">✓</span> Multi-panel educational layouts</div>
             <div class="dw-feature-item"><span class="dw-check">✓</span> Interactive step-by-step response guides</div>
         </div>
-        <br>
-        These require a wider viewport than mobile screens provide.
     </div>
 
-    <!-- Skip / Continue anyway -->
     <button class="dw-skip-btn" onclick="dismissDesktopWarning()">
-        Continue →
+        Continue anyway →
     </button>
 </div>
 
-
-<!-- ============================================================ -->
-<!--  MAIN SITE CONTENT                                            -->
-<!-- ============================================================ -->
-
+<!-- ===== MAIN SITE CONTENT ===== -->
 <section class="hero">
     <canvas id="heroCanvas"></canvas>
     <div class="hero-content">
@@ -976,7 +885,7 @@ footer {
         <div class="step-item">
             <div class="step-num">01</div>
             <div>
-                <h4 style="color: var(--neon-green);">Step 1: Learn</h4>
+                <h4 style="color: #9bdeac;">Step 1: Learn</h4>
                 <p style="color: var(--text-secondary);">Understand different cyber risks through curated theory modules on the left panel.</p>
             </div>
         </div>
@@ -984,7 +893,7 @@ footer {
         <div class="step-item">
             <div class="step-num">02</div>
             <div>
-                <h4 style="color: var(--neon-green);">Step 2: Solve</h4>
+                <h4 style="color: #9bdeac;">Step 2: Solve</h4>
                 <p style="color: var(--text-secondary);">Discover actionable strategies like strong passwords, two-factor authentication, and encryption.</p>
             </div>
         </div>
@@ -992,7 +901,7 @@ footer {
         <div class="step-item">
             <div class="step-num">03</div>
             <div>
-                <h4 style="color: var(--neon-green);">Step 3: Apply</h4>
+                <h4 style="color: #9bdeac;">Step 3: Apply</h4>
                 <p style="color: var(--text-secondary);">Review the modules above and integrate these practices into your daily digital life.</p>
             </div>
         </div>
@@ -1016,26 +925,27 @@ footer {
 
 </div>
 
-<!-- ===== CHATBOT WIDGET ===== -->
-<div class="chatbot-wrapper">
-    <div class="chatbot-iframe-container" id="chatbotContainer">
-        <iframe 
-            class="sitespeak-ai-chatbot" 
-            src="https://chatbot.sitespeak.ai/embed/242fdaac-e3a9-4026-a0ec-9916faf7ab9b?nc=1&nf=1" 
-            allow="microphone;" 
-            frameborder="0">
-        </iframe>
-    </div>
-    <button class="chatbot-toggle" id="chatbotToggle" aria-label="Toggle chatbot">
-        <svg class="icon-chat" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/>
-            <path d="M7 9h10v2H7zm0-3h10v2H7zm0 6h7v2H7z"/>
-        </svg>
-        <svg class="icon-close" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-    </button>
+<!-- ===== CUSTOM ROBOT VIDEO (Triggers SiteSpeakAI) ===== -->
+<div class="custom-robot-container" id="customRobot">
+    <video id="robotVideo" autoplay loop muted playsinline>
+        <source src="video-robot.mp4" type="video/mp4">
+        <!-- Fallback animated emoji -->
+        <div style="width:100%; height:100%; background: linear-gradient(135deg, #6ec8ff, #9bdeac); display: flex; align-items: center; justify-content: center; font-size: 40px;">🤖</div>
+    </video>
 </div>
+<div class="robot-tooltip" id="robotTooltip">🤖 Click me to chat!</div>
+
+<!-- ===== SITESPEAKAI CHATBOT SCRIPT ===== -->
+<script type="text/javascript">
+    (function(){
+        var d=document;
+        var s=d.createElement("script");
+        s.src="https://sitespeak.ai/chatbots/242fdaac-e3a9-4026-a0ec-9916faf7ab9b.js";
+        s.async=1;
+        s.id="sitespeak-script";
+        d.getElementsByTagName("head")[0].appendChild(s);
+    })();
+</script>
 
 <footer>
     <p>&copy; 2026 CyberSmart. All Rights Reserved.</p>
@@ -1043,9 +953,7 @@ footer {
 </footer>
 
 <script>
-// ============================================================
-//  0. DESKTOP WARNING OVERLAY LOGIC
-// ============================================================
+// ===== DESKTOP WARNING FUNCTIONS =====
 function switchDWGuide(browser) {
     document.getElementById('dwGuideChrome').style.display = 'none';
     document.getElementById('dwGuideSafari').style.display = 'none';
@@ -1082,15 +990,7 @@ function dismissDesktopWarning() {
     }
 })();
 
-// Material Icons link (needed for navbar icons)
-const link = document.createElement('link');
-link.rel = 'stylesheet';
-link.href = 'https://fonts.googleapis.com/icon?family=Material+Icons';
-document.head.appendChild(link);
-
-// ============================================================
-//  1. THREE.JS PARTICLE BACKGROUND
-// ============================================================
+// ===== THREE.JS PARTICLE BACKGROUND =====
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('heroCanvas'), alpha: true, antialias: true });
@@ -1107,7 +1007,7 @@ for (let i = 0; i < 2000; i++) {
     );
 }
 geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-const mat = new THREE.PointsMaterial({ color: 0x09eef5, size: 0.03 });
+const mat = new THREE.PointsMaterial({ color: 0x6ec8ff, size: 0.03, opacity: 0.4, transparent: true });
 const points = new THREE.Points(geo, mat);
 scene.add(points);
 camera.position.z = 10;
@@ -1125,9 +1025,7 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// ============================================================
-//  2. READING / SCROLL TRACKING
-// ============================================================
+// ===== READING / SCROLL TRACKING =====
 const readModules = new Set();
 const infoCards = document.querySelectorAll('#learnPanel .info-card[data-topic]');
 const readingFill = document.getElementById('readingFill');
@@ -1159,22 +1057,77 @@ const cardObserver = new IntersectionObserver((entries) => {
 
 infoCards.forEach(card => cardObserver.observe(card));
 
-// ============================================================
-//  3. CHATBOT TOGGLE
-// ============================================================
-const chatbotToggle = document.getElementById('chatbotToggle');
-const chatbotContainer = document.getElementById('chatbotContainer');
-let chatOpen = false;
+// ===== ROBOT CHATBOT INTEGRATION =====
+const robotContainer = document.getElementById('customRobot');
+const robotVideo = document.getElementById('robotVideo');
 
-chatbotToggle.addEventListener('click', () => {
-    chatOpen = !chatOpen;
-    chatbotContainer.style.display = chatOpen ? 'block' : 'none';
-    chatbotToggle.classList.toggle('open', chatOpen);
-});
+function openSiteSpeakChatbot() {
+    const launcher = document.getElementById('sitespeak-launcher');
+    if (launcher) {
+        launcher.click();
+        animateRobotClick();
+        return;
+    }
+    
+    const iframe = document.getElementById('sitespeak-iframe');
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ openChat: true }, '*');
+        animateRobotClick();
+        return;
+    }
+}
 
-// Initial GSAP animation
+function animateRobotClick() {
+    gsap.to(robotContainer, { 
+        scale: 1.15, 
+        duration: 0.15, 
+        yoyo: true, 
+        repeat: 1,
+        onComplete: () => {
+            gsap.to(robotContainer, { scale: 1, duration: 0.1 });
+        }
+    });
+}
+
+robotContainer.addEventListener('click', openSiteSpeakChatbot);
+
+if (robotVideo) {
+    robotVideo.addEventListener('canplay', () => {
+        robotVideo.play().catch(e => console.log('Video autoplay prevented:', e));
+    });
+    
+    document.body.addEventListener('click', function initPlay() {
+        if (robotVideo && robotVideo.paused) {
+            robotVideo.play().catch(() => {});
+        }
+        document.body.removeEventListener('click', initPlay);
+    }, { once: true });
+}
+
+// ===== GSAP ANIMATIONS =====
 gsap.from(".hero-title", { duration: 1.2, y: 40, opacity: 0, ease: "power3.out" });
-</script>
+gsap.from(".hero-content p", { duration: 1, y: 30, opacity: 0, delay: 0.3, ease: "power3.out" });
 
+// Hide tooltip after 5 seconds
+setTimeout(() => {
+    const tooltip = document.getElementById('robotTooltip');
+    if (tooltip) {
+        gsap.to(tooltip, { opacity: 0, duration: 1, delay: 4 });
+    }
+}, 5000);
+
+// Hide default SiteSpeakAI launcher
+setTimeout(() => {
+    const defaultLauncher = document.getElementById('sitespeak-launcher');
+    if (defaultLauncher) {
+        defaultLauncher.style.display = 'none';
+    }
+    const iframe = document.getElementById('sitespeak-iframe');
+    if (iframe) {
+        iframe.style.bottom = '110px';
+        iframe.style.right = '20px';
+    }
+}, 2000);
+</script>
 </body>
 </html>
